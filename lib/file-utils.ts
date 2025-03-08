@@ -6,8 +6,6 @@ import { processHtmlContent, attachmentFolderExists, getImageAttachments } from 
 
 const CONTENTS_DIR = path.join(process.cwd(), "/app/contents");
 
-
-
 export interface HtmlMetadata {
   title: string
   created: string
