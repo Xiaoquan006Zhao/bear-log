@@ -7,6 +7,7 @@ const nextConfig = {
     // This will still show errors but won't fail the build
     ignoreBuildErrors: true,
   },
+  output: 'standalone',
 }
 
 module.exports = nextConfig

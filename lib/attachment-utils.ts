@@ -3,8 +3,7 @@
 import fs from "fs/promises"
 import path from "path"
 
-
-import { CONTENTS_DIR } from "@/lib/utils"
+export const CONTENTS_DIR = path.join(process.cwd(), "/app/contents");
 
 
 // Add caching for attachment existence checks to improve performance
