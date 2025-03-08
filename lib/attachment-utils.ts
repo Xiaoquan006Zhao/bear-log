@@ -3,7 +3,7 @@
 import fs from "fs/promises"
 import path from "path"
 
-const CONTENTS_DIR = path.join(process.cwd(), "static", "content");
+const CONTENTS_DIR = process.env.NODE_ENV === "production" ? "contents" : "public/contents"
 
 // Add caching for attachment existence checks to improve performance
 const attachmentFolderCache = new Map<string, boolean>()

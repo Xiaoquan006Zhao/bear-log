@@ -1,3 +1,4 @@
+// Add better error handling and type safety for storage operations
 type StorageValue = string | number | boolean | object | null
 
 const storage = {

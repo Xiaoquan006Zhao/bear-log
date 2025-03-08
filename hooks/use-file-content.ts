@@ -21,7 +21,29 @@ export function useFileContent() {
     setSelectedFile(filename)
 
     try {
-      const { content, metadata, hasAttachments } = await getFileContent(filename)
+      let content, metadata, hasAttachments
+
+      if (process.env.NODE_ENV === "production") {
+        // In production, use the API route
+        const response = await fetch(`/api/files/${encodeURIComponent(filename)}`)
+        if (!response.ok) {
+          throw new Error(`Failed to fetch file content: ${filename}`)
+        }
+        const data = await response.json()
+        content = data.content
+        metadata = data.metadata
+        hasAttachments = data.hasAttachments
+      } else {
+        // In development, use the existing function
+        const {
+          content: fileContent,
+          metadata: fileMeta,
+          hasAttachments: fileHasAttachments,
+        } = await getFileContent(filename)
+        content = fileContent
+        metadata = fileMeta
+        hasAttachments = fileHasAttachments
+      }
 
       // Add error handling for images in the HTML content
       const processedContent = addImageErrorHandling(content)

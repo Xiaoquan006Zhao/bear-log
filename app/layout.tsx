@@ -11,6 +11,7 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "HTML Viewer",
   description: "View HTML files from the contents folder",
+    generator: 'v0.dev'
 }
 
 // Update the RootLayout component to include the toast provider
@@ -29,3 +30,6 @@ export default function RootLayout({
   )
 }
 
+
+
+import './globals.css'
