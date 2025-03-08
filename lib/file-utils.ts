@@ -4,7 +4,7 @@ import fs from "fs/promises"
 import path from "path"
 import { processHtmlContent, attachmentFolderExists, getImageAttachments } from "./attachment-utils"
 
-const CONTENTS_DIR = process.env.NODE_ENV === "production" ? "contents" : "public/contents"
+const CONTENTS_DIR = "/app/contents"
 
 export interface HtmlMetadata {
   title: string
