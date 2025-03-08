@@ -4,7 +4,7 @@ import fs from "fs/promises"
 import path from "path"
 import { processHtmlContent, attachmentFolderExists, getImageAttachments } from "./attachment-utils"
 
-const CONTENTS_DIR = "/app/contents"
+const CONTENTS_DIR = path.join(process.cwd(), "/app/contents");
 
 export interface HtmlMetadata {
   title: string
