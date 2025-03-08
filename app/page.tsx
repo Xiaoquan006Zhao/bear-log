@@ -16,7 +16,6 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft } from "lucide-react"
 
-
 // Type for folder structure
 // @ts-ignore
 interface FolderNode {

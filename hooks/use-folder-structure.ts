@@ -71,19 +71,7 @@ export function useFolderStructure(onFileSelect: (filename: string) => void) {
       setPagination((prev) => ({ ...prev, loading: true }))
 
       try {
-        let result
-
-        if (process.env.NODE_ENV === "production") {
-          // In production, use the API route
-          const response = await fetch(`/api/folder?path=${encodeURIComponent(folderPath)}&page=${page}&limit=20`)
-          if (!response.ok) {
-            throw new Error(`Failed to fetch folder files: ${folderPath}`)
-          }
-          result = await response.json()
-        } else {
-          // In development, use the existing function
-          result = await getFilesForFolder(folderPath, page, 20)
-        }
+        const result = await getFilesForFolder(folderPath, page, 20)
 
         if (append) {
           setCurrentFolderFiles((prev) => [...prev, ...result.files])

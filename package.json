@@ -36,6 +36,7 @@
     "@types/react-dom": "latest",
     "eslint": "latest",
     "eslint-config-next": "latest",
+    "netlify-cli": "^19.0.2",
     "postcss": "latest",
     "tailwindcss": "latest",
     "typescript": "latest"

@@ -4,7 +4,8 @@ import fs from "fs/promises"
 import path from "path"
 import { processHtmlContent, attachmentFolderExists, getImageAttachments } from "./attachment-utils"
 
-const CONTENTS_DIR = path.join(process.cwd(), "/app/contents");
+const CONTENTS_DIR = path.join(process.cwd(), "/app/contents")
+
 
 export interface HtmlMetadata {
   title: string
@@ -22,10 +23,8 @@ export async function getFilesList(): Promise<string[]> {
     // Read the contents directory
     const files = await fs.readdir(CONTENTS_DIR)
 
-    // Filter for HTML files only and remove the "public/" prefix in production
-    return files
-      .filter((file) => file.toLowerCase().endsWith(".html"))
-      .map((file) => file.replace(/^public\/contents\//, ""))
+    // Filter for HTML files only
+    return files.filter((file) => file.toLowerCase().endsWith(".html"))
   } catch (error) {
     console.error("Error reading contents directory:", error)
     return []
@@ -46,20 +45,7 @@ export async function getFileContent(filename: string): Promise<{
     }
 
     const filePath = path.join(CONTENTS_DIR, filename)
-
-    // In production, we need to fetch the file via HTTP
-    let rawHtml
-    if (process.env.NODE_ENV === "production") {
-      // Use fetch to get the file content from the public URL
-      const response = await fetch(`/contents/${filename}`)
-      if (!response.ok) {
-        throw new Error(`Failed to fetch file: ${filename}`)
-      }
-      rawHtml = await response.text()
-    } else {
-      // In development, use fs as before
-      rawHtml = await fs.readFile(filePath, "utf-8")
-    }
+    const rawHtml = await fs.readFile(filePath, "utf-8")
 
     // Extract metadata from HTML
     const metadata = extractMetadata(rawHtml)
