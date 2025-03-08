@@ -3,7 +3,8 @@
 import fs from "fs/promises"
 import path from "path"
 
-const CONTENTS_DIR = path.join(process.cwd(), "/app/contents");
+
+import { CONTENTS_DIR } from "@/app/page"
 
 // Add caching for attachment existence checks to improve performance
 const attachmentFolderCache = new Map<string, boolean>()
