@@ -3,7 +3,7 @@
 import fs from "fs/promises"
 import path from "path"
 
-const CONTENTS_DIR = "contents"
+const CONTENTS_DIR = "/contents"
 
 // Add caching for attachment existence checks to improve performance
 const attachmentFolderCache = new Map<string, boolean>()
