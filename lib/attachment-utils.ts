@@ -4,7 +4,8 @@ import fs from "fs/promises"
 import path from "path"
 
 
-import { CONTENTS_DIR } from "@/app/page"
+import { CONTENTS_DIR } from "@/lib/utils"
+
 
 // Add caching for attachment existence checks to improve performance
 const attachmentFolderCache = new Map<string, boolean>()

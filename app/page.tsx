@@ -16,10 +16,6 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft } from "lucide-react"
 
-import fs from "fs/promises"
-import path from "path"
-
-export const CONTENTS_DIR = path.join(process.cwd(), "/app/contents");
 
 // Type for folder structure
 // @ts-ignore
