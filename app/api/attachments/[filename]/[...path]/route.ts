@@ -23,4 +23,3 @@ export async function GET(request: NextRequest, { params }: { params: { filename
   }
 }
 
-export const revalidate = 60; // revalidate every 60 seconds
