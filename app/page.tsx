@@ -1,101 +1,218 @@
-import Image from "next/image";
+"use client"
 
-export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+import { useCallback, useEffect } from "react"
+import { cn } from "@/lib/utils"
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable"
+import { usePanelState } from "@/hooks/use-panel-state"
+import { useFolderStructure } from "@/hooks/use-folder-structure"
+import { useFileContent } from "@/hooks/use-file-content"
+import { FolderPanel } from "@/components/folder-panel"
+import { FilesPanel } from "@/components/files-panel"
+import { ContentPanel } from "@/components/content-panel"
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+// Import the error boundary
+import { ErrorBoundary } from "@/components/error-boundary"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { ChevronLeft } from "lucide-react"
+
+// Type for folder structure
+// @ts-ignore
+interface FolderNode {
+  name: string
+  path: string
+  children: Record<string, FolderNode>
+  files: string[]
+  totalUniqueFiles: number
 }
+
+export default function HtmlViewer() {
+  // Use our custom hooks
+  const {
+    leftPanelCollapsed,
+    middlePanelCollapsed,
+    toggleLeftPanel,
+    toggleMiddlePanel,
+    handlePanelResize,
+    getLeftPanelSize,
+    getMiddlePanelSize,
+    getRightPanelSize,
+    setMiddlePanelCollapsed,
+  } = usePanelState()
+
+  const {
+    selectedFile,
+    fileContent,
+    fileMetadata,
+    fileHasAttachments,
+    loading: contentLoading,
+    tocItems,
+    showToc,
+    loadFileContent,
+    setShowToc,
+  } = useFileContent()
+
+  // Callback for file selection that will be passed to the folder structure hook
+  const handleFileSelect = useCallback(
+    (filename: string) => {
+      loadFileContent(filename)
+    },
+    [loadFileContent],
+  )
+
+  const {
+    folderStructure,
+    selectedFolder,
+    expandedFolders,
+    currentFolderFiles,
+    loading,
+    pagination,
+    selectFolder,
+    toggleFolder,
+    loadMoreFiles,
+  } = useFolderStructure(handleFileSelect)
+
+  // Handle file selection
+  const selectFile = useCallback(
+    (filename: string) => {
+      loadFileContent(filename)
+    },
+    [loadFileContent],
+  )
+
+  // Handle folder selection with panel expansion
+  const handleFolderSelect = useCallback(
+    (path: string) => {
+      selectFolder(path)
+      // If middle panel is collapsed, expand it
+      if (middlePanelCollapsed) {
+        setMiddlePanelCollapsed(false)
+      }
+    },
+    [selectFolder, middlePanelCollapsed, setMiddlePanelCollapsed],
+  )
+
+  useEffect(() => {
+    // Function to handle screen size changes
+    const handleResize = () => {
+      const isMobile = window.innerWidth < 768
+
+      // On mobile, collapse both panels by default
+      if (isMobile) {
+        if (!leftPanelCollapsed) {
+          toggleLeftPanel()
+        }
+        if (!middlePanelCollapsed) {
+          toggleMiddlePanel()
+        }
+      }
+    }
+
+    // Call once on mount
+    handleResize()
+
+    // Add event listener
+    window.addEventListener("resize", handleResize)
+
+    // Cleanup
+    return () => window.removeEventListener("resize", handleResize)
+  }, [leftPanelCollapsed, middlePanelCollapsed, toggleLeftPanel, toggleMiddlePanel])
+
+  const folderDisplayName = selectedFolder ? selectedFolder.split("/").pop() : "Root"
+
+  return (
+    <ErrorBoundary>
+      <div className="h-[100vh] w-full overflow-hidden" suppressHydrationWarning>
+        <ResizablePanelGroup
+          direction="horizontal"
+          className="h-full"
+          onLayout={handlePanelResize}
+          style={{ transition: "none" }}
+        >
+          {/* Folder Structure Panel */}
+          <ResizablePanel
+            defaultSize={getLeftPanelSize()}
+            minSize={leftPanelCollapsed ? 3 : 15}
+            maxSize={leftPanelCollapsed ? 3 : 40}
+            collapsible={false}
+            className={cn("border-r flex flex-col overflow-hidden")}
+          >
+            <FolderPanel
+              folderStructure={folderStructure}
+              selectedFolder={selectedFolder}
+              expandedFolders={expandedFolders}
+              loading={loading.structure}
+              collapsed={leftPanelCollapsed}
+              togglePanel={toggleLeftPanel}
+              selectFolder={handleFolderSelect}
+              toggleFolder={toggleFolder}
+            />
+          </ResizablePanel>
+
+          {!middlePanelCollapsed && <ResizableHandle withHandle />}
+
+          {/* Files List Panel */}
+          <ResizablePanel
+            defaultSize={getMiddlePanelSize()}
+            minSize={middlePanelCollapsed ? 3 : 15}
+            maxSize={middlePanelCollapsed ? 3 : 40}
+            collapsible={false}
+            className={cn("border-r flex flex-col overflow-hidden")}
+          >
+            {!middlePanelCollapsed && (
+              <div className="p-4 border-b flex-shrink-0 flex items-center justify-between">
+                <div className="flex items-center gap-2 min-w-0 max-w-[calc(100%-40px)]">
+                  <h2 className="text-lg font-semibold truncate" title={folderDisplayName}>
+                    {folderDisplayName}
+                  </h2>
+                  {pagination.total > 0 && (
+                    <Badge variant="outline" className="text-xs flex-shrink-0">
+                      {pagination.total}
+                    </Badge>
+                  )}
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0 flex items-center justify-center flex-shrink-0"
+                  onClick={toggleMiddlePanel}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+
+            <FilesPanel
+              selectedFolder={selectedFolder}
+              selectedFile={selectedFile}
+              files={currentFolderFiles}
+              pagination={pagination}
+              loading={loading.files}
+              collapsed={middlePanelCollapsed}
+              togglePanel={toggleMiddlePanel}
+              selectFile={selectFile}
+              loadMoreFiles={loadMoreFiles}
+            />
+          </ResizablePanel>
+
+          {!middlePanelCollapsed && <ResizableHandle withHandle />}
+
+          {/* HTML Content Panel */}
+          <ResizablePanel defaultSize={getRightPanelSize()} minSize={30} className="flex flex-col">
+            <ContentPanel
+              selectedFile={selectedFile}
+              fileContent={fileContent}
+              fileMetadata={fileMetadata}
+              fileHasAttachments={fileHasAttachments}
+              loading={contentLoading}
+              tocItems={tocItems}
+              showToc={showToc}
+              setShowToc={setShowToc}
+            />
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      </div>
+    </ErrorBoundary>
+  )
+}
+
