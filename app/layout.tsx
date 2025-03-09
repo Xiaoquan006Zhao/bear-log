@@ -10,9 +10,8 @@ import { AppStateProvider } from "@/context/app-state-context"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Xiaoquan's Notes",
-  description: "A Log for Xiaoquan's (Bear) Notes",
-    generator: 'v0.dev'
+  title: "HTML Viewer",
+  description: "View HTML files from the contents folder",
 }
 
 // Update the RootLayout component to include our providers
@@ -23,6 +22,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* Add meta viewport for responsiveness */}
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        {/* You can add more static head content here if needed */}
+      </head>
       <body className={`${inter.className} overflow-hidden`}>
         <AppStateProvider>
           {children}
@@ -33,6 +37,3 @@ export default function RootLayout({
   )
 }
 
-
-
-import './globals.css'

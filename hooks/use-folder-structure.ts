@@ -35,7 +35,7 @@ export function useFolderStructure(onFileSelect: (filename: string) => void) {
     const loadFolderStructure = async () => {
       setLoading((prev) => ({ ...prev, structure: true }))
       try {
-        // Get folder structure from server
+        // Get folder structure from static data
         const structure = await getFolderStructure()
         setFolderStructure(structure)
 
@@ -73,7 +73,9 @@ export function useFolderStructure(onFileSelect: (filename: string) => void) {
       setPagination((prev) => ({ ...prev, loading: true }))
 
       try {
+        console.log(`Loading files for folder: ${folderPath}, page: ${page}, append: ${append}`)
         const result = await getFilesForFolder(folderPath, page, 20)
+        console.log(`Loaded ${result.files.length} files, total: ${result.total}, hasMore: ${result.hasMore}`)
 
         // Handle empty results
         if (result.files.length === 0) {
@@ -106,16 +108,6 @@ export function useFolderStructure(onFileSelect: (filename: string) => void) {
 
             return newFiles
           })
-
-          // If we're at the end of the list and loading more, select the first new file
-          const currentIndex = currentFolderFiles.findIndex((file) => file.file === result.files[0].file)
-          if (currentIndex === -1 && result.files.length > 0) {
-            // Only select if we're at the end of the current list
-            const lastVisible = document.querySelector('.file-card[data-selected="true"]')
-            if (lastVisible && lastVisible.getBoundingClientRect().bottom > window.innerHeight - 100) {
-              onFileSelect(result.files[0].file)
-            }
-          }
         } else {
           // When not appending, replace the current list
           setCurrentFolderFiles(result.files)
@@ -150,7 +142,7 @@ export function useFolderStructure(onFileSelect: (filename: string) => void) {
         setLoading((prev) => ({ ...prev, files: false }))
       }
     },
-    [loading.files, onFileSelect, currentFolderFiles],
+    [loading.files, onFileSelect],
   )
 
   // Load more files when scrolling

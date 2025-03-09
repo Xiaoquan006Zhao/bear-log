@@ -213,20 +213,49 @@ export function FilesPanel({
           }
         }}
       >
-        <div
-          style={{
-            height: `${rowVirtualizer.getTotalSize()}px`,
-            width: "100%",
-            position: "relative",
-          }}
-        >
-          {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-            const isLoaderRow = virtualRow.index === files.length
+        {loading ? (
+          <div className="flex justify-center items-center p-6">
+            <Loader2 className="h-6 w-6 animate-spin mr-2" />
+            <span>Loading files...</span>
+          </div>
+        ) : files.length > 0 ? (
+          <div
+            style={{
+              height: `${rowVirtualizer.getTotalSize()}px`,
+              width: "100%",
+              position: "relative",
+            }}
+          >
+            {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+              const isLoaderRow = virtualRow.index === files.length
 
-            if (isLoaderRow) {
+              if (isLoaderRow) {
+                return (
+                  <div
+                    key="loader"
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "100%",
+                      height: `${virtualRow.size}px`,
+                      transform: `translateY(${virtualRow.start}px)`,
+                    }}
+                    className="p-3"
+                  >
+                    <div className="flex justify-center items-center h-full bg-muted/20 rounded-md">
+                      <Loader2 className="h-5 w-5 animate-spin mr-2" />
+                      <span className="text-sm">Loading more files...</span>
+                    </div>
+                  </div>
+                )
+              }
+
+              const item = files[virtualRow.index]
+
               return (
                 <div
-                  key="loader"
+                  key={item.file}
                   style={{
                     position: "absolute",
                     top: 0,
@@ -235,45 +264,24 @@ export function FilesPanel({
                     height: `${virtualRow.size}px`,
                     transform: `translateY(${virtualRow.start}px)`,
                   }}
-                  className="p-3"
+                  className="p-2 overflow-hidden"
                 >
-                  <div className="flex justify-center items-center h-full bg-muted/20 rounded-md">
-                    <Loader2 className="h-5 w-5 animate-spin mr-2" />
-                    <span className="text-sm">Loading more files...</span>
-                  </div>
+                  <FileCard
+                    file={item.file}
+                    metadata={item.metadata}
+                    imageAttachments={item.imageAttachments || []}
+                    isSelected={selectedFile === item.file}
+                    onClick={() => selectFile(item.file)}
+                  />
                 </div>
               )
-            }
-
-            const item = files[virtualRow.index]
-
-            return (
-              <div
-                key={item.file}
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: "100%",
-                  height: `${virtualRow.size}px`,
-                  transform: `translateY(${virtualRow.start}px)`,
-                }}
-                className="p-2 overflow-hidden"
-              >
-                <FileCard
-                  file={item.file}
-                  metadata={item.metadata}
-                  imageAttachments={item.imageAttachments || []}
-                  isSelected={selectedFile === item.file}
-                  onClick={() => selectFile(item.file)}
-                />
-              </div>
-            )
-          })}
-        </div>
-
-        {files.length === 0 && !loading && (
-          <div className="p-4 text-center text-muted-foreground">No notes in this folder</div>
+            })}
+          </div>
+        ) : (
+          <div className="p-4 text-center text-muted-foreground">
+            <p>No notes in this folder</p>
+            <p className="text-xs mt-2">Folder path: {selectedFolder || "root"}</p>
+          </div>
         )}
       </div>
     </>

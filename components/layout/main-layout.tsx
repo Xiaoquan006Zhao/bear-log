@@ -8,6 +8,8 @@ import { FilesPanel } from "@/components/panels/files-panel"
 import { ContentPanel } from "@/components/panels/content-panel"
 import { ErrorBoundary } from "@/components/error-boundary"
 import { useAppState } from "@/context/app-state-context"
+// Import the debug panel
+import { DebugPanel } from "@/components/debug-panel"
 
 export function MainLayout() {
   // Get state from context
@@ -190,6 +192,9 @@ export function MainLayout() {
             />
           </ResizablePanel>
         </ResizablePanelGroup>
+
+        {/* Add the debug panel */}
+        <DebugPanel />
       </div>
     </ErrorBoundary>
   )
