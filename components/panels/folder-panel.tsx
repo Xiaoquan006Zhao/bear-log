@@ -49,8 +49,8 @@ export function FolderPanel({
     <>
       <div className="px-4 py-3 border-b flex-shrink-0 flex items-center justify-between">
         <h2 className="text-lg font-semibold flex items-center gap-3">
-          <Folder className="h-5 w-5" />
-          <span className="truncate">Folders</span>
+          
+          <span className="truncate">Xiaoquan's Notes</span>
         </h2>
         <Button
           variant="ghost"

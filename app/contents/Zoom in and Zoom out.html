@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <title>Zoom in and Zoom out</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="bear-note-unique-identifier" content="501C49FE-0929-4F5E-803A-EBCC3B4B4602">
+        <meta name="created" content="2022-08-07T02:53:01-0500">
+        <meta name="modified" content="2023-09-10T21:18:53-0500">
+        <meta name="tags" content="_book/management, _book/management/Decisive/Reality-test-your-assumption, _book, _book/management/Decisive">
+        <meta name="last device" content="xiaoquan’s MacBook Pro">
+        
+        <style>
+             body {
+   --base-background-color: #ffffff;
+   --document-background-color: var(--base-background-color);
+ }
+
+.document-wrapper {
+  /* Constants used to transform theme values to CSS */
+  --transform-line-height-factor: 1.17;
+
+  /* From template */
+  --base-text-color: #444444;
+  --base-text-secondary-color: #888888;
+  --base-text-tertiary-color: #d9d9d9;
+  --base-background-color: #ffffff;
+  --base-background-secondary-color: #F3F5F7;
+  --base-background-tertiary-color: #E4E5E6;
+  --base-stroke-color: #d9d9d9;
+  --base-stroke-secondary-color: #d9d9d9;
+  --base-accent-color: #DD4C4F;
+  --base-highlight-color: ;
+
+  --document-background-color: var(--base-background-color);
+  --document-text-color: var(--base-text-color);
+  --document-text-secondary-color: var(--base-text-secondary-color);
+  --document-text-light-color: var(--base-text-secondary-color);
+  --document-accent-color: var(--base-accent-color);
+  --document-cursor-color: var(--base-accent-color);
+  --document-link-color: var(--base-accent-color);
+  --document-list-marker-color: var(--base-accent-color);
+  --document-marker-color: var(--base-text-tertiary-color);
+  --document-selection-color: var(--base-selection-color);
+  --document-selection-inactive-color: var(--base-background-tertiary-color);
+  --document-text-font: "AvenirNext-Regular";
+  --document-text-size: 15px;
+  --document-line-height-multiplier: calc(
+    1.5 * var(--transform-line-height-factor)
+  );
+
+  --document-headers-text-color: var(--base-text-color);
+  --document-headers-font: "AvenirNext-Medium";
+  --document-headers-modular-scale: 1.125;
+  --document-headers-line-height-multiplier: calc(
+    1.3 * var(--transform-line-height-factor)
+  );
+  --document-headers-add-top-bottom-padding: 1;
+  --document-headers-padding-top-multiplier: 0.5;
+  --document-headers-padding-bottom-multiplier: 0.3;
+
+  --document-code-text-color: var(--base-text-color);
+  --document-code-border-color: var(--base-text-tertiary-color);
+  --document-code-background-color: var(--base-background-secondary-color);
+  --document-code-font: "Menlo-Regular";
+  --document-code-text-size-multiplier: 0.91em;
+
+  --document-code-syntax-highlight-comment: #65798c;
+  --document-code-syntax-highlight-constant: #0095c9;
+  --document-code-syntax-highlight-number: #0095c9;
+  --document-code-syntax-highlight-string: #d12f1b;
+  --document-code-syntax-highlight-entity: #4a838b;
+  --document-code-syntax-highlight-keyword: #ad3da4;
+  --document-code-syntax-highlight-function: #4a838b;
+  --document-code-syntax-highlight-variable: #4a838b;
+
+  --document-task-background-color: var(--base-background-color);
+  --document-task-border-color: var(--base-text-secondary-color);
+  --document-task-check-color: var(--base-text-color);
+
+  --document-tag-background-color: var(--base-background-tertiary-color);
+  --document-tag-text-color: var(--base-text-color);
+  --document-tag-marker-color: var(--base-text-secondary-color);
+
+  --document-highlighter-background-color: #CDF7BD;
+  --document-highlighter-text-color: #102D05;
+
+  --document-highlighter-red-background-color: #FED09F;
+  --document-highlighter-red-text-color: #321A00;
+
+  --document-highlighter-blue-background-color: #C9E5FF;
+  --document-highlighter-blue-text-color: #001A32;
+
+  --document-highlighter-green-background-color: #CDF7BD;
+  --document-highlighter-green-text-color: #102D05;
+
+  --document-highlighter-purple-background-color: #FEDAFF;
+  --document-highlighter-purple-text-color: #310032;
+
+  --document-highlighter-yellow-background-color: #FCF195;
+  --document-highlighter-yellow-text-color: #312C01;
+  
+  --document-file-fold-color: var(--base-background-tertiary-color);
+  --document-file-background-color: var(--base-background-secondary-color);
+
+  --document-separator-border-color: var(--base-stroke-secondary-color);
+
+  --document-table-border-color: var(--base-stroke-secondary-color);
+  --document-table-cell-background-color: var(--base-background-color);
+  --document-table-cell-alternate-background-color: var(
+    --base-background-secondary-color
+  );
+}
+
+.document-wrapper,body{background-color:var(--document-background-color)}.document-wrapper h1.setext,.document-wrapper h2.setext{border-bottom:calc(2 * var(--document-hairline-width)) solid var(--document-separator-border-color);padding-bottom:.6em}.document-wrapper blockquote blockquote blockquote blockquote blockquote::before,.document-wrapper blockquote blockquote blockquote::before,.document-wrapper blockquote::before{background-color:var(--document-list-marker-color)}.document-wrapper td[data-alignment="1"],.document-wrapper th{text-align:left}.document-wrapper :after,.document-wrapper :before,.document-wrapper a,.document-wrapper abbr,.document-wrapper acronym,.document-wrapper address,.document-wrapper applet,.document-wrapper article,.document-wrapper aside,.document-wrapper audio,.document-wrapper b,.document-wrapper big,.document-wrapper blockquote,.document-wrapper canvas,.document-wrapper caption,.document-wrapper center,.document-wrapper cite,.document-wrapper code,.document-wrapper dd,.document-wrapper del,.document-wrapper details,.document-wrapper dfn,.document-wrapper div,.document-wrapper dl,.document-wrapper dt,.document-wrapper em,.document-wrapper embed,.document-wrapper fieldset,.document-wrapper figcaption,.document-wrapper figure,.document-wrapper footer,.document-wrapper form,.document-wrapper h1,.document-wrapper h2,.document-wrapper h3,.document-wrapper h4,.document-wrapper h5,.document-wrapper h6,.document-wrapper header,.document-wrapper hgroup,.document-wrapper i,.document-wrapper iframe,.document-wrapper ins,.document-wrapper kbd,.document-wrapper label,.document-wrapper legend,.document-wrapper li,.document-wrapper mark,.document-wrapper menu,.document-wrapper nav,.document-wrapper object,.document-wrapper ol,.document-wrapper output,.document-wrapper p,.document-wrapper pre,.document-wrapper q,.document-wrapper ruby,.document-wrapper s,.document-wrapper samp,.document-wrapper section,.document-wrapper small,.document-wrapper span,.document-wrapper strike,.document-wrapper strong,.document-wrapper summary,.document-wrapper table,.document-wrapper tbody,.document-wrapper td,.document-wrapper tfoot,.document-wrapper th,.document-wrapper thead,.document-wrapper time,.document-wrapper tr,.document-wrapper tt,.document-wrapper u,.document-wrapper ul,.document-wrapper var,.document-wrapper video{all:unset}.document-wrapper{--document-inline-padding-top-bottom:0.25em;--document-inline-padding-left-right:0.25em;--header-1-font-size:2em;--header-2-font-size:1.6em;--header-3-font-size:1.27em;--document-hairline-width:calc(var(--document-text-size) / 15);box-sizing:border-box;color:var(--document-text-color);font-family:var(--document-text-font);font-size:var(--document-text-size);line-height:var(--document-line-height-multiplier);min-height:100%;max-width:48em;width:100%;tab-size:4;margin:0 auto;padding:0 2em}body{text-rendering:optimizeLegibility}.document-wrapper:focus-visible{outline:0}.document-wrapper .marker{color:var(--document-marker-color);display:none}.document-wrapper [data-direction="2"]{direction:rtl}.document-wrapper div.footnote,.document-wrapper div.link-definition,.document-wrapper p{display:block}.document-wrapper p.blank-line::before{content:" "}.document-wrapper h1,.document-wrapper h2,.document-wrapper h3,.document-wrapper h4,.document-wrapper h5,.document-wrapper h6{font-family:var(--document-headers-font);display:block;line-height:var(--document-headers-line-height-multiplier)}.document-wrapper h1{font-size:var(--header-1-font-size);padding-block-start:0.8em;padding-block-end:0.33em}.document-wrapper h2{font-size:var(--header-2-font-size);padding-block-start:0.66em;padding-block-end:0.27em}.document-wrapper h3{font-size:var(--header-3-font-size);padding-block-start:0.53em;padding-block-end:0.27em}.document-wrapper code,.document-wrapper pre{font-size:var(--document-code-text-size-multiplier);font-family:var(--document-code-font),monospace}.document-wrapper h4,.document-wrapper h5,.document-wrapper h6{padding-block-start:0.4em;padding-block-end:0.27em}.document-wrapper h1.setext{margin-bottom:.45em}.document-wrapper h2.setext{margin-bottom:.2em}.document-wrapper .fenced-code *,.document-wrapper .fenced-code-content .marker,.document-wrapper .fenced-code-content .space,.document-wrapper .hard-linebreak-marker,.document-wrapper .image .space,.document-wrapper .image-destination,.document-wrapper .image-label,.document-wrapper .image-title,.document-wrapper .indented-code .space,.document-wrapper .link .space,.document-wrapper .link-destination,.document-wrapper .link-label,.document-wrapper .link-title,.document-wrapper .replace .text,.document-wrapper .setext-heading-marker+.line-ending,.document-wrapper .yaml-marker+.line-ending,.document-wrapper li>p>.space:first-child,.document-wrapper tr.delimiter-row{display:none}.document-wrapper ol,.document-wrapper ul{display:block;padding-inline-start:2.13em}.document-wrapper li{display:list-item;color:var(--document-text-color)}.document-wrapper .color-marker,.document-wrapper .entity-marker,.document-wrapper .fenced-code-content,.document-wrapper .fenced-code-content *,.document-wrapper .footnote-separator,.document-wrapper .link-definition-separator,.document-wrapper code.code-inline,.document-wrapper li>p{display:inline}.document-wrapper ul{list-style-type:disc}.document-wrapper li li li li li li li ul,.document-wrapper li li li li li ul,.document-wrapper li li li ul,.document-wrapper li ul{list-style:circle}.document-wrapper li li li li li li ul,.document-wrapper li li li li ul,.document-wrapper li li ul{list-style:disc}.document-wrapper li::marker{color:var(--document-list-marker-color)}.document-wrapper ol{list-style-type:none;counter-reset:custom-list-item calc(var(--data-list-start,1) - 1)}.document-wrapper ol>li{counter-increment:custom-list-item;position:relative}.document-wrapper ol>li::before{content:counter(custom-list-item) ". ";color:var(--document-list-marker-color);position:absolute;transform:translate(calc(-100% - .33em),0)}.document-wrapper ol>li[data-big-number=true]{margin-inline-start:-2.05em}.document-wrapper ol>li[data-big-number=true]::before{position:static;padding-inline-end:0.25em}.document-wrapper ol>li[data-list-type="1"]:before{content:counter(custom-list-item) ") "}.document-wrapper [data-direction="2"] ol>li::before,.document-wrapper ol[data-direction="2"]>li::before{transform:translate(calc(100% + .33em),0)}.document-wrapper li[role=checkbox]{list-style:none;position:relative}.document-wrapper li[aria-checked=true]{color:var(--document-text-secondary-color)}.document-wrapper .todo-checkbox{display:inline-block;margin-left:-1.7em;margin-right:.5em}.document-wrapper .todo-checkbox svg{display:inline-block;margin-bottom:-.3em}.document-wrapper blockquote{display:block;padding-inline-start:2.13em;position:relative}.document-wrapper code,.document-wrapper mark,span.highlighted{padding:var(--document-inline-padding-top-bottom) var(--document-inline-padding-left-right)}.document-wrapper blockquote::before{content:"";position:absolute;top:.2em;left:1em;width:.13em;height:calc(100% - .4em);border:var(--document-hairline-width) solid var(--document-list-marker-color);border-radius:.33em}.document-wrapper code,.document-wrapper pre.fenced-code,.document-wrapper pre.indented-code,.document-wrapper pre.yaml{color:var(--document-code-text-color);background-color:var(--document-code-background-color);border-radius:.25em}.document-wrapper [data-direction="2"] blockquote::before,.document-wrapper blockquote[data-direction="2"]::before{left:0;right:1em}.document-wrapper blockquote blockquote blockquote blockquote blockquote blockquote::before,.document-wrapper blockquote blockquote blockquote blockquote::before,.document-wrapper blockquote blockquote::before{background-color:transparent}.document-wrapper hr{display:block;margin-block-start:calc(var(--document-line-height-multiplier) * 0.5em);margin-block-end:calc(var(--document-line-height-multiplier) * -0.5em);border-top:var(--document-hairline-width) solid var(--document-separator-border-color)}.document-wrapper pre{display:block;white-space:pre-wrap}.document-wrapper pre.indented-code{padding-inline-start:2.13em}.document-wrapper pre.fenced-code,.document-wrapper pre.yaml{padding:0 .5em}.document-wrapper .fenced-code::before{content:"\200B"}.document-wrapper code{font-weight:400;font-style:normal;display:block}.document-wrapper mark code{color:var(--document-text-color);background-color:var(--document-highlighter-background-color)}.document-wrapper em,.document-wrapper i{font-family:AvenirNext-Italic}.document-wrapper b,.document-wrapper strong,.document-wrapper th{font-family:AvenirNext-Bold}.document-wrapper mark,span.highlighted{color:var(--document-highlighter-background-text-color);background-color:var(--document-highlighter-background-color);text-decoration:inherit;unicode-bidi:embed;border-radius:.25em}.document-wrapper mark.red,span.highlighted.red{color:var(--document-highlighter-red-background-text-color);background-color:var(--document-highlighter-red-background-color)}.document-wrapper mark.blue,span.highlighted.blue{color:var(--document-highlighter-blue-background-text-color);background-color:var(--document-highlighter-blue-background-color)}.document-wrapper mark.green,span.highlighted.green{color:var(--document-highlighter-green-background-text-color);background-color:var(--document-highlighter-green-background-color)}.document-wrapper mark.yellow,span.highlighted.yellow{color:var(--document-highlighter-yellow-background-text-color);background-color:var(--document-highlighter-yellow-background-color)}.document-wrapper mark.purple,span.highlighted.purple{color:var(--document-highlighter-purple-background-text-color);background-color:var(--document-highlighter-purple-background-color)}.document-wrapper u{text-decoration:underline;text-decoration-color:var(--document-accent-color);unicode-bidi:embed}.document-wrapper s,.document-wrapper strike{text-decoration:line-through}.document-wrapper a{color:var(--document-link-color);unicode-bidi:embed;cursor:pointer}.document-wrapper a:hover{text-decoration:inherit}.document-wrapper .wiki-separator-marker{display:inline;color:inherit}.document-wrapper .link-definition-title{color:var(--document-text-light-color)}.document-wrapper .footnote-ref{font-size:.9em;vertical-align:super}.document-wrapper span.entity{direction:ltr;unicode-bidi:embed;color:var(--document-code-syntax-highlight-entity)}.document-wrapper span.escape{unicode-bidi:embed}.document-wrapper .color{font-family:var(--document-code-font),monospace;font-size:var(--document-code-text-size-multiplier);padding-inline-start:1.2em;position:relative;direction:ltr;unicode-bidi:embed}.document-wrapper .color::before{content:"";position:absolute;width:.9em;height:.9em;left:0;bottom:0;transform:translateY(-15%);border:var(--document-hairline-width) solid rgb(0,0,0,.3);border-radius:.9em;background-color:var(--data-color)}.document-wrapper .hashtag{color:var(--document-tag-text-color);background-color:var(--document-tag-background-color);border-radius:1em;padding:calc(var(--document-inline-padding-top-bottom) - 2 * var(--document-hairline-width)) calc(var(--document-inline-padding-left-right) + .3em);unicode-bidi:embed}.document-wrapper .hashtag>.marker{display:inline;color:var(--document-tag-marker-color);padding:0}.document-wrapper table{display:block;max-width:fit-content;overflow-x:auto;border-collapse:separate;border-spacing:0;border:var(--document-hairline-width) solid var(--document-table-border-color);border-radius:.33em;margin-bottom:calc(var(--document-line-height-multiplier) * 1em)}.document-wrapper table[data-direction="2"]{margin-left:auto;direction:ltr}.document-wrapper tr{display:table-row;background-color:var(--document-table-cell-background-color)}.document-wrapper tr.header-row,.document-wrapper tr:nth-child(odd){background-color:var(--document-table-cell-alternate-background-color)}.document-wrapper td,.document-wrapper th{box-sizing:border-box;display:table-cell;padding:.37em .75em;min-width:5em;border-right:var(--document-hairline-width) solid var(--document-table-border-color)}.document-wrapper td:last-of-type,.document-wrapper th:last-of-type{border:none}.document-wrapper table[data-direction="2"] td{margin-left:auto}.document-wrapper td[data-alignment="2"]{text-align:right}.document-wrapper td[data-alignment="3"]{text-align:center}.document-wrapper .code_comment{color:var(--document-code-syntax-highlight-comment)}.document-wrapper .code_constant{color:var(--document-code-syntax-highlight-constant)}.document-wrapper .code_number{color:var(--document-code-syntax-highlight-number)}.document-wrapper .code_string{color:var(--document-code-syntax-highlight-string)}.document-wrapper .code_entity{color:var(--document-code-syntax-highlight-entity)}.document-wrapper .code_keyword{color:var(--document-code-syntax-highlight-keyword)}.document-wrapper .code_function{color:var(--document-code-syntax-highlight-function)}.document-wrapper .code_variable{color:var(--document-code-syntax-highlight-variable)}.document-wrapper img{max-width:100%}.document-wrapper .pdf_preview{display:inline-block;width:100%;height:500px;background-color:#fff;overflow:hidden;padding:0;margin:0;position:relative;border-radius:4px}.document-wrapper .arrow svg #body,.document-wrapper .arrow svg #head{fill:var(--base-text-color)}.document-wrapper .todo-checkbox svg #body{stroke:var(--document-task-border-color)}.document-wrapper .todo-checkbox svg #check{fill:var(--document-task-check-color)}.document-wrapper .todo-checkbox.todo-checked svg #body{opacity:.35}.document-wrapper .todo-checkbox.todo-checked svg #check{opacity:.4}
+
+        </style>
+    </head>
+    <body>
+        <div class="document-wrapper">
+            <h1 id='Zoom in and Zoom out'>Zoom in and Zoom out</h1><br>
+<h1 id='Table of Contents'>Table of Contents</h1><ul>
+<li><a href='bear://x-callback-url/open-note?id=501C49FE-0929-4F5E-803A-EBCC3B4B4602&header=You%20may%20think%20you%20are%20special'>You may think you are special</a></li>
+<li><a href='bear://x-callback-url/open-note?id=501C49FE-0929-4F5E-803A-EBCC3B4B4602&header=Ask%20about%20the%20past%20and%20present%2C%20never%20the%20future.%20%28we%20need%20facts%2C%20not%20predictions%29'>Ask about the past and present, never the future. (we need facts, not predictions)</a></li>
+<li><a href='bear://x-callback-url/open-note?id=501C49FE-0929-4F5E-803A-EBCC3B4B4602&header=Life%20or%20death%20decision'>Life or death decision</a></li>
+<li><a href='bear://x-callback-url/open-note?id=501C49FE-0929-4F5E-803A-EBCC3B4B4602&header=A%20close%20up%20%28zoom%20in%29'>A close up (zoom in)</a></li>
+<li><a href='bear://x-callback-url/open-note?id=501C49FE-0929-4F5E-803A-EBCC3B4B4602&header=Suggestions'>Suggestions</a></li>
+</ul><br>
+<hr><br>
+<br>
+<ul>
+<li>Many people have come to take this kind of review shopping for granted. We hunt routinely for the rating of a book on Amazon or a restaurant on Yelp or a digital camera on CNET. It’s an obvious thing to do, right? But this “obvious” behavior shows wisdom. Because when we make decisions based on reviews, we are acknowledging two things:
+<ul>
+<li>(1) Our ability to glean the truth about a product is limited and subject to distortion by the company that makes it</li>
+<li>(2) For that reason, we are smarter to trust the averages over our own impressions.</li>
+</ul>
+</li>
+<li>Often in life, though, we do the opposite: We trust our impressions over the averages.
+<ul>
+<li>Many people will accept a new job without consulting a sample of people who currently or formerly held the same title. Shouldn’t their “reviews” be as valuable as a stranger’s assessment of a hotel room or restaurant?</li>
+</ul>
+</li>
+</ul><br>
+<h2 id='You may think you are special'>You may think you are special</h2><ul>
+<li>The outside view is more accurate—it’s a summary of real-world experiences, rather than a single person’s impressions—yet we’ll be drawn to the inside view.</li>
+<li>Imagine a restauranteur, Jack, who is deciding whether to take out a loan to start a Thai restaurant in downtown Austin. What’s in the spotlight, for him, will be all the factors going for him: <i>I’m a wonderful Thai cook. The location on 4th Street would be perfect. The foot traffic in that area is huge. There’s no other Thai restaurant close by</i>. From the inside view, the opportunity looks pretty good.</li>
+<li>By contrast, the outside view does not treat Jack’s situation as unique. It looks for the averages: Are there other people who’ve faced a similar situation, and if so, how did they fare? This involves looking for, in statistics terminology, some “base rates” on the situation—data showing the record of other people in similar circumstances. Jack might learn, for instance, that 60% of restaurants fail in their first three years. From the outside view, the restaurant looks pretty risky.</li>
+<li>The outside view ignores everything that is special about our situation. All entrepreneurs have reason to believe, at the beginning, that they will succeed. Jack, for instance, would surely scoff at the base-rates data, saying, “I know Thai food, and I know Austin, and I know this will work. You can’t lump me in with a guy who sells corn dogs at the mall.” But he’d be wrong. There are enough commonalities among restaurants that their experiences are likely to be more similar than different.</li>
+<li>Mind you, for Jack to take the outside view—and accept those bleak odds of restaurant success—does not demand that he give up on the idea. It may be that a successful restaurant would be so lucrative that the risk is worth taking. Or he may consider the restaurant a good investment in his career, even if it fails. The outside view doesn’t require defeatism, but it does require respect for the likely outcomes. Put it this way: If he bets his kids’ college money on the venture, he’s nuts.</li>
+</ul><br>
+<h2 id='Ask about the past and present, never the future. (we need facts, not predictions)'>Ask about the past and present, never the future. (we need facts, not predictions)</h2><ul>
+<li>Imagine that you are indeed consulting an IP lawyer about a potential patent-infringement suit. The right kinds of questions to ask him are
+<ul>
+<li>“What are the important variables in a case like this?,”</li>
+<li>“What kind of evidence can tip the verdict one way or the other?,”</li>
+<li>“In percentage terms, how many cases get settled before trial?,”</li>
+<li>“Of those that go to trial, what are the odds that the plaintiff prevails?”</li>
+</ul>
+</li>
+<li>If you ask questions like that—questions about past cases and legal norms—you will get a wealth of trustworthy information.</li>
+<li>On the other hand, if you ask a predictive question—“Do you think I can win this case?”—it will trigger the lawyer to slip into the inside view. Like the curriculum-writing dean, your lawyer will tend to be too optimistic about the chances of success.</li>
+<li>We don’t want to overstate the case here—a good IP lawyer will surely know the difference between a slam-dunk case and a long shot. The point is that the /predictions/of even a world-class expert need to be discounted in a way that their /knowledge of base rates/does not.</li>
+<li>In short, when you need trustworthy information, go find an expert—someone more experienced than you. Just keep them talking about the past and the present, not the future.</li>
+</ul><br>
+<h2 id='Life or death decision'>Life or death decision</h2><ul>
+<li>Brain was a sick patient facing one of the hardest choices imaginable: the guarantee of a short life or the chance at a longer one.</li>
+<li>As a decision-making expert, he was also a man determined to use every scrap of his expertise to make that choice. And if you replay the story, what you’ll notice is that he was constantly taking the outside view and pushing for base rates.</li>
+<li>After reading the journal articles, he wondered which base rate he should be consulting: Was the evidence derived from older patients applicable to him? So he talked to an expert, the hematologist, who told him to take the odds of success seriously but to adjust them upward a little because of his youth and health. She also suggested a different base rate to consult: the success rates of different hospitals, which hinged on the volume of transplants they performed. (He didn’t ask the expert to predict <i>what would happen in his case</i>. Experts are great with base rates and mediocre at predictions.)</li>
+<li>Concerned about side effects, he pumped doctors for base-rate information: <i>Are we talking about a 50% chance? Or a 5% chance? Or a five-in-a-million chance?</i></li>
+<li>There’s one aspect of Brian’s decision-making process, though, that looks nothing like base-rate thinking: He sought out the stories of other transplant patients, eager to learn from their experiences. What he learned led to a few choices that almost certainly increased his odds of success, including his self-imposed exercise regimen and the decision of his parents to accompany him to Seattle.</li>
+<li>These insights didn’t arise from asking doctors about base rates. Nor did they come from a flawed “inside view” approach—he was not simply trusting his own impressions; he was diligently gathering evidence. What, exactly, was his strategy?</li>
+<li>Brian wanted more textured information, more color. He wanted to see, with his own eyes, what life was like for these patients. And that’s what we’ll see next: In assessing our options, the best complement to the big picture is often a close-up.</li>
+</ul><br>
+<h2 id='A close up (zoom in)'>A close up (zoom in)</h2><ul>
+<li>Base rates are good at establishing norms: <i>Here are the outcomes we can expect if we make this decision</i>. Close-ups, though, create intuition, which can be just as important.</li>
+</ul><br>
+<h2 id='Suggestions'>Suggestions</h2><ul>
+<li>When we zoom out, we take the outside view, learning from the experiences of others who have made choices like the one we’re facing. When we zoom in, we take a close-up of the situation, looking for “color” that could inform our decision.</li>
+<li>Either strategy is helpful, and either one will add insight in a way that conference- room pontificating rarely will.</li>
+<li>When possible, we should do both. In interpreting the sentiments of Americans, FDR created statistical summaries /and/read a sample of real letters. In assessing the competitors’ products, Paul Smith’s colleagues relied on scientific data /and/personal experience. In making a high-stakes health decision, Brian Zikmund-Fisher trusted both the base rates /and/the stories of actual patients.</li>
+<li>Zooming out and zooming in gives us a more realistic perspective on our choices. We downplay the overly optimistic pictures we tend to paint inside our minds and instead redirect our attention to the outside world, viewing it in wide-angle and then in close-up.</li>
+</ul><br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<p><span class='hashtag'><span class='hashtag-marker marker'>#</span>_book<span class='hashtag-separator-marker marker'>/</span>management<span class='hashtag-separator-marker marker'>/</span>Decisive<span class='hashtag-separator-marker marker'>/</span>Reality-test-your-assumption</span></p>
+        </div>
+    </body>
+</html>

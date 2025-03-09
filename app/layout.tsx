@@ -10,8 +10,8 @@ import { AppStateProvider } from "@/context/app-state-context"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "HTML Viewer",
-  description: "View HTML files from the contents folder",
+  title: "Xiaoquan's Notes",
+  description: "A Log for Xiaoquan's (Bear) Notes",
     generator: 'v0.dev'
 }
 
