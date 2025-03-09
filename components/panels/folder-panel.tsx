@@ -5,6 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Folder, ChevronRight, ChevronLeft, Loader2 } from "lucide-react"
 import type { FolderNode } from "@/hooks/use-folder-structure"
 import { FolderItem } from "@/components/panels/folder-item"
+import { SocialLinks } from "@/components/social-links"
 
 interface FolderPanelProps {
   folderStructure: FolderNode | null
@@ -60,6 +61,9 @@ export function FolderPanel({
         >
           <ChevronLeft className="h-4 w-4" />
         </Button>
+      </div>
+      <div className="border-b">
+        <SocialLinks collapsed={collapsed} />
       </div>
 
       <div className="flex-1 overflow-hidden relative">

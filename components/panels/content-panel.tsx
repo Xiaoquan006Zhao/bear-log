@@ -8,7 +8,9 @@ import type { TocItem } from "@/lib/toc-utils"
 import { RawHtmlViewer, type RawHtmlViewerRef } from "@/components/viewers/raw-html-viewer"
 import { ContentHeader } from "@/components/panels/content-header"
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable"
-import storage from "@/lib/local-storage"
+
+// Default TOC panel width (percentage)
+const DEFAULT_TOC_WIDTH = 25
 
 interface ContentPanelProps {
   selectedFile: string | null
@@ -57,17 +59,14 @@ export function ContentPanel({
   // Calculate base URL for the iframe if needed
   const baseUrl = fileHasAttachments ? `/api/attachments/${encodeURIComponent(selectedFile.replace(".html", ""))}/` : ""
 
-  // Handle panel resizing
+  // Handle TOC auto-collapse
   const handlePanelResize = (sizes: number[]) => {
     if (sizes.length >= 2) {
-      // Save TOC panel size to localStorage
-      storage.set("tocPanelSize", sizes[1])
+      // If TOC panel gets too small, auto-collapse it
+      if (sizes[1] <= 10) {
+        setShowToc(false)
+      }
     }
-  }
-
-  // Get saved TOC panel size or default
-  const getTocPanelSize = () => {
-    return storage.get("tocPanelSize", 25)
   }
 
   return (
@@ -83,7 +82,7 @@ export function ContentPanel({
         {showToc ? (
           <ResizablePanelGroup direction="horizontal" className="h-full" onLayout={handlePanelResize}>
             {/* Content Panel */}
-            <ResizablePanel defaultSize={75} minSize={30} className="overflow-auto">
+            <ResizablePanel defaultSize={100 - DEFAULT_TOC_WIDTH} minSize={30} className="overflow-auto">
               {loading ? (
                 <div className="flex justify-center items-center p-6">
                   <Loader2 className="h-6 w-6 animate-spin mr-2" />
@@ -100,8 +99,8 @@ export function ContentPanel({
 
             {/* TOC Panel */}
             <ResizablePanel
-              defaultSize={getTocPanelSize()}
-              minSize={15}
+              defaultSize={DEFAULT_TOC_WIDTH}
+              minSize={10}
               maxSize={40}
               className="min-w-0 overflow-hidden"
             >
