@@ -3,7 +3,7 @@
 import { Calendar } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import type { HtmlMetadata } from "@/lib/file-utils"
-import { ImagePreviewGrid } from "./image-preview-grid"
+import { ImagePreviewGrid } from "../image-preview-grid"
 
 interface FileCardProps {
   file: string
@@ -24,20 +24,20 @@ export function FileCard({ file, metadata, imageAttachments, isSelected, onClick
         month: "2-digit",
         day: "2-digit",
       })
-    } catch (_) {
+    } catch (e) {
       return dateString
     }
   }
 
   return (
     <Card
-      className={`group flex flex-col h-full overflow-hidden transition-colors cursor-pointer border ${
+      className={`group flex flex-col h-full w-full overflow-hidden transition-colors cursor-pointer border ${
         isSelected ? "bg-secondary border-primary shadow-sm" : "hover:bg-secondary/40 border-border/50"
       }`}
       onClick={onClick}
     >
-      <div className="p-3 flex-shrink-0">
-        <div className="flex items-start gap-2">
+      <div className="p-3 flex-shrink-0 w-full min-w-0">
+        <div className="flex items-start gap-2 w-full min-w-0">
           <div className="flex-1 min-w-0">
             <div className="font-medium text-sm overflow-hidden text-ellipsis">
               <span className="whitespace-nowrap block overflow-hidden text-ellipsis">{metadata.title || file}</span>

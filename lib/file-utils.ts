@@ -3,9 +3,9 @@
 import fs from "fs/promises"
 import path from "path"
 import { processHtmlContent, attachmentFolderExists, getImageAttachments } from "./attachment-utils"
+import { cache } from "react"
 
 const CONTENTS_DIR = path.join(process.cwd(), "/app/contents")
-
 
 export interface HtmlMetadata {
   title: string
@@ -17,8 +17,8 @@ export interface HtmlMetadata {
   [key: string]: string
 }
 
-// Get the list of HTML files in the contents directory
-export async function getFilesList(): Promise<string[]> {
+// Cached version of getFilesList for better performance
+export const getFilesList = cache(async (): Promise<string[]> => {
   try {
     // Read the contents directory
     const files = await fs.readdir(CONTENTS_DIR)
@@ -29,7 +29,7 @@ export async function getFilesList(): Promise<string[]> {
     console.error("Error reading contents directory:", error)
     return []
   }
-}
+})
 
 // Get the content of a specific HTML file and extract metadata
 export async function getFileContent(filename: string): Promise<{
@@ -52,8 +52,6 @@ export async function getFileContent(filename: string): Promise<{
 
     // Check if this file has an attachments folder
     const hasAttachments = await attachmentFolderExists(filename)
-
-    console.log(`File ${filename} has attachments: ${hasAttachments}`)
 
     // Process HTML content to fix attachment paths if needed
     const processedContent = hasAttachments ? await processHtmlContent(rawHtml, filename) : rawHtml
@@ -119,40 +117,8 @@ function extractMetadata(html: string): HtmlMetadata {
   return metadata
 }
 
-// Get paginated list of HTML files
-export async function getPaginatedFilesList(
-  page = 1,
-  limit = 20,
-): Promise<{
-  files: string[]
-  total: number
-  hasMore: boolean
-}> {
-  try {
-    // Read the contents directory
-    const files = await fs.readdir(CONTENTS_DIR)
-
-    // Filter for HTML files only
-    const htmlFiles = files.filter((file) => file.toLowerCase().endsWith(".html"))
-
-    // Calculate pagination
-    const startIndex = (page - 1) * limit
-    const endIndex = startIndex + limit
-    const paginatedFiles = htmlFiles.slice(startIndex, endIndex)
-
-    return {
-      files: paginatedFiles,
-      total: htmlFiles.length,
-      hasMore: endIndex < htmlFiles.length,
-    }
-  } catch (error) {
-    console.error("Error reading contents directory:", error)
-    return { files: [], total: 0, hasMore: false }
-  }
-}
-
 // Get only file metadata without full content
-export async function getFileMetadataOnly(filename: string): Promise<HtmlMetadata> {
+export const getFileMetadataOnly = cache(async (filename: string): Promise<HtmlMetadata> => {
   try {
     // Validate that we're only reading .html files
     if (!filename.toLowerCase().endsWith(".html")) {
@@ -161,8 +127,7 @@ export async function getFileMetadataOnly(filename: string): Promise<HtmlMetadat
 
     const filePath = path.join(CONTENTS_DIR, filename)
 
-    // Instead of using streams, read a small portion of the file
-    // This approach is more compatible with Next.js server components
+    // Read only a portion of the file to extract metadata
     const buffer = Buffer.alloc(8192) // 8KB buffer
     const fileHandle = await fs.open(filePath, "r")
 
@@ -188,13 +153,12 @@ export async function getFileMetadataOnly(filename: string): Promise<HtmlMetadat
       lastDevice: "",
     }
   }
-}
+})
 
-// Get folder structure based on file tags
-export async function getFolderStructure(): Promise<any> {
+// Get folder structure based on file tags - use React's cache for better performance
+export const getFolderStructure = cache(async (): Promise<any> => {
   try {
-    const files = await fs.readdir(CONTENTS_DIR)
-    const htmlFiles = files.filter((file) => file.toLowerCase().endsWith(".html"))
+    const files = await getFilesList()
 
     // Build folder structure based on tags
     const root = {
@@ -207,8 +171,8 @@ export async function getFolderStructure(): Promise<any> {
 
     // Process files in batches to avoid memory issues
     const batchSize = 50
-    for (let i = 0; i < htmlFiles.length; i += batchSize) {
-      const batch = htmlFiles.slice(i, i + batchSize)
+    for (let i = 0; i < files.length; i += batchSize) {
+      const batch = files.slice(i, i + batchSize)
 
       await Promise.all(
         batch.map(async (file) => {
@@ -289,7 +253,7 @@ export async function getFolderStructure(): Promise<any> {
       totalUniqueFiles: 0,
     }
   }
-}
+})
 
 // Get files for a specific folder
 export async function getFilesForFolder(

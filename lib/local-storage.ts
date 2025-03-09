@@ -1,8 +1,6 @@
 // Add better error handling and type safety for storage operations
-type StorageValue = string | number | boolean | object | null
-
 const storage = {
-  get<T extends StorageValue>(key: string, defaultValue: T): T {
+  get(key: string, defaultValue: any): any {
     if (typeof window === "undefined") {
       return defaultValue
     }
@@ -21,7 +19,7 @@ const storage = {
     }
   },
 
-  set(key: string, value: StorageValue): void {
+  set(key: string, value: any): void {
     if (typeof window === "undefined") {
       return
     }
@@ -30,6 +28,30 @@ const storage = {
       window.localStorage.setItem(key, JSON.stringify(value))
     } catch (error) {
       console.error(`Error saving ${key} to localStorage:`, error)
+    }
+  },
+
+  remove(key: string): void {
+    if (typeof window === "undefined") {
+      return
+    }
+
+    try {
+      window.localStorage.removeItem(key)
+    } catch (error) {
+      console.error(`Error removing ${key} from localStorage:`, error)
+    }
+  },
+
+  clear(): void {
+    if (typeof window === "undefined") {
+      return
+    }
+
+    try {
+      window.localStorage.clear()
+    } catch (error) {
+      console.error("Error clearing localStorage:", error)
     }
   },
 }

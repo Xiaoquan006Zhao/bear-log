@@ -1,24 +1,36 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useCallback } from "react"
+import { Skeleton } from "@/components/ui/skeleton"
 
 interface ImagePreviewGridProps {
   images: string[]
   maxHeight?: number
 }
 
-export function ImagePreviewGrid({ images, maxHeight }: ImagePreviewGridProps) {
-  const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({})
+export function ImagePreviewGrid({ images, maxHeight = 200 }: ImagePreviewGridProps) {
+  const [imageStates, setImageStates] = useState<Record<number, "loading" | "error" | "loaded">>(() => {
+    // Initialize all images as loading
+    const states: Record<number, "loading" | "error" | "loaded"> = {}
+    images.forEach((_, index) => {
+      states[index] = "loading"
+    })
+    return states
+  })
 
-  if (!images.length) return null
-
-  const handleImageError = (index: number) => {
-    console.log(`Image at index ${index} failed to load:`, images[index])
-    setImageErrors((prev) => ({
+  const handleImageError = useCallback((index: number) => {
+    setImageStates((prev) => ({
       ...prev,
-      [index]: true,
+      [index]: "error",
     }))
-  }
+  }, [])
+
+  const handleImageLoad = useCallback((index: number) => {
+    setImageStates((prev) => ({
+      ...prev,
+      [index]: "loaded",
+    }))
+  }, [])
 
   // Extract filename from path for fallback display
   const getFilenameFromPath = (path: string) => {
@@ -28,31 +40,37 @@ export function ImagePreviewGrid({ images, maxHeight }: ImagePreviewGridProps) {
     return decodeURIComponent(cleanPath)
   }
 
+  if (!images.length) return null
+
   return (
     <div className="h-full w-full">
-      <div className="flex gap-0.5 h-full" style={{ maxHeight: maxHeight }}>
+      <div className="flex gap-0.5 h-full">
         {images.map((src, index) => (
           <div
             key={index}
             className="relative bg-gray-100 dark:bg-gray-900 overflow-hidden flex-shrink-0"
             style={{ height: "100%" }}
           >
-            {imageErrors[index] ? (
+            {imageStates[index] === "error" ? (
               <div className="h-full w-full flex items-center justify-center p-2 text-xs text-muted-foreground break-all">
                 {getFilenameFromPath(src)}
               </div>
             ) : (
-              <img
-                src={src || "/placeholder.svg"}
-                alt={`Preview ${index + 1}`}
-                className="h-full w-auto"
-                style={{
-                  objectFit: "cover",
-                  minWidth: "100%",
-                }}
-                onError={() => handleImageError(index)}
-                onLoad={() => console.log(`Image loaded successfully: ${src}`)}
-              />
+              <>
+                {imageStates[index] === "loading" && <Skeleton className="absolute inset-0 bg-muted animate-pulse" />}
+                <img
+                  src={src || "/placeholder.svg"}
+                  alt={`Preview ${index + 1}`}
+                  className={`h-full w-auto ${imageStates[index] === "loading" ? "opacity-0" : "opacity-100"}`}
+                  style={{
+                    objectFit: "cover",
+                    minWidth: "100%",
+                    transition: "opacity 0.3s ease-in-out",
+                  }}
+                  onError={() => handleImageError(index)}
+                  onLoad={() => handleImageLoad(index)}
+                />
+              </>
             )}
           </div>
         ))}

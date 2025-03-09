@@ -2,10 +2,11 @@
 
 import { useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { ChevronRight, Loader2 } from "lucide-react"
+import { ChevronRight, Loader2, ChevronLeft } from "lucide-react"
 import { useVirtualizer } from "@tanstack/react-virtual"
-import { FileCard } from "@/components/file-card"
+import { FileCard } from "@/components/panels/file-item"
 import type { HtmlMetadata } from "@/lib/file-utils"
+import { Badge } from "@/components/ui/badge"
 
 interface FilesPanelProps {
   selectedFolder: string
@@ -25,7 +26,7 @@ interface FilesPanelProps {
 }
 
 export function FilesPanel({
-  _selectedFolder,
+  selectedFolder,
   selectedFile,
   files,
   pagination,
@@ -37,27 +38,6 @@ export function FilesPanel({
 }: FilesPanelProps) {
   // Ref for virtualization
   const parentRef = useRef<HTMLDivElement>(null)
-
-  // Handle keyboard navigation
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Only handle if this panel is focused/active
-      if (collapsed) return
-
-      const currentIndex = files.findIndex((file) => file.file === selectedFile)
-
-      if (e.key === "ArrowDown" && currentIndex < files.length - 1) {
-        e.preventDefault()
-        selectFile(files[currentIndex + 1].file)
-      } else if (e.key === "ArrowUp" && currentIndex > 0) {
-        e.preventDefault()
-        selectFile(files[currentIndex - 1].file)
-      }
-    }
-
-    window.addEventListener("keydown", handleKeyDown)
-    return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [files, selectedFile, collapsed, selectFile])
 
   // Setup virtualization for file list
   const rowVirtualizer = useVirtualizer({
@@ -81,6 +61,87 @@ export function FilesPanel({
     overscan: 10, // Increase overscan to keep more items in the DOM
   })
 
+  // Check if we need to load more files
+  const checkAndLoadMoreFiles = () => {
+    if (pagination.hasMore && !pagination.loading) {
+      loadMoreFiles()
+      return true
+    }
+    return false
+  }
+
+  // Handle keyboard navigation with pagination support
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Only handle if this panel is focused/active
+      if (collapsed) return
+
+      const currentIndex = files.findIndex((file) => file.file === selectedFile)
+
+      if (e.key === "ArrowDown") {
+        e.preventDefault()
+
+        // If we're at the last file and there are more files to load
+        if (currentIndex === files.length - 1) {
+          // Try to load more files
+          const loadingMore = checkAndLoadMoreFiles()
+
+          // If we're not loading more (no more to load), don't do anything
+          if (!loadingMore) return
+        }
+
+        // If we're not at the end, or we're loading more, select the next file
+        if (currentIndex < files.length - 1) {
+          selectFile(files[currentIndex + 1].file)
+        }
+      } else if (e.key === "ArrowUp" && currentIndex > 0) {
+        e.preventDefault()
+        selectFile(files[currentIndex - 1].file)
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [files, selectedFile, collapsed, selectFile, pagination.hasMore, pagination.loading, loadMoreFiles])
+
+  // Scroll to selected file when it changes
+  useEffect(() => {
+    if (selectedFile && !collapsed && files.length > 0) {
+      const selectedIndex = files.findIndex((file) => file.file === selectedFile)
+
+      if (selectedIndex >= 0) {
+        // Immediate scrolling without timeout
+        rowVirtualizer.scrollToIndex(selectedIndex, {
+          align: "auto",
+          behavior: "auto",
+        })
+
+        // Check if we're near the end and should load more
+        if (selectedIndex >= files.length - 5 && pagination.hasMore && !pagination.loading) {
+          loadMoreFiles()
+        }
+      }
+    }
+  }, [selectedFile, files, collapsed, rowVirtualizer, pagination.hasMore, pagination.loading, loadMoreFiles])
+
+  // Add an effect to check scroll position and load more if needed
+  useEffect(() => {
+    const checkScroll = () => {
+      if (collapsed || !parentRef.current) return
+
+      const container = parentRef.current
+      const scrollPosition = container.scrollTop + container.clientHeight
+      const scrollThreshold = container.scrollHeight * 0.8 // Load more when within 20% of the bottom
+
+      if (scrollPosition >= scrollThreshold && pagination.hasMore && !pagination.loading) {
+        loadMoreFiles()
+      }
+    }
+
+    // Check on mount and when files or pagination changes
+    checkScroll()
+  }, [files, pagination, collapsed, loadMoreFiles])
+
   if (collapsed) {
     return (
       <div className="h-full bg-muted/50 flex flex-col pointer-events-auto">
@@ -99,11 +160,34 @@ export function FilesPanel({
     )
   }
 
+  const folderDisplayName = selectedFolder ? selectedFolder.split("/").pop() : "Root"
+
   return (
     <>
+      <div className="p-4 border-b flex-shrink-0 flex items-center justify-between">
+        <div className="flex items-center gap-2 min-w-0 max-w-[calc(100%-40px)]">
+          <h2 className="text-lg font-semibold truncate" title={folderDisplayName}>
+            {folderDisplayName}
+          </h2>
+          {pagination.total > 0 && (
+            <Badge variant="outline" className="text-xs flex-shrink-0">
+              {pagination.total}
+            </Badge>
+          )}
+        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-8 w-8 p-0 flex items-center justify-center flex-shrink-0"
+          onClick={togglePanel}
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </Button>
+      </div>
+
       <div
         ref={parentRef}
-        className={`flex-1 overflow-auto ${collapsed ? "pointer-events-none" : ""}`}
+        className="flex-1 overflow-auto overflow-x-hidden"
         onScroll={(e) => {
           if (collapsed) return // Don't process scroll events when collapsed
           const target = e.target as HTMLDivElement
@@ -121,7 +205,6 @@ export function FilesPanel({
             height: `${rowVirtualizer.getTotalSize()}px`,
             width: "100%",
             position: "relative",
-            minWidth: "250px",
           }}
         >
           {rowVirtualizer.getVirtualItems().map((virtualRow) => {
@@ -162,7 +245,7 @@ export function FilesPanel({
                   height: `${virtualRow.size}px`,
                   transform: `translateY(${virtualRow.start}px)`,
                 }}
-                className="p-2"
+                className="p-2 overflow-hidden"
               >
                 <FileCard
                   file={item.file}

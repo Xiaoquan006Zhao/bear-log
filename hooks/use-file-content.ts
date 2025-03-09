@@ -1,67 +1,206 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useRef, useEffect } from "react"
 import { getFileContent, type HtmlMetadata } from "@/lib/file-utils"
 import { generateTableOfContents, type TocItem } from "@/lib/toc-utils"
+import storage from "@/lib/local-storage"
+
+// Define a cache entry type
+interface CacheEntry {
+  content: string
+  rawHtml: string
+  metadata: HtmlMetadata
+  hasAttachments: boolean
+  tocItems: TocItem[]
+  timestamp: number
+}
+
+// Maximum number of files to keep in cache
+const MAX_CACHE_SIZE = 20
+const CACHE_STORAGE_KEY = "file-content-cache"
 
 export function useFileContent() {
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
   const [fileContent, setFileContent] = useState<string>("")
+  const [rawHtml, setRawHtml] = useState<string>("")
   const [fileMetadata, setFileMetadata] = useState<HtmlMetadata | null>(null)
   const [fileHasAttachments, setFileHasAttachments] = useState<boolean>(false)
   const [loading, setLoading] = useState(false)
   const [tocItems, setTocItems] = useState<TocItem[]>([])
   const [showToc, setShowToc] = useState(false)
 
-  // Load content for selected file
-  const loadFileContent = useCallback(async (filename: string) => {
-    if (!filename) return
+  // Use a ref for the cache to avoid re-renders when cache changes
+  const contentCache = useRef<Map<string, CacheEntry>>(new Map())
 
-    setLoading(true)
-    setSelectedFile(filename)
-
+  // Load cache from localStorage on mount
+  useEffect(() => {
     try {
-      const { content, metadata, hasAttachments } = await getFileContent(filename)
+      const cachedData = storage.get(CACHE_STORAGE_KEY, null)
+      if (cachedData) {
+        const cacheMap = new Map<string, CacheEntry>()
 
-      // Add error handling for images in the HTML content
-      const processedContent = addImageErrorHandling(content)
+        // Only restore the most recent MAX_CACHE_SIZE entries
+        const entries = Object.entries(cachedData)
+          .sort((a, b) => (b[1] as CacheEntry).timestamp - (a[1] as CacheEntry).timestamp)
+          .slice(0, MAX_CACHE_SIZE)
 
-      setFileContent(processedContent)
-      setFileMetadata(metadata)
-      setFileHasAttachments(hasAttachments)
-      // Generate table of contents
-      const toc = generateTableOfContents(processedContent)
-      setTocItems(toc)
+        entries.forEach(([key, value]) => {
+          cacheMap.set(key, value as CacheEntry)
+        })
+
+        contentCache.current = cacheMap
+        console.log(`Restored ${cacheMap.size} cache entries from localStorage`)
+      }
     } catch (error) {
-      console.error("Error loading file content:", error)
-      setFileContent("<p>Error loading file content</p>")
-      setFileMetadata(null)
-      setFileHasAttachments(false)
-      setTocItems([])
-    } finally {
-      setLoading(false)
+      console.error("Error loading cache from localStorage:", error)
     }
   }, [])
 
-  // Add error handling to images in HTML content
-  const addImageErrorHandling = (htmlContent: string): string => {
-    // Add onerror attribute to img tags to show the src as text when image fails to load
-    return htmlContent.replace(
-      /<img([^>]*)src=["']([^"']+)["']([^>]*)>/gi,
-      "<img$1src=\"$2\"$3 onerror=\"this.style.display='none'; this.insertAdjacentHTML('afterend', '<div class=\\'text-xs text-muted-foreground p-2 break-all bg-gray-100 dark:bg-gray-900 rounded border\\'>$2</div>');\">",
-    )
-  }
+  // Save cache to localStorage when it changes
+  const saveCache = useCallback(() => {
+    try {
+      const cache = contentCache.current
+      if (cache.size > 0) {
+        // Convert Map to object for storage
+        const cacheObject = Object.fromEntries(cache.entries())
+        storage.set(CACHE_STORAGE_KEY, cacheObject)
+      }
+    } catch (error) {
+      console.error("Error saving cache to localStorage:", error)
+    }
+  }, [])
+
+  // Function to clean up old cache entries if cache exceeds max size
+  const cleanupCache = useCallback(() => {
+    const cache = contentCache.current
+    if (cache.size <= MAX_CACHE_SIZE) return
+
+    // Convert to array to sort by timestamp
+    const entries = Array.from(cache.entries())
+    // Sort by timestamp (oldest first)
+    entries.sort((a, b) => a[1].timestamp - b[1].timestamp)
+    // Remove oldest entries until we're under the limit
+    const entriesToRemove = entries.slice(0, entries.length - MAX_CACHE_SIZE)
+
+    entriesToRemove.forEach(([key]) => {
+      cache.delete(key)
+    })
+
+    console.log(`Cleaned up ${entriesToRemove.length} old cache entries`)
+
+    // Save updated cache to localStorage
+    saveCache()
+  }, [saveCache])
+
+  // Load content for selected file with caching
+  const loadFileContent = useCallback(
+    async (filename: string) => {
+      if (!filename) return
+
+      setLoading(true)
+      setSelectedFile(filename)
+
+      try {
+        // Check if we have this file in cache
+        const cache = contentCache.current
+        const cachedEntry = cache.get(filename)
+
+        if (cachedEntry) {
+          console.log(`Loading ${filename} from cache`)
+          // Update the timestamp to mark this as recently used
+          cachedEntry.timestamp = Date.now()
+
+          // Use cached data
+          setFileContent(cachedEntry.content)
+          setRawHtml(cachedEntry.rawHtml)
+          setFileMetadata(cachedEntry.metadata)
+          setFileHasAttachments(cachedEntry.hasAttachments)
+          setTocItems(cachedEntry.tocItems)
+
+          // Save updated cache timestamps
+          saveCache()
+
+          // Return early, no need to fetch from server
+          setLoading(false)
+          return
+        }
+
+        // Not in cache, fetch from server
+        console.log(`Fetching ${filename} from server`)
+        const { content, metadata, hasAttachments, rawHtml } = await getFileContent(filename)
+
+        // Generate table of contents from the processed content
+        const toc = generateTableOfContents(content)
+
+        // Update state
+        setFileContent(content)
+        setRawHtml(rawHtml)
+        setFileMetadata(metadata)
+        setFileHasAttachments(hasAttachments)
+        setTocItems(toc)
+
+        // Add to cache
+        cache.set(filename, {
+          content,
+          rawHtml,
+          metadata,
+          hasAttachments,
+          tocItems: toc,
+          timestamp: Date.now(),
+        })
+
+        // Clean up old cache entries if needed
+        cleanupCache()
+
+        // Save updated cache to localStorage
+        saveCache()
+      } catch (error) {
+        console.error("Error loading file content:", error)
+        setFileContent("<p>Error loading file content</p>")
+        setRawHtml("<p>Error loading file content</p>")
+        setFileMetadata(null)
+        setFileHasAttachments(false)
+        setTocItems([])
+      } finally {
+        setLoading(false)
+      }
+    },
+    [cleanupCache, saveCache],
+  )
+
+  // Function to clear the cache (useful for debugging or manual cleanup)
+  const clearCache = useCallback(() => {
+    contentCache.current.clear()
+    storage.remove(CACHE_STORAGE_KEY)
+    console.log("Content cache cleared")
+  }, [])
+
+  // Load showToc preference from localStorage on mount
+  useEffect(() => {
+    const savedShowToc = storage.get("showToc", false)
+    if (typeof savedShowToc === "boolean") {
+      setShowToc(savedShowToc)
+    }
+  }, [])
+
+  // Save showToc preference to localStorage when it changes
+  const setShowTocWithStorage = useCallback((value: boolean) => {
+    setShowToc(value)
+    storage.set("showToc", value)
+  }, [])
 
   return {
     selectedFile,
     fileContent,
+    rawHtml,
     fileMetadata,
     fileHasAttachments,
     loading,
     tocItems,
     showToc,
     loadFileContent,
-    setShowToc,
+    setShowToc: setShowTocWithStorage,
+    clearCache, // Expose this for debugging or manual cleanup
   }
 }
 

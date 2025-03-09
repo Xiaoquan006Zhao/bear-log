@@ -5,6 +5,7 @@ import "./globals.css"
 
 // Import the toast provider
 import { ToastProvider } from "@/components/ui/toast"
+import { AppStateProvider } from "@/context/app-state-context"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
     generator: 'v0.dev'
 }
 
-// Update the RootLayout component to include the toast provider
+// Update the RootLayout component to include our providers
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -23,8 +24,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} overflow-hidden`}>
-        {children}
-        <ToastProvider />
+        <AppStateProvider>
+          {children}
+          <ToastProvider />
+        </AppStateProvider>
       </body>
     </html>
   )

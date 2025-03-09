@@ -9,8 +9,8 @@ export function usePanelState() {
   const [middlePanelCollapsed, setMiddlePanelCollapsed] = useState(false)
 
   // Store panel sizes with localStorage persistence
-  const [leftPanelSize, setLeftPanelSize] = useState(18)
-  const [middlePanelSize, setMiddlePanelSize] = useState(18)
+  const [leftPanelSize, setLeftPanelSize] = useState(15)
+  const [middlePanelSize, setMiddlePanelSize] = useState(15)
 
   // Save panel sizes to localStorage when they change
   useEffect(() => {
@@ -35,12 +35,12 @@ export function usePanelState() {
   const toggleLeftPanel = useCallback(() => {
     if (leftPanelCollapsed) {
       // When expanding, first restore the panel size
-      setLeftPanelSize(storage.get("leftPanelSize", 18))
+      setLeftPanelSize(storage.get("leftPanelSize", 15))
       // Then uncollapse after a brief delay to allow size restoration
       setTimeout(() => {
         setLeftPanelCollapsed(false)
         if (middlePanelCollapsed) {
-          setMiddlePanelSize(storage.get("middlePanelSize", 18))
+          setMiddlePanelSize(storage.get("middlePanelSize", 15))
           setMiddlePanelCollapsed(false)
         }
         // Force layout update
@@ -57,7 +57,7 @@ export function usePanelState() {
   const toggleMiddlePanel = useCallback(() => {
     if (middlePanelCollapsed) {
       // When expanding, first restore the panel size
-      setMiddlePanelSize(storage.get("middlePanelSize", 18))
+      setMiddlePanelSize(storage.get("middlePanelSize", 15))
       // Then uncollapse after a brief delay to allow size restoration
       setTimeout(() => {
         setMiddlePanelCollapsed(false)
@@ -81,7 +81,7 @@ export function usePanelState() {
         // Only save sizes when panels are expanded
         if (!leftPanelCollapsed) {
           const newLeftSize = sizes[0]
-          if (newLeftSize >= 18) {
+          if (newLeftSize >= 15) {
             setLeftPanelSize(newLeftSize)
             storage.set("leftPanelSize", newLeftSize)
           }
@@ -89,7 +89,7 @@ export function usePanelState() {
 
         if (!middlePanelCollapsed) {
           const newMiddleSize = sizes[leftPanelCollapsed ? 0 : 1]
-          if (newMiddleSize >= 18) {
+          if (newMiddleSize >= 15) {
             setMiddlePanelSize(newMiddleSize)
             storage.set("middlePanelSize", newMiddleSize)
           }
@@ -101,11 +101,11 @@ export function usePanelState() {
 
   // Calculate panel sizes based on collapsed state with improved transition handling
   const getLeftPanelSize = useCallback(() => {
-    return leftPanelCollapsed ? 3 : Math.max(leftPanelSize, 18)
+    return leftPanelCollapsed ? 3 : Math.max(leftPanelSize, 15)
   }, [leftPanelCollapsed, leftPanelSize])
 
   const getMiddlePanelSize = useCallback(() => {
-    return middlePanelCollapsed ? 3 : Math.max(middlePanelSize, 18)
+    return middlePanelCollapsed ? 3 : Math.max(middlePanelSize, 15)
   }, [middlePanelCollapsed, middlePanelSize])
 
   const getRightPanelSize = useCallback(() => {
@@ -132,14 +132,14 @@ export function usePanelState() {
 
   useEffect(() => {
     // Load saved panel sizes from localStorage after component mounts
-    const savedLeftSize = storage.get("leftPanelSize", 18)
-    const savedMiddleSize = storage.get("middlePanelSize", 18)
+    const savedLeftSize = storage.get("leftPanelSize", 15)
+    const savedMiddleSize = storage.get("middlePanelSize", 15)
 
-    if (typeof savedLeftSize === "number" && savedLeftSize >= 18) {
+    if (typeof savedLeftSize === "number" && savedLeftSize >= 15) {
       setLeftPanelSize(savedLeftSize)
     }
 
-    if (typeof savedMiddleSize === "number" && savedMiddleSize >= 18) {
+    if (typeof savedMiddleSize === "number" && savedMiddleSize >= 15) {
       setMiddlePanelSize(savedMiddleSize)
     }
   }, [])

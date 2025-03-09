@@ -1,9 +1,12 @@
 import { getAttachmentFile } from "@/lib/attachment-utils"
 import { type NextRequest, NextResponse } from "next/server"
 
-export async function GET(request: NextRequest, { params }: { params: { filename: string; path: string[] } }) {
+export async function GET(request: NextRequest, context: { params: { filename: string; path: string[] } }) {
   try {
-    // Get the parameters directly from the params object
+    // First, await the entire params object
+    const params = await context.params
+
+    // Now we can safely access its properties
     const htmlFilename = decodeURIComponent(params.filename) + ".html"
     const attachmentPath = params.path.map((segment) => decodeURIComponent(segment)).join("/")
 
