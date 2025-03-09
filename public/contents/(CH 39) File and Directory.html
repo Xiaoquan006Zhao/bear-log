@@ -122,12 +122,12 @@
 <li>The first is the <b>file</b>. A file is simply a linear array of bytes, each of which you can read or write.</li>
 <li>Each entry in a directory refers to either files or other directories. By placing directories within other directories, users are able to build an arbitrary <b>directory tree</b>(or <b>directory hierarchy</b>), under which all files and directories are stored.</li>
 </ul><br>
-<p><img src='61862F58-20E0-463D-9976-2B2398641D62.png'></p><br>
-<h2 id='Creating Files'>Creating Files</h2><p><img src='579A1945-A1D3-4723-9975-D6527CD6E2DA.png'></p><ul>
+<p><img src='(CH%2039)%20File%20and%20Directory/61862F58-20E0-463D-9976-2B2398641D62.png'></p><br>
+<h2 id='Creating Files'>Creating Files</h2><p><img src='(CH%2039)%20File%20and%20Directory/579A1945-A1D3-4723-9975-D6527CD6E2DA.png'></p><ul>
 <li>One important aspect of open() is what it returns: a <b>file descriptor</b>. A file descriptor is just an integer, private per process, and is used in UNIX systems to access files; thus, once a file is opened, you use the file descriptor to read or write the file, assuming you have permission to do so.</li>
 </ul><br>
-<h2 id='Reading and Writing Files'>Reading and Writing Files</h2><p><img src='81E27FCB-E74B-4925-851A-DF46583F1EE2.png'><br>
-<img src='769ECFD0-3F99-4210-B2B5-AE1F2E6D16DE.png'></p><ul>
+<h2 id='Reading and Writing Files'>Reading and Writing Files</h2><p><img src='(CH%2039)%20File%20and%20Directory/81E27FCB-E74B-4925-851A-DF46583F1EE2.png'><br>
+<img src='(CH%2039)%20File%20and%20Directory/769ECFD0-3F99-4210-B2B5-AE1F2E6D16DE.png'></p><ul>
 <li>As it turns out, each running process already has three files open,
 <ul>
 <li>standard input (which the process can read to receive input)</li>
@@ -137,33 +137,33 @@
 </li>
 <li>These are represented by file descriptors 0, 1, and 2, respectively. Thus, when you first open another file (as cat does above), it will almost certainly be file descriptor 3.</li>
 </ul><br>
-<h2 id='Reading And Writing, But Not Sequentially'>Reading And Writing, But Not Sequentially</h2><p><img src='D28B799D-6D4E-469B-A2CB-D333C4382A34.png'><br>
-<img src='07AB90F1-8BFF-4338-A062-EFD9D063D8F6.png'></p><br>
+<h2 id='Reading And Writing, But Not Sequentially'>Reading And Writing, But Not Sequentially</h2><p><img src='(CH%2039)%20File%20and%20Directory/D28B799D-6D4E-469B-A2CB-D333C4382A34.png'><br>
+<img src='(CH%2039)%20File%20and%20Directory/07AB90F1-8BFF-4338-A062-EFD9D063D8F6.png'></p><br>
 <h2 id='Writing Immediately with fsync()'>Writing Immediately with fsync()</h2><ul>
 <li>Most times when a program calls write(), it is just telling the file system: please write this data to persistent storage, at some point in the future.</li>
 </ul><br>
-<p><img src='3B7BE00E-0E43-454A-8DA1-ECF5D751CA67.png'></p><ul>
+<p><img src='(CH%2039)%20File%20and%20Directory/3B7BE00E-0E43-454A-8DA1-ECF5D751CA67.png'></p><ul>
 <li>Interestingly, this sequence does not guarantee everything that you might expect; in some cases, <b>you also need to fsync() the directory that contains the file foo</b></li>
 </ul><br>
 <h2 id='Renaming Files'>Renaming Files</h2><ul>
 <li>The file foo is renamed bar:</li>
 </ul><br>
-<p><img src='7A250DB2-FCF6-4C30-BB7E-9474E3123502.png'></p><br>
-<h2 id='Getting Information About Files (Metadata)'>Getting Information About Files (Metadata)</h2><p><img src='D57DA929-29C2-4AFA-8BB2-49147317D8F8.png'><br>
-<img src='EBB177F8-ABFB-4A88-9975-87D22AE602B0.png'></p><br>
-<h2 id='Removing Files'>Removing Files</h2><p><img src='6A135FB7-C01E-4D53-B143-B849D3158A45.png'></p><ul>
+<p><img src='(CH%2039)%20File%20and%20Directory/7A250DB2-FCF6-4C30-BB7E-9474E3123502.png'></p><br>
+<h2 id='Getting Information About Files (Metadata)'>Getting Information About Files (Metadata)</h2><p><img src='(CH%2039)%20File%20and%20Directory/D57DA929-29C2-4AFA-8BB2-49147317D8F8.png'><br>
+<img src='(CH%2039)%20File%20and%20Directory/EBB177F8-ABFB-4A88-9975-87D22AE602B0.png'></p><br>
+<h2 id='Removing Files'>Removing Files</h2><p><img src='(CH%2039)%20File%20and%20Directory/6A135FB7-C01E-4D53-B143-B849D3158A45.png'></p><ul>
 <li>when the file system unlinks file, it checks a <b>reference count</b>within the inode number.</li>
 <li>This reference count (sometimes called the <b>link count</b>) allows the file system to track how many different file names have been linked to this particular inode.</li>
 <li>When unlink() is called, it removes the “link” between the human-readable name (the file that is being deleted) to the given inode number, and decrements the reference count;</li>
 <li>only when the reference count reaches zero does the file system also free the inode and related data blocks, and thus truly “delete” the file.</li>
 </ul><br>
-<p><img src='0C333177-B738-4333-BEBA-AB75C569CCAA.png'></p><br>
-<h2 id='Making Directories'>Making Directories</h2><p><img src='3C5D8398-0B31-405C-AAE5-7E5F8D6BCDDA.png'></p><br>
-<h2 id='Reading Directories'>Reading Directories</h2><p><img src='C6E60BCB-BBF3-476F-8366-350062277AC7.png'></p><br>
+<p><img src='(CH%2039)%20File%20and%20Directory/0C333177-B738-4333-BEBA-AB75C569CCAA.png'></p><br>
+<h2 id='Making Directories'>Making Directories</h2><p><img src='(CH%2039)%20File%20and%20Directory/3C5D8398-0B31-405C-AAE5-7E5F8D6BCDDA.png'></p><br>
+<h2 id='Reading Directories'>Reading Directories</h2><p><img src='(CH%2039)%20File%20and%20Directory/C6E60BCB-BBF3-476F-8366-350062277AC7.png'></p><br>
 <h2 id='Deleting Directories'>Deleting Directories</h2><ul>
 <li>rmdir() has the requirement that the directory be empty (i.e., only has “.” and “..” entries) before it is deleted. If you try to delete a non-empty directory, the call to rmdir() simply will fail.</li>
 </ul><br>
-<h2 id='Hard Links'>Hard Links</h2><p><img src='112667DD-5882-4A71-AEF5-3F1B6AF42D14.png'></p><ul>
+<h2 id='Hard Links'>Hard Links</h2><p><img src='(CH%2039)%20File%20and%20Directory/112667DD-5882-4A71-AEF5-3F1B6AF42D14.png'></p><ul>
 <li>The link() system call takes two arguments, an old pathname and a new one; when you “link” a new file name to an old one, you essentially create another way to refer to the same file.</li>
 </ul><br>
 <h2 id='Symbolic (Soft) Links'>Symbolic (Soft) Links</h2><ul>
@@ -174,11 +174,11 @@
 </ul>
 </li>
 </ul><br>
-<p><img src='EC18EAC8-5F64-4EB9-9227-01F357FCCED0.png'></p><ul>
+<p><img src='(CH%2039)%20File%20and%20Directory/EC18EAC8-5F64-4EB9-9227-01F357FCCED0.png'></p><ul>
 <li>the way a symbolic link is formed is by holding the pathname of the linked-to file as the data of the link file.</li>
 </ul><br>
-<p><img src='E8B5DFD0-565F-44B4-9371-07B23DCE7BF1.png'></p><br>
-<h3 id='Dangling reference'>Dangling reference</h3><p><img src='B9B3903D-C059-405E-9F43-6FD4C50C9DD9.png'></p><br>
+<p><img src='(CH%2039)%20File%20and%20Directory/E8B5DFD0-565F-44B4-9371-07B23DCE7BF1.png'></p><br>
+<h3 id='Dangling reference'>Dangling reference</h3><p><img src='(CH%2039)%20File%20and%20Directory/B9B3903D-C059-405E-9F43-6FD4C50C9DD9.png'></p><br>
 <h2 id='Making and Mounting a File System'>Making and Mounting a File System</h2><ul>
 <li>To make a file system, most file systems provide a tool, usually re- ferred to as mkfs (pronounced “make fs”)
 <ul>
@@ -187,7 +187,7 @@
 </li>
 <li>What mount does, quite simply is take an existing direc- tory as a target <b>mount point</b>and essentially paste a new file system onto the directory tree at that point.</li>
 </ul><br>
-<p><img src='1D01DEB0-0533-4D6E-B427-6759A2620AF1.png'></p><br>
+<p><img src='(CH%2039)%20File%20and%20Directory/1D01DEB0-0533-4D6E-B427-6759A2620AF1.png'></p><br>
 <br>
 <br>
 <br>

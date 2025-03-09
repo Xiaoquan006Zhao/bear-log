@@ -118,7 +118,7 @@
     </head>
     <body>
         <div class="document-wrapper">
-            <h1 id='(CH 41) Locality and The Fast File System'>(CH 41) Locality and The Fast File System</h1><h2 id='FFS: Disk Awareness Is The Solution'>FFS: Disk Awareness Is The Solution</h2><p><img src='9D769697-CCE9-4CE2-ABAA-64C75AF8736A.png'></p><br>
+            <h1 id='(CH 41) Locality and The Fast File System'>(CH 41) Locality and The Fast File System</h1><h2 id='FFS: Disk Awareness Is The Solution'>FFS: Disk Awareness Is The Solution</h2><p><img src='(CH%2041)%20Locality%20and%20The%20Fast%20File%20System/9D769697-CCE9-4CE2-ABAA-64C75AF8736A.png'></p><br>
 <h3 id='Policies: How To Allocate Files and Directories'>Policies: How To Allocate Files and Directories</h3><ul>
 <li><b>First</b>, it makes sure (in the general case) to allocate the data blocks of a file in the same group as its inode, thus preventing long seeks between inode and data</li>
 <li><b>Second</b>, it places all files that are in the same directory in the cylinder group of the directory they are in. Thus, if a user creates four files, /dir1/1.txt, /dir1/2.txt, /dir1/3.txt, and /dir99/4.txt, FFS would try to place the first three near one another (same group) and the fourth far away (in some other group).</li>
@@ -128,7 +128,7 @@
 </ul><br>
 <h2 id='The Large-File Exception'>The Large-File Exception</h2><ul>
 <li>Without a different rule, a large file would entirely fill the block group it is first placed within (and maybe others). Filling a block group in this manner is undesirable, as it prevents subsequent “related” files from being placed within this block group, and thus may hurt file-access locality.</li>
-</ul><p><img src='C7535DAE-0BA0-4924-8959-4BE5009AA53C.png'></p><br>
+</ul><p><img src='(CH%2041)%20Locality%20and%20The%20Fast%20File%20System/C7535DAE-0BA0-4924-8959-4BE5009AA53C.png'></p><br>
 <br>
 <br>
 <br>

@@ -122,14 +122,14 @@
 <li>The first is the <b>data structures</b>of the file system. In other words, what types of on-disk structures are utilized by the file system to organize its data and metadata?</li>
 <li>The second aspect of a file system is its <b>access methods</b>. How does it map the calls made by a process, such as open(), read(), write(), etc., onto its structures? Which structures are read during the execution of a particular system call? Which are written? How efficiently are all of these steps performed?</li>
 </ul><br>
-<h2 id='Overall Organization'>Overall Organization</h2><p><img src='BC204E95-7063-4429-AA15-4D86458229E2.png'></p><ul>
+<h2 id='Overall Organization'>Overall Organization</h2><p><img src='(CH%2040)%20File%20System%20Implementation/BC204E95-7063-4429-AA15-4D86458229E2.png'></p><ul>
 <li>And thus our new on-disk layout, with an inode bitmap (i) and a data bitmap (d):</li>
 </ul><br>
 <p>We reserve this for the <b>superblock</b>, denoted by an S in the diagram below. The superblock contains information about this particular file system, including, for example, how many inodes and data blocks are in the file system (80 and 56, respectively in this instance), where the inode table begins (block 3), and so forth.</p><br>
 <h2 id='File Organization: The Inode'>File Organization: The Inode</h2><ul>
 <li>Each inode is implicitly referred to by a number (called the <b>inumber</b>), which we’ve earlier called the <b>low-level name</b>of the file.</li>
-</ul><p><img src='82A80920-457F-47A6-AD5D-708A3DF459C1.png'><br>
-<img src='1261370A-3C8B-4542-AA02-4AC2D3CC67A4.png'></p><br>
+</ul><p><img src='(CH%2040)%20File%20System%20Implementation/82A80920-457F-47A6-AD5D-708A3DF459C1.png'><br>
+<img src='(CH%2040)%20File%20System%20Implementation/1261370A-3C8B-4542-AA02-4AC2D3CC67A4.png'></p><br>
 <h3 id='The Multi-Level Index'>The Multi-Level Index</h3><ul>
 <li>To support bigger files, file system designers have had to introduce different structures within inodes. One common idea is to have a special pointer known as an <b>indirect pointer</b>.</li>
 <li>Instead of pointing to a block that contains user data, it points to a block that contains more pointers, each of which point to user data.</li>
@@ -137,11 +137,11 @@
 <h2 id='Directory Organization'>Directory Organization</h2><ul>
 <li>In vsfs (as in many file systems), directories have a simple organization; a directory basically just contains a list of (entry name, inode number) pairs.</li>
 </ul><br>
-<p><img src='F269FDD9-43FB-4F41-84E6-3DF410D28822.png'></p><br>
+<p><img src='(CH%2040)%20File%20System%20Implementation/F269FDD9-43FB-4F41-84E6-3DF410D28822.png'></p><br>
 <h2 id='Free Space Management'>Free Space Management</h2><ul>
 <li>For example, when we create a file, we will have to allocate an inode for that file. The file system will thus search through the bitmap for an in- ode that is free, and allocate it to the file; the file system will have to mark the inode as used (with a 1) and eventually update the on-disk bitmap with the correct information. A similar set of activities take place when a data block is allocated.</li>
 </ul><br>
-<h2 id='Access Paths: Reading and Writing'>Access Paths: Reading and Writing</h2><h3 id='Reading A File From Disk'>Reading A File From Disk</h3><p><img src='AB11B1F2-7C5C-471F-ABC7-CD0B2A35D1A3.png'></p><ul>
+<h2 id='Access Paths: Reading and Writing'>Access Paths: Reading and Writing</h2><h3 id='Reading A File From Disk'>Reading A File From Disk</h3><p><img src='(CH%2040)%20File%20System%20Implementation/AB11B1F2-7C5C-471F-ABC7-CD0B2A35D1A3.png'></p><ul>
 <li>First read root inode <span class='arrow'><svg width="12px" height="12px" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <g id="Arrow" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
         <g transform="translate(0.000000, 0.500000)" fill="#444444">
@@ -162,10 +162,10 @@
 <li>Writing to a file is a similar process. First, the file must be opened (as above). Then, the application can issue write() calls to update the file with new contents. Finally, the file is closed.</li>
 <li>Unlike reading, writing to the file may also <b>allocate</b>a block (unless the block is being overwritten, for example).</li>
 </ul><br>
-<p><img src='F2F10587-3F7D-4EAB-B30A-815131CCAE57.png'></p><ul>
+<p><img src='(CH%2040)%20File%20System%20Implementation/F2F10587-3F7D-4EAB-B30A-815131CCAE57.png'></p><ul>
 <li>You can also see that each allocating write costs 5 I/Os: a pair to read and update the inode, another pair to read and update the data bitmap, and then finally the write of the data itself.</li>
 </ul><br>
-<h3 id='Caching and Buffering'>Caching and Buffering</h3><p><img src='11FBF13A-D863-4B37-B9AA-5EEDDD3DD433.png'></p><br>
+<h3 id='Caching and Buffering'>Caching and Buffering</h3><p><img src='(CH%2040)%20File%20System%20Implementation/11FBF13A-D863-4B37-B9AA-5EEDDD3DD433.png'></p><br>
 <br>
 <br>
 <p><span class='hashtag'><span class='hashtag-marker marker'>#</span>_book<span class='hashtag-separator-marker marker'>/</span>Programing<span class='hashtag-separator-marker marker'>/</span>Operating-Systems-Three-Easy-Pieces<span class='hashtag-separator-marker marker'>/</span>persistence</span></p>

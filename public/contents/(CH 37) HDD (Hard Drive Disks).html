@@ -126,7 +126,7 @@
 </ul>
 </li>
 </ul><br>
-<h2 id='Basic Geometry'>Basic Geometry</h2><p><img src='DEDE2E19-26D3-4C2E-84F3-A2757DB76A27.png'></p><ul>
+<h2 id='Basic Geometry'>Basic Geometry</h2><p><img src='(CH%2037)%20HDD%20(Hard%20Drive%20Disks)/DEDE2E19-26D3-4C2E-84F3-A2757DB76A27.png'></p><ul>
 <li><b>Platter</b>, a circular hard surface on which data is stored persistently by inducing magnetic changes to it.</li>
 <li>The platters are all bound together around the <b>spindle</b>, which is connected to a motor that spins the platters around (while the drive is powered on) at a constant (fixed) rate.</li>
 <li>Data is encoded on each surface in concentric circles of sectors; we call one such concentric circle a <b>track</b>.
@@ -135,15 +135,15 @@
 </ul>
 </li>
 </ul><br>
-<p><img src='C07A7A28-EA59-4B2D-A667-78B2F4A43238.png'></p><br>
+<p><img src='(CH%2037)%20HDD%20(Hard%20Drive%20Disks)/C07A7A28-EA59-4B2D-A667-78B2F4A43238.png'></p><br>
 <h3 id='Single-track Latency: The Rotational Delay'>Single-track Latency: The Rotational Delay</h3><ul>
 <li>In the example, if the full rotational delay is R, the disk has to incur a rotational delay of about R/2 to wait for 0 to come under the read / write head (if we start at 6).</li>
 </ul><br>
-<h2 id='Multiple Tracks: Seek Time'>Multiple Tracks: Seek Time</h2><p><img src='98248652-3BDC-4757-AD00-8B52EC8426DB.png'></p><br>
-<h2 id='I/O Time: Doing The Math'>I/O Time: Doing The Math</h2><p><img src='36054ED5-7C7A-4FD5-B660-4F1E9421FE8F.png'><br>
-<img src='91E186EB-53A5-4B25-B566-161ADC34422A.png'></p><br>
-<h3 id='Random v.s. Sequential'>Random v.s. Sequential</h3><p><img src='7768770A-CE64-419E-A96C-917BDC029B6B.png'><br>
-<img src='4F10BEED-0FA8-483E-AA26-489796A695C0.png'></p><br>
+<h2 id='Multiple Tracks: Seek Time'>Multiple Tracks: Seek Time</h2><p><img src='(CH%2037)%20HDD%20(Hard%20Drive%20Disks)/98248652-3BDC-4757-AD00-8B52EC8426DB.png'></p><br>
+<h2 id='I/O Time: Doing The Math'>I/O Time: Doing The Math</h2><p><img src='(CH%2037)%20HDD%20(Hard%20Drive%20Disks)/36054ED5-7C7A-4FD5-B660-4F1E9421FE8F.png'><br>
+<img src='(CH%2037)%20HDD%20(Hard%20Drive%20Disks)/91E186EB-53A5-4B25-B566-161ADC34422A.png'></p><br>
+<h3 id='Random v.s. Sequential'>Random v.s. Sequential</h3><p><img src='(CH%2037)%20HDD%20(Hard%20Drive%20Disks)/7768770A-CE64-419E-A96C-917BDC029B6B.png'><br>
+<img src='(CH%2037)%20HDD%20(Hard%20Drive%20Disks)/4F10BEED-0FA8-483E-AA26-489796A695C0.png'></p><br>
 <h2 id='Disk Scheduling'>Disk Scheduling</h2><ul>
 <li>Unlike job scheduling, where the length of each job is usually unknown, with disk scheduling, we can make a good guess at how long a “job” (i.e., disk request) will take.
 <ul>
@@ -159,7 +159,7 @@
 </li>
 <li><b>The second problem</b> is more fundamental: <b>starvation</b>.</li>
 </ul><br>
-<h3 id='Elevator (a.k.a. SCAN or C-SCAN)'>Elevator (a.k.a. SCAN or C-SCAN)</h3><p><img src='23F20B16-64BF-45CE-A2AE-E878CA929A13.png'></p><ul>
+<h3 id='Elevator (a.k.a. SCAN or C-SCAN)'>Elevator (a.k.a. SCAN or C-SCAN)</h3><p><img src='(CH%2037)%20HDD%20(Hard%20Drive%20Disks)/23F20B16-64BF-45CE-A2AE-E878CA929A13.png'></p><ul>
 <li>The algorithm, originally called <b>SCAN</b>, simply moves across the disk servicing requests in order across the tracks. Let us call a single pass across the disk a <i>sweep</i>.
 <ul>
 <li>Thus, if a request comes for a block on a track that has already been serviced on this sweep of the disk, it is not handled immediately, but rather queued until the next sweep.</li>

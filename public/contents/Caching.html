@@ -186,9 +186,9 @@
 </ul><br>
 <h2 id='Caching Based on HTTP'>Caching Based on HTTP</h2><ul>
 <li><b>Read-through cache</b> is a <b>caching component</b> that can return cached resources or fetch the data for the client, if the request cannot be satisfied from cache (Client doesn’t connect to the service directly)</li>
-</ul><p><img src='C86E10A6-3992-48C8-A8BC-7E866F498293.png'></p><ul>
+</ul><p><img src='Caching/C86E10A6-3992-48C8-A8BC-7E866F498293.png'></p><ul>
 <li>It is common to see <b>multiple</b> HTTP read-through caches <b>chained</b> to one another in a single web request without the client ever being aware of it.</li>
-</ul><p><img src='74A0EFD3-71DA-439A-8F59-5CF50447C4F0.png'></p><br>
+</ul><p><img src='Caching/74A0EFD3-71DA-439A-8F59-5CF50447C4F0.png'></p><br>
 <h3 id='HTTP Caching Headers'>HTTP Caching Headers</h3><ul>
 <li>Some headers have <b>over-lapping functions</b> (Cache-control header max-age, Expires header), decide which headers you want to use and <b>sticking</b> to them</li>
 </ul><br>
@@ -257,17 +257,17 @@
 <li><b>Cache static files under unique URL</b>, users who have older versions of HTML can still access old URL files</li>
 </ul>
 </li>
-</ul><p><img src='B33814EC-23D8-45DE-BF41-C84C30ACEA49.png'></p><ul>
+</ul><p><img src='Caching/B33814EC-23D8-45DE-BF41-C84C30ACEA49.png'></p><ul>
 <li>Never stored, cached, or reused for any users.</li>
-</ul><p><img src='611ED48C-7938-4418-A721-4FCB9931E2BC.png'></p><ul>
+</ul><p><img src='Caching/611ED48C-7938-4418-A721-4FCB9931E2BC.png'></p><ul>
 <li>User-specific data
 <ul>
 <li>Cached for 10 minutes</li>
 </ul>
 </li>
-</ul><p><img src='E4C867B0-B994-4A1E-8963-BE305B74D99E.png'></p><ul>
+</ul><p><img src='Caching/E4C867B0-B994-4A1E-8963-BE305B74D99E.png'></p><ul>
 <li><b>HTML meta-tags</b> for cache control (<b>avoid</b> these meta-tags altogether, as they <b>do not work for intermediate caches</b> and they may be a source of <b>confusion</b>)</li>
-</ul><p><img src='21E43439-4B08-48E9-89B3-86C8BD21BF73.png'></p><br>
+</ul><p><img src='Caching/21E43439-4B08-48E9-89B3-86C8BD21BF73.png'></p><br>
 <h3 id='Types of HTTP Cache Technologies'>Types of HTTP Cache Technologies</h3><br>
 <h4 id='Browser Cache'>Browser Cache</h4><ul>
 <li>Browsers have <b>built-in caching capabilities</b> to <b>reduce the number of requests</b> sent out.
@@ -283,14 +283,14 @@
 <li>The larger the network, the larger the potential saving</li>
 </ul>
 </li>
-</ul><p><img src='B7AC67F3-3430-44F5-9F20-84C217CD4BEB.png'></p><br>
+</ul><p><img src='Caching/B7AC67F3-3430-44F5-9F20-84C217CD4BEB.png'></p><br>
 <h4 id='Reverse Proxy'>Reverse Proxy</h4><ul>
 <li>Place a reverse proxy in your own <b>data center</b> to reduce the load put on your own web servers
 <ul>
 <li>You can <b>override HTTP headers</b> and <b>better control</b> which requests are being cached and for how long</li>
 </ul>
 </li>
-</ul><p><img src='9BE5D990-06E3-47F6-AF41-AB60A0C2CECF.png'></p><br>
+</ul><p><img src='Caching/9BE5D990-06E3-47F6-AF41-AB60A0C2CECF.png'></p><br>
 <h4 id='Content Delivery Networks'>Content Delivery Networks</h4><ul>
 <li>A <b>content delivery network (CDN)</b> is a distributed network of cache servers that work in a similar way as caching proxies.</li>
 <li>Web applications would typically use CDN to cache their <b>static files</b> like images, CSS, JavaScript, videos, or Portable Document File (PDF) documents.
@@ -345,7 +345,7 @@
 </ul><br>
 <h4 id='Reaching concurrency limit or throughput limit'>Reaching concurrency limit or throughput limit</h4><ul>
 <li>Deploying <b>multiple reverse proxies</b> in parallel and distributing traffic among them</li>
-</ul><p><img src='99EF646D-1C83-47A3-A650-92F9F8F1F83B.png'></p><br>
+</ul><p><img src='Caching/99EF646D-1C83-47A3-A650-92F9F8F1F83B.png'></p><br>
 <h2 id='Caching Application Objects'>Caching Application Objects</h2><ul>
 <li>They are <b>cache-aside</b> rather than read-through caches
 <ul>
@@ -356,8 +356,8 @@
 <h3 id='Common Types of Object Caches'>Common Types of Object Caches</h3><br>
 <h4 id='Client-Side Caches'>Client-Side Caches</h4><ul>
 <li>Store application data directly on the user’s device</li>
-</ul><p><img src='D28B6F61-FE46-45D5-8DDD-F0B2B05D26FB.png'><br>
-<img src='4F07D36D-00BC-4591-A90B-64DF2FF10698.png'></p><ul>
+</ul><p><img src='Caching/D28B6F61-FE46-45D5-8DDD-F0B2B05D26FB.png'><br>
+<img src='Caching/4F07D36D-00BC-4591-A90B-64DF2FF10698.png'></p><ul>
 <li>It is isolated from your data center, which makes it impossible for your servers to remove/invalidate cached objects directly
 <ul>
 <li>Anytime you use web storage or similar client-side storage, you need to include the code responsible for cache refresh and invalidation in your front-end JavaScript code</li>
@@ -383,14 +383,14 @@
 <li>It is not clear where the cache lives to <b>invalidate</b> data, because it may live in many servers</li>
 </ul>
 </li>
-</ul><p><img src='86278F50-C90A-4B84-ABC3-C7C737EA83E4.png'></p><br>
+</ul><p><img src='Caching/86278F50-C90A-4B84-ABC3-C7C737EA83E4.png'></p><br>
 <h4 id='Distributed Object Caches (Redis, Memcached)'>Distributed Object Caches (Redis, Memcached)</h4><ul>
 <li>The main difference between this type and local server cache is that interacting with a distributed object cache usually requires a network <b>round trip to the cache server</b></li>
 <li>Most caching servers have client libraries for all common programming language</li>
-</ul><p><img src='D79A55FC-A506-4082-89DA-510BF4310A94.png'></p><ul>
+</ul><p><img src='Caching/D79A55FC-A506-4082-89DA-510BF4310A94.png'></p><ul>
 <li><b>Efficiently remove</b> objects from the cache, allowing for cache invalidation on source data changes (connect to your cache and request object removal)</li>
 <li><b>Deployment</b></li>
-</ul><p><img src='1E7783F8-B87D-409A-9DF7-3465AE665AF0.png'></p><ul>
+</ul><p><img src='Caching/1E7783F8-B87D-409A-9DF7-3465AE665AF0.png'></p><ul>
 <li><b>Challenge</b>
 <ul>
 <li>Adding distributed cache, adds a certain amount of <b>complexity</b> and <b>management</b> overhead</li>
@@ -408,18 +408,18 @@
 <li>Memcached with libMemcached client library</li>
 </ul>
 </li>
-</ul><p><img src='555243B2-8BC7-4785-9CD4-CE1C1DC3D79D.png'><br>
-<img src='21CD1E99-21E5-45B9-80C8-11AA9BB748BF.png'></p><ul>
+</ul><p><img src='Caching/555243B2-8BC7-4785-9CD4-CE1C1DC3D79D.png'><br>
+<img src='Caching/21CD1E99-21E5-45B9-80C8-11AA9BB748BF.png'></p><ul>
 <li>By declaring a Memcached cluster, your data will be automatically distributed among the cache servers using a <b>consistent hashing</b> algorithm
 <ul>
 <li>Server sits in a hash ring with equal distance because the size of cache is pre-determined</li>
 </ul>
 </li>
-</ul><p><img src='D41CAEFA-5388-43E3-A583-6A06C3E19CC2.png'></p><ul>
+</ul><p><img src='Caching/D41CAEFA-5388-43E3-A583-6A06C3E19CC2.png'></p><ul>
 <li>Adding a server</li>
-</ul><p><img src='4F118E50-DC49-4465-A4FF-E6D7FB900A1C.png'></p><ul>
+</ul><p><img src='Caching/4F118E50-DC49-4465-A4FF-E6D7FB900A1C.png'></p><ul>
 <li>With replication</li>
-</ul><p><img src='B6D5FAA9-4A65-4F19-9DAE-EF46BD5F44E1.png'></p><ul>
+</ul><p><img src='Caching/B6D5FAA9-4A65-4F19-9DAE-EF46BD5F44E1.png'></p><ul>
 <li><b>Hosting</b>
 <ul>
 <li><b>Amazon</b>, you could either deploy your own caching servers on EC2 instances or use Amazon Elastic Cache
@@ -431,12 +431,12 @@
 </ul>
 </li>
 </ul><br>
-<h2 id='Caching Rules of Thumb'>Caching Rules of Thumb</h2><h3 id='Cache High Up the Call Stack'>Cache High Up the Call Stack</h3><p><img src='3B34D5DA-71D3-4783-9CE7-99585DD98CC7.png'></p><br>
+<h2 id='Caching Rules of Thumb'>Caching Rules of Thumb</h2><h3 id='Cache High Up the Call Stack'>Cache High Up the Call Stack</h3><p><img src='Caching/3B34D5DA-71D3-4783-9CE7-99585DD98CC7.png'></p><br>
 <h3 id='Reuse Cache Among Users'>Reuse Cache Among Users</h3><ul>
 <li>Think about how you could make you cache <b>more usable</b> for other users</li>
 <li>The <b>second</b> one is <b>better</b>, as rounding does not influence restaurants in the area by much (as long as the rounding is correct) and able to cache the result for more requests</li>
-</ul><p><img src='8988948E-7823-433B-B8CF-4D149B308980.png'><br>
-<img src='CAF91B72-D301-4E18-9729-A5CA47199DC7.png'></p><br>
+</ul><p><img src='Caching/8988948E-7823-433B-B8CF-4D149B308980.png'><br>
+<img src='Caching/CAF91B72-D301-4E18-9729-A5CA47199DC7.png'></p><br>
 <h3 id='Where to Start Caching?'>Where to Start Caching?</h3><ul>
 <li><b>Prioritize</b> based on a strict and simple metric</li>
 <li><b>Aggregated time spent</b> = time spent per request * number of requests
@@ -445,7 +445,7 @@
 </ul>
 </li>
 <li>Google Analytics report and correlated traffic stats for the top 20 pages with the average time needed to render each of these pages.</li>
-</ul><p><img src='8068B70A-FAC7-4E34-85FC-26D3185F24B0.png'></p><br>
+</ul><p><img src='Caching/8068B70A-FAC7-4E34-85FC-26D3185F24B0.png'></p><br>
 <h3 id='Cache Invalidation Is Difficult'>Cache Invalidation Is Difficult</h3><ul>
 <li>Cache invalidation is <b>difficult</b> because cached objects are usually a result of computation that takes multiple data sources as its <b>input</b>.
 <ul>

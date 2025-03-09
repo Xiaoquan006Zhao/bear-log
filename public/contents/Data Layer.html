@@ -151,7 +151,7 @@
 <li>You can always connect a new slave or disconnect slaves at any point in time without affecting the master.</li>
 </ul>
 </li>
-</ul><p><img src='BF7F4946-DB83-42A9-ABBB-45B62864FA36.png'></p><ul>
+</ul><p><img src='Data%20Layer/BF7F4946-DB83-42A9-ABBB-45B62864FA36.png'></p><ul>
 <li><b>Advantage</b>:
 <ul>
 <li><b>Share load</b> for read-only queries</li>
@@ -191,7 +191,7 @@
 <li>Each statement written to a master’s binlog includes the name of the server it was originally written to (No duplicated statements)</li>
 </ul>
 </li>
-</ul><p><img src='96038CD1-0116-44B7-A9A9-316EFC766294.png'></p><ul>
+</ul><p><img src='Data%20Layer/96038CD1-0116-44B7-A9A9-316EFC766294.png'></p><ul>
 <li>In case of <b>Master A failure</b>, or any time you need to perform long-lasting maintenance, your application can be quickly <b>reconfigured</b> to direct all writes <b>to Master B</b></li>
 <li><b>Master Master with Slave</b>
 <ul>
@@ -207,7 +207,7 @@
 </li>
 </ul>
 </li>
-</ul><p><img src='7B997E03-CA85-4F5D-B3B5-9A995038FCE1.png'></p><br>
+</ul><p><img src='Data%20Layer/7B997E03-CA85-4F5D-B3B5-9A995038FCE1.png'></p><br>
 <ul>
 <li><b>Master Master</b> is bad for scalability (good for availability)
 <ul>
@@ -270,7 +270,7 @@
 <li>All of the sharding logic lives in your application and the database schema is identical on all of the shards.</li>
 </ul>
 </li>
-</ul><p><img src='DB606EE1-602B-474D-99FD-91A61A145646.png'></p><ul>
+</ul><p><img src='Data%20Layer/DB606EE1-602B-474D-99FD-91A61A145646.png'></p><ul>
 <li><b>Even distribution</b>
 <ul>
 <li>It is usually not possible to ensure equal size of your data buckets, but as long as your buckets are small and you have a lot of them, your servers will still end up with a pretty good overall data distribution.</li>
@@ -306,15 +306,15 @@
 </li>
 </ul>
 </li>
-</ul><p><img src='ADA9199F-57AA-4922-9ABA-6BE104628D56.png'></p><ul>
+</ul><p><img src='Data%20Layer/ADA9199F-57AA-4922-9ABA-6BE104628D56.png'></p><ul>
 <li><b>Alternative</b>, (easier) Use the <b>modulo function</b> to map from the sharding key value to the database number, but each database is just a <b>logical MySQL database</b> rather than a physical machine.
 <ul>
 <li>Modulo function to locate server number and db number</li>
 </ul>
 </li>
-</ul><p><img src='6E0EB5AB-F111-4CAB-B6E8-4D200A0EE6DF.png'></p><ul>
+</ul><p><img src='Data%20Layer/6E0EB5AB-F111-4CAB-B6E8-4D200A0EE6DF.png'></p><ul>
 <li>When you want to <b>scale</b>, copy half of the data to two servers and update the Module function that locate server number (double capacity and modify a few lines)</li>
-</ul><p><img src='F91BD053-BD8A-445B-AD69-42714A7D7C04.png'></p><ul>
+</ul><p><img src='Data%20Layer/F91BD053-BD8A-445B-AD69-42714A7D7C04.png'></p><ul>
 <li><b>Globally unique identifier</b>, some data store supports it
 <ul>
 <li>Use some <b>logic</b> (even, odd) or <b>atomic counters</b> provided by some data stores</li>
@@ -398,7 +398,7 @@
 </li>
 <li>Clients can connect to any of Cassandra’s nodes and when they connect to one, that node becomes the client’s <b>session coordinator</b></li>
 <li>Clients send all of their requests to the session coordinator and the coordinator takes responsibility for all of the internal cluster activities like replication or sharding. (great example of <b>decoupling</b> and significantly reduces complexity on the application side)</li>
-</ul><p><img src='83019D15-0908-4115-820E-1CA836C0354D.png'></p><ul>
+</ul><p><img src='Data%20Layer/83019D15-0908-4115-820E-1CA836C0354D.png'></p><ul>
 <li><b>Advantage</b>
 <ul>
 <li>Rather than defining the schema up front, you <b>dynamically create fields</b> as they are required (data have different fields and live on different servers)

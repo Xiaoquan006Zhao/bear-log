@@ -167,7 +167,7 @@
 </ul><br>
 <h2 id='Performance'>Performance</h2><h3 id='Cardinality is a number of unique values stored in a particular field'>Cardinality is a number of unique values stored in a particular field</h3><ul>
 <li>Fields with <b>high cardinality</b> are <b>good candidates for indexes</b>, as they allow you to <b>reduce the data set</b> to a very small number of rows. (You do not need to look further down)</li>
-</ul><p><img src='E7769AB8-4981-40B7-961C-259375888676.png'></p><br>
+</ul><p><img src='Searching%20for%20Data/E7769AB8-4981-40B7-961C-259375888676.png'></p><br>
 <h3 id='Item distribution'>Item distribution</h3><ul>
 <li>When creating indexes is that <b>equal distribution</b> leads to <b>better index performance</b></li>
 <li>If you were indexing a field where some values were present in just a single item and others were present in millions of records, then performance of the index would vary greatly depending on which value you look for.
@@ -192,10 +192,10 @@
 <h3 id='NoSQL Data Modeling'>NoSQL Data Modeling</h3><ul>
 <li>Making a <b>tradeoff</b>. You <b>sacrifice some flexibility</b> for the sake of <b>performance</b> and <b>scalability</b></li>
 <li>Rather than starting with data in mind, you need to <b>start</b> with <b>queries in mind</b></li>
-</ul><p><img src='EC382D6A-557C-470A-B8A4-DC02ADB21BA3.png'></p><ul>
+</ul><p><img src='Searching%20for%20Data/EC382D6A-557C-470A-B8A4-DC02ADB21BA3.png'></p><ul>
 <li>For example, if your most important queries were to load a product page to display all of the product-related metadata like name, image URL, price, categories it belongs to, and average user ranking, you might optimize your data model for this use case rather than keeping it normalized.</li>
 <li>By <b>grouping</b> most of the data into the product entity, you would be able to <b>request all of that data</b> with a single document access. You would not need to join tables, query multiple servers, or traverse multiple indexes.</li>
-</ul><p><img src='A50FE6FC-41DA-4352-A44E-1E26EEAB6EA4.png'></p><ul>
+</ul><p><img src='Searching%20for%20Data/A50FE6FC-41DA-4352-A44E-1E26EEAB6EA4.png'></p><ul>
 <li><b>Advantage</b>
 <ul>
 <li><b>Performance</b> and ability to <b>efficiently access data</b> despite a huge data set.</li>
@@ -222,10 +222,10 @@
 </ul><br>
 <h2 id='Search Engine (Satisfy complex query (What NoSQL lack of))'>Search Engine (Satisfy complex query (What NoSQL lack of))</h2><ul>
 <li>Keeps Object data, whenever change happens, you post an asynchronous message to update the object in the engine</li>
-</ul><p><img src='55BB3918-9737-470A-A94A-3131853BF4BF.png'></p><br>
+</ul><p><img src='Searching%20for%20Data/55BB3918-9737-470A-A94A-3131853BF4BF.png'></p><br>
 <h3 id='Reverse Index'>Reverse Index</h3><ul>
 <li><b>Full text search</b>, broken down search into work tokens and locate in inverted index table</li>
-</ul><p><img src='8A40B405-E6F3-4C77-B4E0-5B04C8452AAC.png'></p><br>
+</ul><p><img src='Searching%20for%20Data/8A40B405-E6F3-4C77-B4E0-5B04C8452AAC.png'></p><br>
 <h3 id='Also other data types'>Also other data types</h3><ul>
 <li>Using a <b>host</b>, <b>Amazon CloudSearch</b> and <b>Azure Search</b>,</li>
 <li><b>Open-source</b> products, like <b>Elasticsearch</b>, <b>Solr</b>, and <b>Sphinx</b></li>

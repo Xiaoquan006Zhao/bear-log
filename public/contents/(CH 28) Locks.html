@@ -118,8 +118,8 @@
     </head>
     <body>
         <div class="document-wrapper">
-            <h1 id='(CH 28) Locks'>(CH 28) Locks</h1><h2 id='Locks: The Basic Idea'>Locks: The Basic Idea</h2><p><img src='D8E15F5E-A760-40F7-B27D-1401A32B6335.png'></p><br>
-<h2 id='Pthread Locks'>Pthread Locks</h2><p><img src='E258CCFB-03CB-4CAD-923B-68B7C6FC7B19.png'></p><br>
+            <h1 id='(CH 28) Locks'>(CH 28) Locks</h1><h2 id='Locks: The Basic Idea'>Locks: The Basic Idea</h2><p><img src='(CH%2028)%20Locks/D8E15F5E-A760-40F7-B27D-1401A32B6335.png'></p><br>
+<h2 id='Pthread Locks'>Pthread Locks</h2><p><img src='(CH%2028)%20Locks/E258CCFB-03CB-4CAD-923B-68B7C6FC7B19.png'></p><br>
 <h2 id='Evaluating Locks'>Evaluating Locks</h2><ul>
 <li>Some criteria
 <ul>
@@ -129,14 +129,14 @@
 </ul>
 </li>
 </ul><br>
-<h2 id='Spin lock'>Spin lock</h2><h3 id='Test And Set (Atomic Exchange)'>Test And Set (Atomic Exchange)</h3><p><img src='14B695AB-84A1-4C75-9990-71CBB3E6405E.png'><br>
-<img src='A910A93E-AE34-4528-ABFD-B7084D6B90BC.png'></p><ul>
+<h2 id='Spin lock'>Spin lock</h2><h3 id='Test And Set (Atomic Exchange)'>Test And Set (Atomic Exchange)</h3><p><img src='(CH%2028)%20Locks/14B695AB-84A1-4C75-9990-71CBB3E6405E.png'><br>
+<img src='(CH%2028)%20Locks/A910A93E-AE34-4528-ABFD-B7084D6B90BC.png'></p><ul>
 <li>By making both the <b>test</b>(of the old lock value) and <b>set</b>(of the new value) a single atomic operation, we ensure that only one thread acquires the lock.</li>
 </ul><br>
-<h3 id='Compare-And-Swap (similar to test and set)'>Compare-And-Swap (similar to test and set)</h3><p><img src='72851393-DA16-4DAE-B1F9-B3034BB01C06.png'></p><br>
-<h3 id='Load-Linked and Store-Conditional'>Load-Linked and Store-Conditional</h3><p><img src='381BD225-3182-4893-A3A5-8C97DA3DD234.png'></p><br>
-<h3 id='Fetch-And-Add'>Fetch-And-Add</h3><p><img src='4A1B9A65-2D3D-4AA8-B228-631889EAF690.png'><br>
-<img src='7C0E3D1A-928C-411B-A066-1F5B1888A1D5.png'></p><br>
+<h3 id='Compare-And-Swap (similar to test and set)'>Compare-And-Swap (similar to test and set)</h3><p><img src='(CH%2028)%20Locks/72851393-DA16-4DAE-B1F9-B3034BB01C06.png'></p><br>
+<h3 id='Load-Linked and Store-Conditional'>Load-Linked and Store-Conditional</h3><p><img src='(CH%2028)%20Locks/381BD225-3182-4893-A3A5-8C97DA3DD234.png'></p><br>
+<h3 id='Fetch-And-Add'>Fetch-And-Add</h3><p><img src='(CH%2028)%20Locks/4A1B9A65-2D3D-4AA8-B228-631889EAF690.png'><br>
+<img src='(CH%2028)%20Locks/7C0E3D1A-928C-411B-A066-1F5B1888A1D5.png'></p><br>
 <h2 id='Just Yield, Baby'>Just Yield, Baby</h2><ul>
 <li>Our first try is a simple and friendly approach: when you are going to spin, instead give up the CPU to another thread.</li>
 <li>Still costly, thinking about 100 threads, thread 1 has the lock, if there is a fairness scheduling, the 99 threads have to yield</li>
@@ -147,10 +147,10 @@
 <li>Thus, we must explicitly exert some control over who gets to acquire the lock next after the current holder releases it.</li>
 <li>Support provided by Solaris, in terms of two calls: park() to put a calling thread to sleep, and unpark (threadID) to wake a particular thread as designated by threadID.</li>
 </ul><br>
-<p><img src='8E6AB5AF-3F9F-469B-B290-67955CB60945.png'></p><ul>
+<p><img src='(CH%2028)%20Locks/8E6AB5AF-3F9F-469B-B290-67955CB60945.png'></p><ul>
 <li>Finally, you might notice the perceived race condition in the solution, just before the call to park(). With just the wrong timing, a thread will be about to park, assuming that it should sleep until the lock is no longer held. A switch at that time to another thread (say, a thread holding the lock) could lead to trouble, for example, if that thread then released the lock. The subsequent park by the first thread would then sleep forever (potentially). This problem is sometimes called the <b>wakeup/waiting race</b>; to avoid it, we need to do some extra work.</li>
 </ul><br>
-<p><img src='6DEC209A-33EC-410C-AD83-152F5EDB1239.png'></p><br>
+<p><img src='(CH%2028)%20Locks/6DEC209A-33EC-410C-AD83-152F5EDB1239.png'></p><br>
 <br>
 <br>
 <br>

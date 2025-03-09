@@ -120,9 +120,9 @@
         <div class="document-wrapper">
             <h1 id='(CH 14) Interlude: Memory API'>(CH 14) Interlude: Memory API</h1><h2 id='Types of Memory'>Types of Memory</h2><ul>
 <li><b>Stack</b> memory, and <b>allocations</b> and <b>deallocations</b> of it are <b>managed implicitly by the compiler</b> for you</li>
-</ul><p><img src='98B42F2E-F609-4159-BA31-9F51AAF8C5F7.png'></p><ul>
+</ul><p><img src='(CH%2014)%20Interlude%20Memory%20API/98B42F2E-F609-4159-BA31-9F51AAF8C5F7.png'></p><ul>
 <li><b>Heap</b>memory, where all allocations and deallocations are <b>explicitly handled by you</b></li>
-</ul><p><img src='F2D11723-666E-4DF6-8903-22F0E8D8E624.png'></p><br>
+</ul><p><img src='(CH%2014)%20Interlude%20Memory%20API/F2D11723-666E-4DF6-8903-22F0E8D8E624.png'></p><br>
 <h2 id='The malloc() Call'>The malloc() Call</h2><ul>
 <li>The malloc() call is quite <b>simple</b>
 <ul>
@@ -142,15 +142,15 @@
 </ul><br>
 <h2 id='The free() Call'>The free() Call</h2><ul>
 <li>To free heap memory that is no longer in use, programmers simply call free():</li>
-</ul><p><img src='94E8DA49-EE5B-43BB-9259-76CA1476EF8A.png'></p><br>
+</ul><p><img src='(CH%2014)%20Interlude%20Memory%20API/94E8DA49-EE5B-43BB-9259-76CA1476EF8A.png'></p><br>
 <h2 id='Common Errors'>Common Errors</h2><h3 id='Forgetting To Allocate Memory'>Forgetting To Allocate Memory</h3><ul>
 <li>Many routines expect memory to be allocated before you call them.</li>
-</ul><p><img src='3D6F3D49-3F64-42A0-9346-65EACC1F0139.png'></p><ul>
+</ul><p><img src='(CH%2014)%20Interlude%20Memory%20API/3D6F3D49-3F64-42A0-9346-65EACC1F0139.png'></p><ul>
 <li>In this case, the proper code might instead look like this:</li>
-</ul><p><img src='2411E5F3-FB10-4452-9B97-B66AD214E265.png'></p><br>
+</ul><p><img src='(CH%2014)%20Interlude%20Memory%20API/2411E5F3-FB10-4452-9B97-B66AD214E265.png'></p><br>
 <h3 id='Not Allocating Enough Memory'>Not Allocating Enough Memory</h3><ul>
 <li><b>Buffer overflow</b></li>
-</ul><p><img src='F53C05BA-11BB-41D2-BFC2-0BF239DDE9EA.png'></p><br>
+</ul><p><img src='(CH%2014)%20Interlude%20Memory%20API/F53C05BA-11BB-41D2-BFC2-0BF239DDE9EA.png'></p><br>
 <h3 id='Forgetting to Initialize Allocated Memory'>Forgetting to Initialize Allocated Memory</h3><ul>
 <li><b>Uninitialized read</b></li>
 </ul><br>

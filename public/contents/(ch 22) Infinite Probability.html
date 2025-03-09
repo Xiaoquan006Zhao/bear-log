@@ -144,12 +144,12 @@
 </ul>
 </li>
 </ul><br>
-<h2 id='State machine to matrix'>State machine to matrix</h2><p><img src='AB31070C-7598-4D04-B279-46BB7EC84F7B.png'><br>
-<img src='65EF5EC5-BE9C-4021-A50D-214D2D83D336.png'></p><br>
+<h2 id='State machine to matrix'>State machine to matrix</h2><p><img src='(ch%2022)%20Infinite%20Probability/AB31070C-7598-4D04-B279-46BB7EC84F7B.png'><br>
+<img src='(ch%2022)%20Infinite%20Probability/65EF5EC5-BE9C-4021-A50D-214D2D83D336.png'></p><br>
 <ul>
 <li>Start with [1,0,0], after 13 or 14 operation</li>
 </ul><br>
-<p><img src='C51E4F98-9F6E-4E23-B685-FE299487DCEA.png'></p><ul>
+<p><img src='(ch%2022)%20Infinite%20Probability/C51E4F98-9F6E-4E23-B685-FE299487DCEA.png'></p><ul>
 <li>A <b>steady state</b></li>
 </ul><br>
 <h2 id='Discussion Questions'>Discussion Questions</h2><ol start='1' style='--data-list-start: 1;'>
@@ -215,7 +215,7 @@ described, abstractly, as follows:</p><ul>
 </li>
 <li>But we can model this as a state machine, where the state is the number of times the wizard hits:</li>
 </ul><br>
-<p><img src='31DF2FE9-687E-452E-827F-A9564DF777F2.png'></p><ul>
+<p><img src='(ch%2022)%20Infinite%20Probability/31DF2FE9-687E-452E-827F-A9564DF777F2.png'></p><ul>
 <li>This becomes a fairly simple transition matrix. Construct that matrix, and use an initial column vector that shows a probability 1 of starting in state 0. Using a Markov chain, you can then determine, for any number of turns, the probability breakdown of what state the player is in (multiply by 6 to get the amount of damage done so far). For any given turn, you can see the prob- ability of doing any amount of damage (keeping in mind that on turn <i>n</i>, the warrior has done exactly /n/damage).</li>
 <li>What trends do you see as the amount of required damage increases? Between 1 and 1000, what value gives the odds that are closest to 1:1 (even chance of the warrior or wizard winning, i.e., the smallest absolute difference between the expected win rate of the wizard and 50%)?</li>
 </ul><br>
@@ -231,7 +231,7 @@ described, abstractly, as follows:</p><ul>
 <li>Each state consists of /three/numbers rather than just one. The first number is the number of black cards remaining in the deck. The second number is the number of red cards remaining in the deck. The third number is the number of black cards in a row, currently. The initial state is (3, 3, 0).</li>
 <li>With the first card drawn, we can draw either a black card (probability 3/6) transitioning to state (2, 3, 1) or a red card (probability 3/6) transition- ing to state (3, 2, 0). State (2, 3, 1) has a probability 2/5 of drawing a second black card, transitioning to (1, 3, 2) which is a final state, because no matter what is drawn after that, we know that we have encountered a run of two black cards in a row; there is also a probability 3/5 of drawing a red card after the initial black card instead, transitioning to state (2, 2, 0). The partial state diagram looks like the following.</li>
 </ul><br>
-<p><img src='D74F3182-1782-4076-9900-5EF2023D55FC.png'></p><ul>
+<p><img src='(ch%2022)%20Infinite%20Probability/D74F3182-1782-4076-9900-5EF2023D55FC.png'></p><ul>
 <li>You could extend this state diagram to include all possibilities. Then, for each final state that includes a run of at least two black cards, multiply all of the probabilities to get there (in this case, the probability of reaching state (1, 3, 2) is 3/6 * 2/5 = 1/5). Add the probabilities of all such final states and that is the probability of encountering a run of at least two cards.</li>
 <li>How would you model this in a spreadsheet? The first number is between 0 and 3. The second number is between 0 and 3. The third number is between 0 and 2. This gives a maximum of 4 * 4 * 3 = 192 states. You could simply number the states as a single three-digit number (the initial state would be 330). For greater efficiency, if the three numbers are (<i>a</i>, <i>b</i>, <i>c</i>), you could have that correspond to the state number 12/a/+ 3/b/+ <i>c</i>, which would be unique for any valid combination of the numbers. (We could get even more efficient, since some states like (3, 3, 3) are impossible, but the number is small enough that we can ignore that detail for now.) As with the <i>Risk/case study in this chapter, each state (/a</i>, <i>b</i>, 2) for all numbers <i>a/and /b/is considered a positive final state, and we can compute the probability of reaching that state by going back to the previous (/a/+ 1, /b</i>, 1). Any state (<i>m</i>, <i>n</i>, 1) can be reached from (<i>m/+ 1, /n</i>, 0). Any state (<i>x</i>, <i>y</i>, 0) can be reached from either (<i>x</i>, <i>y/+ 1, 0) or (/x</i>, <i>y/+ 1, 1). Going recursively, you get back to (3, 3, 0) eventually through all paths. By multi- plying each state’s probability by the probability of transitioning there from a previous state—the probability of drawing a black card from state (/black</i>, <i>red</i>, <i>streak</i>) is black/(black+red), and the probability of drawing a red card is red/(black+red)—you should be able to get the probability of transitioning at some point to any given state. Add up all the probability of reaching all final states with /streak/= 2 and that gives you the probability you’re looking for.</li>
 <li><b>Ultimate challenge (requires programming)</b>: A gambler sits down at a /Blackjack/table, which is dealing cards from an eight-deck shoe; this means the cards are being dealt from a collection of 32 Aces, 128 “tens” (10, Jack, Queen or King), and 256 “spots” (number cards 2 through 9). Assume a fair, random shuffle, and assume that the entire shoe is dealt through. What is the probability that at some point, the player sees at least one run of at least 10 “tens” dealt in a row?</li>

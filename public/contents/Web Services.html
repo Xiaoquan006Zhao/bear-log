@@ -142,7 +142,7 @@
 <h2 id='Web Services as an Alternative Presentation Layer'>Web Services as an Alternative Presentation Layer</h2><ul>
 <li>Build the web application first and then add <b>web services</b> as an <b>alternative interface</b> to it</li>
 <li>Hard to scale because everything is in one place</li>
-</ul><p><img src='91B82715-A80B-4062-BEBA-2C48E2DD10E8.png'></p><br>
+</ul><p><img src='Web%20Services/91B82715-A80B-4062-BEBA-2C48E2DD10E8.png'></p><br>
 <h2 id='API-First Approach'>API-First Approach</h2><ul>
 <li>Designing and building your <b>API contract first</b> and then building clients consuming that API and the actual implementation of the web service.
 <ul>
@@ -151,7 +151,7 @@
 </ul>
 </li>
 <li>To make sure you <b>do not over-engineer</b> and <b>still provide</b> all of the functionality needed by your clients, you may need to spend much more time designing and <b>researching</b> your <b>future use cases</b></li>
-</ul><p><img src='349757D8-3233-4B2E-8F8F-5D040E7A9C19.png'></p><br>
+</ul><p><img src='Web%20Services/349757D8-3233-4B2E-8F8F-5D040E7A9C19.png'></p><br>
 <h2 id='Pragmatic Approach'>Pragmatic Approach</h2><ul>
 <li>When you see a use case that can be easily isolated into a separate web service and that will most likely require multiple clients performing the same type of functionality, then you should consider building a web service for it.</li>
 <li>On the other hand, when you are just testing the waters with very loosely defined requirements, you may be better off by starting small and learning quickly rather than investing too much upfront.</li>
@@ -176,7 +176,7 @@
 </ul><br>
 <h2 id='Scaling REST Web Services'>Scaling REST Web Services</h2><h3 id='Keeping Service Machines Stateless'>Keeping Service Machines Stateless</h3><ul>
 <li>load balancing, add clones, crash-detecting, maintenance and update (no downtime), (potential auto-scaling if your cloud host supports it)</li>
-</ul><p><img src='9974961D-CC86-4DE0-AF37-7D2DEC3A150C.png'></p><br>
+</ul><p><img src='Web%20Services/9974961D-CC86-4DE0-AF37-7D2DEC3A150C.png'></p><br>
 <h4 id='common use cases of sharing state between machines'>common use cases of sharing state between machines</h4><ul>
 <li><b>Security</b>, authentication token
 <ul>
@@ -193,7 +193,7 @@
 </li>
 </ul>
 </li>
-</ul><p><img src='535D8017-9F0A-4751-A554-C7BBE479724A.png'></p><br>
+</ul><p><img src='Web%20Services/535D8017-9F0A-4751-A554-C7BBE479724A.png'></p><br>
 <h5 id='Question whether transactions or even locking is necessary because they are so expensive to implement (Time, hurt scalability)'>Question whether transactions or even locking is necessary because they are so expensive to implement (Time, hurt scalability)</h5><ul>
 <li><b>Resource locking</b>
 <ul>
@@ -216,14 +216,14 @@
 <li><b>Increasingly difficult</b> to perform as the number of services involved increases and <b>more resources need</b> to be available throughout the time of the transaction</li>
 </ul>
 </li>
-</ul><p><img src='E273EAC3-318F-4E94-8488-9889ECE7E8FF.png'></p><ul>
+</ul><p><img src='Web%20Services/E273EAC3-318F-4E94-8488-9889ECE7E8FF.png'></p><ul>
 <li>Look for <b>alternative</b>
 <ul>
 <li><b>Compensating transaction</b>, <b>revert</b> the result of an operation that was issued as part of a larger logical transaction that has failed. (<b>roll back v.s. providing additional methods to revert</b>)</li>
 <li><b>Benefit</b>, web services do not need to wait for one another; they do not need to maintain any state or resources for the duration of the overarching transaction either</li>
 </ul>
 </li>
-</ul><p><img src='5CBB18A8-578E-475A-962A-6C31A324223F.png'></p><br>
+</ul><p><img src='Web%20Services/5CBB18A8-578E-475A-962A-6C31A324223F.png'></p><br>
 <h2 id='Caching Service Responses'>Caching Service Responses</h2><ul>
 <li>To take advantage of HTTP caching, you need to make sure that all of your <b>GET</b> method handlers are <b>truly read-only</b>. A GET request to any resource should not cause any state changes or data updates.
 <ul>
@@ -242,7 +242,7 @@
 </li>
 <li>To truly leverage HTTP caching, you want to make as many of your resources <b>public</b> as possible. Making resources public allows you to have a single cached object for each URL</li>
 <li>Reverse Proxy, Load Balancing separated by service</li>
-</ul><p><img src='E0D5EB3E-BF3C-45BC-8EF0-8C70F24A2DE2.png'></p><br>
+</ul><p><img src='Web%20Services/E0D5EB3E-BF3C-45BC-8EF0-8C70F24A2DE2.png'></p><br>
 <h2 id='Functional Partitioning'>Functional Partitioning</h2><ul>
 <li><b>Functional partitioning</b> is a way to split a service into a set of smaller, fairly <b>independent web services</b>, where each web service focuses on a subset of functionality of the overall system.
 <ul>

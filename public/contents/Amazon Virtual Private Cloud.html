@@ -186,11 +186,11 @@
 <li>The CIDR block determines which IP addresses may be assigned to instances and other resources within the VPC.</li>
 <li>After creating a VPC, you divide the primary VPC CIDR block into <b>subnets</b> that hold your AWS resources.</li>
 </ul><br>
-<p><img src='191535DC-F6D6-49E6-82AA-2EBBB447976C.png'></p><ul>
+<p><img src='Amazon%20Virtual%20Private%20Cloud/191535DC-F6D6-49E6-82AA-2EBBB447976C.png'></p><ul>
 <li>If you plan to connect your VPC to another network—whether an on-premises network or another VPC—be sure the VPC CIDR you choose <b>doesn’t overlap with addresses</b> already in use on the other network.</li>
 <li>You <b>can’t change</b> the primary CIDR block <b>after you create</b> your VPC, so think carefully about your address requirements before creating a VPC.</li>
 </ul><br>
-<h3 id='IPv6 CIDR Blocks'>IPv6 CIDR Blocks</h3><p><img src='78EE6D44-3D1F-4EA1-9137-D82F63478649.png'></p><br>
+<h3 id='IPv6 CIDR Blocks'>IPv6 CIDR Blocks</h3><p><img src='Amazon%20Virtual%20Private%20Cloud/78EE6D44-3D1F-4EA1-9137-D82F63478649.png'></p><br>
 <h2 id='Subnets'>Subnets</h2><ul>
 <li>A subnet lets you isolate instances from each other, control how traffic flows to and from your instances, and organize them by function.</li>
 </ul><br>
@@ -201,15 +201,15 @@
 </ul>
 </li>
 </ul><br>
-<p><img src='03FD0186-846C-4F46-ADFC-E4BFE4C3C1A3.png'></p><br>
+<p><img src='Amazon%20Virtual%20Private%20Cloud/03FD0186-846C-4F46-ADFC-E4BFE4C3C1A3.png'></p><br>
 <h3 id='Availability Zones'>Availability Zones</h3><ul>
 <li>You can achieve resiliency for your applications by creating two subnets each in a differ- ent availability zone and then spreading your instances across those zones.</li>
 </ul><br>
-<p><img src='BF2FBE79-82C1-431C-B082-A85AA4AD1BC9.png'></p><br>
+<p><img src='Amazon%20Virtual%20Private%20Cloud/BF2FBE79-82C1-431C-B082-A85AA4AD1BC9.png'></p><br>
 <h2 id='Elastic Network Interfaces'>Elastic Network Interfaces</h2><ul>
 <li>An elastic network interface (ENI) allows an instance to communicate with other network resources, including AWS services, other instances, on-premises servers, and the Internet.</li>
 </ul><br>
-<h3 id='Enhanced Networking'>Enhanced Networking</h3><p><img src='E9F0AE55-C92A-42AD-8095-8854F7C88E8E.png'></p><br>
+<h3 id='Enhanced Networking'>Enhanced Networking</h3><p><img src='Amazon%20Virtual%20Private%20Cloud/E9F0AE55-C92A-42AD-8095-8854F7C88E8E.png'></p><br>
 <h2 id='Internet Gateways'>Internet Gateways</h2><ul>
 <li>An Internet gateway gives instances the ability to receive a public IP address, connect to the Internet, and receive requests from the Internet.</li>
 </ul><br>
@@ -222,7 +222,7 @@
 <h3 id='The Default Route'>The Default Route</h3><ul>
 <li>To enable Internet access for your instances, you must create a default route pointing to the Internet gateway.</li>
 </ul><br>
-<p><img src='B1E5F347-52EE-4686-ABC2-9A6D1A3DBAFA.png'></p><br>
+<p><img src='Amazon%20Virtual%20Private%20Cloud/B1E5F347-52EE-4686-ABC2-9A6D1A3DBAFA.png'></p><br>
 <h2 id='Security Groups'>Security Groups</h2><ul>
 <li>A security group functions as a <b>firewall</b> that controls traffic to and from an instance by permitting traffic to ingress or egress that instance’s ENI.</li>
 <li>When you create a security group, you must specify a group name, description, and VPC for the group to reside in.</li>
@@ -238,7 +238,7 @@
 </ul>
 </li>
 </ul><br>
-<p><img src='033FAF4B-529B-40E5-8828-97BB28B9E163.png'></p><br>
+<p><img src='Amazon%20Virtual%20Private%20Cloud/033FAF4B-529B-40E5-8828-97BB28B9E163.png'></p><br>
 <h3 id='Outbound Rules'>Outbound Rules</h3><ul>
 <li>Outbound rules specify what traffic the instance may send out of the attached ENI. The format of an outbound rule mirrors an inbound rule and contains three elements:
 <ul>
@@ -248,7 +248,7 @@
 </ul>
 </li>
 </ul><br>
-<p><img src='7F19D2E1-9EBA-43A6-9077-284712181116.png'></p><br>
+<p><img src='Amazon%20Virtual%20Private%20Cloud/7F19D2E1-9EBA-43A6-9077-284712181116.png'></p><br>
 <h3 id='Sources and Destinations'>Sources and Destinations</h3><ul>
 <li>The source or destination in a rule can be any <b>CIDR</b></li>
 <li>The source can also be the <b>resource ID of a security group</b>
@@ -282,7 +282,7 @@
 </ul>
 </li>
 </ul><br>
-<p><img src='3195E465-FBC1-424E-9989-A40ED01D067C.png'></p><br>
+<p><img src='Amazon%20Virtual%20Private%20Cloud/3195E465-FBC1-424E-9989-A40ED01D067C.png'></p><br>
 <h3 id='Outbound Rules'>Outbound Rules</h3><ul>
 <li>As you might expect, the outbound NACL rules follow an almost identical format as the inbound rules. Each rule contains the following elements:
 <ul>
@@ -294,8 +294,8 @@
 </ul>
 </li>
 </ul><br>
-<p><img src='591CEB6D-B94C-4ACF-B528-E58256D644B0.png'><br>
-<img src='150D367F-1BA1-43CD-985E-AB9C1685F5C1.png'></p><br>
+<p><img src='Amazon%20Virtual%20Private%20Cloud/591CEB6D-B94C-4ACF-B528-E58256D644B0.png'><br>
+<img src='Amazon%20Virtual%20Private%20Cloud/150D367F-1BA1-43CD-985E-AB9C1685F5C1.png'></p><br>
 <h3 id='Using Network Access Control Lists and Security Groups Together'>Using Network Access Control Lists and Security Groups Together</h3><ul>
 <li>You may want to use an NACL in addition to a security group so that you aren’t dependent on AWS administrators to specify the correct security group when they launch an instance.</li>
 <li>Because an NACL is applied to the subnet, the rules of the NACL apply to all traffic ingressing and egressing the subnet, regardless of how the security groups are configured.</li>
@@ -317,14 +317,14 @@
 <li>When you associate an ENI with a public IP address, the ENI maintains its private IP address.</li>
 <li>The Internet gateway maps the public IP address to the ENI’s private IP address using a process called network address translation (NAT).</li>
 </ul><br>
-<p><img src='0904FD69-FE04-417C-9B19-6AE94F2482E9.png'></p><br>
+<p><img src='Amazon%20Virtual%20Private%20Cloud/0904FD69-FE04-417C-9B19-6AE94F2482E9.png'></p><br>
 <h2 id='Network Address Translation Devices'>Network Address Translation Devices</h2><ul>
 <li>The purpose of a NAT device is to allow an instance to access the Internet while preventing hosts on the Internet from reaching the instance directly.</li>
 </ul><br>
 <h3 id='Configuring Route Tables to Use NAT Devices'>Configuring Route Tables to Use NAT Devices</h3><ul>
 <li>Instances that use the NAT device must send Internet-bound traffic to it, and the NAT device must send Internet-bound traffic to an Internet gateway. Hence, the NAT device and the instances that use it must use different default routes. Furthermore, they must also use different route tables and hence must reside in separate subnets.</li>
 </ul><br>
-<p><img src='67C9A655-377E-4AE4-96A3-ECFBD44F4082.png'></p><br>
+<p><img src='Amazon%20Virtual%20Private%20Cloud/67C9A655-377E-4AE4-96A3-ECFBD44F4082.png'></p><br>
 <h3 id='NAT Gateway'>NAT Gateway</h3><ul>
 <li>When you create a NAT gateway, you must assign it an EIP. A NAT gateway can reside in only one subnet, which must be a public subnet for it to access the Internet. AWS selects a private IP address from the subnet and assigns it to the NAT gateway.
 <ul>
@@ -337,7 +337,7 @@
 <li>A NAT instance is a normal EC2 instance that uses a preconfigured Linux-based AMI.</li>
 <li>Unlike a NAT gateway, a NAT instance doesn’t automatically scale to accommodate increased bandwidth requirements.</li>
 </ul><br>
-<p><img src='FEC7FEF3-DB1B-49FB-A554-06B7D14E0DC7.png'></p><br>
+<p><img src='Amazon%20Virtual%20Private%20Cloud/FEC7FEF3-DB1B-49FB-A554-06B7D14E0DC7.png'></p><br>
 <h2 id='VPC Peering'>VPC Peering</h2><ul>
 <li>You can configure VPC peering to allow instances in one VPC to communicate with VPCs in another over the private AWS network.</li>
 <li>To enable VPC peering, you must set up a <b>VPC peering connection</b> between two VPCs.</li>
@@ -345,7 +345,7 @@
 <li>To use a peering connection, you must create new routes in both VPCs to allow traffic to travel in both directions.</li>
 <li>For each route, the destination prefix should exist within the destination VPC. The target of each route must be the peering connection’s identifier, which begins with pcx-.</li>
 </ul><br>
-<p><img src='2B2AEBFD-14B3-44BC-AE9A-8114260D5753.png'></p><br>
+<p><img src='Amazon%20Virtual%20Private%20Cloud/2B2AEBFD-14B3-44BC-AE9A-8114260D5753.png'></p><br>
 <h2 id='Hybrid Cloud Networking'>Hybrid Cloud Networking</h2><ul>
 <li>AWS offers three options for private connectivity <b>between your on-premises network and your VPCs</b></li>
 </ul><br>
@@ -372,7 +372,7 @@
 <h5 id='Transit Gateway Peering'>Transit Gateway Peering</h5><ul>
 <li>You can peer transit gateways together, even between different regions. If you have resources spread across different regions, this can reduce the number of VPN connections and VPC peering connections.</li>
 </ul><br>
-<h5 id='Multicast'>Multicast</h5><p><img src='20572372-E5A7-4AD0-BA87-B97F5570B24B.png'></p><br>
+<h5 id='Multicast'>Multicast</h5><p><img src='Amazon%20Virtual%20Private%20Cloud/20572372-E5A7-4AD0-BA87-B97F5570B24B.png'></p><br>
 <h5 id='Blackhole Routes'>Blackhole Routes</h5><ul>
 <li>If you want to block a specific route, you can create a blackhole entry for that route in the transit gateway route table.</li>
 <li>A blackhole route causes the transit gateway to drop any traffic that matches the route. Blackhole routes are useful for permanently blocking specific networks such as known malicious IP addresses.</li>
@@ -387,8 +387,8 @@
 <h4 id='Hosted'>Hosted</h4><ul>
 <li>If you need less than 1 Gbps of bandwidth, or if placing your equipment in a Direct Connect location is infeasible, you can get a hosted Direct Connect link that supports speeds between 50 Mbps and 10 Gbps. A hosted connection extends the “last-mile” connection from a Direct Connect location to your data center or office.</li>
 </ul><br>
-<h4 id='Direct Connect Gateways'>Direct Connect Gateways</h4><p><img src='7CDE58AC-FD0B-457F-A613-9358E18EA4A2.png'></p><br>
-<h4 id='Virtual Interfaces'>Virtual Interfaces</h4><p><img src='8C5C1B43-E726-45CD-8AD3-4CF03FB04E3C.png'></p><br>
+<h4 id='Direct Connect Gateways'>Direct Connect Gateways</h4><p><img src='Amazon%20Virtual%20Private%20Cloud/7CDE58AC-FD0B-457F-A613-9358E18EA4A2.png'></p><br>
+<h4 id='Virtual Interfaces'>Virtual Interfaces</h4><p><img src='Amazon%20Virtual%20Private%20Cloud/8C5C1B43-E726-45CD-8AD3-4CF03FB04E3C.png'></p><br>
 <h2 id='High-Performance Computing (Don’t understand this)'>High-Performance Computing (Don’t understand this)</h2><ul>
 <li><b>Elastic Fabric Adapter</b></li>
 <li><b>AWS ParallelCluster</b></li>

@@ -123,16 +123,16 @@
 </ul><br>
 <h2 id='The Singleton Pattern'>The Singleton Pattern</h2><ul>
 <li>The Singleton Pattern ensures a class has only one instance, and provides a global point of access to it.</li>
-</ul><p><img src='image.png'></p><br>
-<h2 id='Multithreading problem'>Multithreading problem</h2><p><img src='image%202.png'></p><br>
-<h3 id='A not so good solution: Synchronization'>A not so good solution: Synchronization</h3><p><img src='image%203.png'><img src='image%204.png'></p><br>
-<h3 id='Another not so good solution: Eagerly created instance'>Another not so good solution: Eagerly created instance</h3><p><img src='image%205.png'></p><ul>
+</ul><p><img src='(CH%205)%20The%20Singleton%20Pattern/image.png'></p><br>
+<h2 id='Multithreading problem'>Multithreading problem</h2><p><img src='(CH%205)%20The%20Singleton%20Pattern/image%202.png'></p><br>
+<h3 id='A not so good solution: Synchronization'>A not so good solution: Synchronization</h3><p><img src='(CH%205)%20The%20Singleton%20Pattern/image%203.png'><img src='(CH%205)%20The%20Singleton%20Pattern/image%204.png'></p><br>
+<h3 id='Another not so good solution: Eagerly created instance'>Another not so good solution: Eagerly created instance</h3><p><img src='(CH%205)%20The%20Singleton%20Pattern/image%205.png'></p><ul>
 <li>Using this approach, we rely on the JVM to create the unique instance of the Singleton when the class is loaded. The JVM guarantees that the instance will be created before any thread accesses the static uniqueInstance variable.</li>
 </ul><br>
-<h3 id='Another not so good solution: Volatile and Use “double-checked locking”'>Another not so good solution: Volatile and Use “double-checked locking”</h3><p><img src='image%206.png'></p><br>
+<h3 id='Another not so good solution: Volatile and Use “double-checked locking”'>Another not so good solution: Volatile and Use “double-checked locking”</h3><p><img src='(CH%205)%20The%20Singleton%20Pattern/image%206.png'></p><br>
 <h3 id='Problems with the above methods'>Problems with the above methods</h3><ul>
 <li>Synchronization, class loading issues, reflection, and serialization/deserialization issues</li>
-</ul><h3 id='A better solution: Enum'>A better solution: Enum</h3><p><img src='image%207.png'></p><br>
+</ul><h3 id='A better solution: Enum'>A better solution: Enum</h3><p><img src='(CH%205)%20The%20Singleton%20Pattern/image%207.png'></p><br>
 <br>
 <br>
 <br>

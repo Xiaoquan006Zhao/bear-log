@@ -177,7 +177,7 @@
 <li>A <b>callback</b> is a construct of asynchronous processing where the caller does not block while waiting for the result of the operation, but provides a mechanism to be <b>notified</b> once the operation is finished.</li>
 </ul>
 </li>
-</ul><p><img src='1087DDC0-3656-4AF0-A6CF-A982E9FC6C88.png'></p><br>
+</ul><p><img src='Asynchronous%20Processing/1087DDC0-3656-4AF0-A6CF-A982E9FC6C88.png'></p><br>
 <h2 id='Message Queue'>Message Queue</h2><ul>
 <li>A <b>message queue</b> is a component that buffers and distributes asynchronous requests.
 <ul>
@@ -185,7 +185,7 @@
 <li>Finally, they are delivered to <b>message consumers</b> who perform the asynchronous action on behalf of the producer.</li>
 </ul>
 </li>
-</ul><p><img src='70CEB9D2-B055-41DA-A06E-C9DD23F1DBDD.png'></p><ul>
+</ul><p><img src='Asynchronous%20Processing/70CEB9D2-B055-41DA-A06E-C9DD23F1DBDD.png'></p><ul>
 <li><b>Advantage</b>
 <ul>
 <li>Nonblocking communication between producer and consumer</li>
@@ -211,7 +211,7 @@
 A <b>daemon-like consumer</b> runs constantly in an infinite loop, and it usually has a permanent connection to the message broker.</p><br>
 <h2 id='Routing methods'>Routing methods</h2><h3 id='Direct Worker Queue Method'>Direct Worker Queue Method</h3><ul>
 <li>Each message arriving to the queue is routed to only one consumer.</li>
-</ul><p><img src='70FD15F2-BB40-40E1-8454-CB1CF48841BA.png'></p><br>
+</ul><p><img src='Asynchronous%20Processing/70FD15F2-BB40-40E1-8454-CB1CF48841BA.png'></p><br>
 <h3 id='Publish/Subscribe Method'>Publish/Subscribe Method</h3><ul>
 <li>Consumers using the publish/subscribe model have to connect to the message broker and declare which <b>topics</b> they are interested in.</li>
 <li>Whenever a new message is published to a topic, it is <b>cloned</b> for each consumer subscribing to it.</li>
@@ -227,7 +227,7 @@ A <b>daemon-like consumer</b> runs constantly in an infinite loop, and it usuall
 </svg></span> notifies shipping providers and processes loyalty program rules (two services)</li>
 </ul>
 </li>
-</ul><p><img src='902272E6-AFAA-467D-9F75-492406FFC9FF.png'></p><br>
+</ul><p><img src='Asynchronous%20Processing/902272E6-AFAA-467D-9F75-492406FFC9FF.png'></p><br>
 <h2 id='Messaging Protocols'>Messaging Protocols</h2><ul>
 <li><b>AMQP (Advanced Message Queuing Protocol)</b></li>
 <li><b>STOMP (Streaming Text-Oriented Messaging Protocol)</b>
@@ -243,7 +243,7 @@ A <b>daemon-like consumer</b> runs constantly in an infinite loop, and it usuall
 <li>Workers should get all of their data from the queue and external persistence stores.</li>
 </ul>
 </li>
-</ul><p><img src='A0DFEF39-8653-41C1-9C53-A16C2F85C14D.png'></p><ul>
+</ul><p><img src='Asynchronous%20Processing/A0DFEF39-8653-41C1-9C53-A16C2F85C14D.png'></p><ul>
 <li>No matter what messaging solution you use, do some research (get to know what works under the hood and avoid gotcha) (To scale horizontally, usually you need to do application-level sharding to push to different message brokers)
 <ul>
 <li><b>Number of messages published per second</b></li>
@@ -266,16 +266,16 @@ A <b>daemon-like consumer</b> runs constantly in an infinite loop, and it usuall
 <li><b>Resource intensive work</b></li>
 <li><b>Independent processing of high- and low-priority jobs</b></li>
 </ul><br>
-<h3 id='Evening Out Traffic Spikes'>Evening Out Traffic Spikes</h3><p><img src='0080D6D0-AC1D-4CA7-A589-74BB64A60A35.png'></p><br>
+<h3 id='Evening Out Traffic Spikes'>Evening Out Traffic Spikes</h3><p><img src='Asynchronous%20Processing/0080D6D0-AC1D-4CA7-A589-74BB64A60A35.png'></p><br>
 <h3 id='Decoupling and self healing'>Decoupling and self healing</h3><ul>
 <li><b>Producers and consumers do not talk to each other</b>, they don’t know how the other does its job (don’t even know if the other exist)</li>
-</ul><p><img src='C27930CB-A18B-4EFE-838D-D62C21B7A365.png'></p><br>
+</ul><p><img src='Asynchronous%20Processing/C27930CB-A18B-4EFE-838D-D62C21B7A365.png'></p><br>
 <ul>
 <li>To <b>recover</b> from <b>failure</b>, you simply <b>add a server replacement</b> and the system “heals” itself automatically by <b>slowly catching up</b> with the queues and draining messages over time</li>
 </ul><br>
 <h2 id='Message Queue–Related Challenges'>Message Queue–Related Challenges</h2><h3 id='No Message Ordering'>No Message Ordering</h3><ul>
 <li>When messages need to be processed in certain order but fail to do so due to parallel consumer processing speed or failure</li>
-</ul><p><img src='12A76D02-DC35-45EA-A273-88340A4D3FCB.png'></p><br>
+</ul><p><img src='Asynchronous%20Processing/12A76D02-DC35-45EA-A273-88340A4D3FCB.png'></p><br>
 <h4 id='Solution'>Solution</h4><ul>
 <li><b>Build the system to assume that messages can arrive in random order</b>
 <ul>

@@ -150,7 +150,7 @@
 <li>At any given time, a job that is ready to run is on a single queue.</li>
 <li>MLFQ uses <b>priorities</b> to decide which job should run at a given time: <b>a job with higher priority is chosen to run</b></li>
 </ul><br>
-<p><img src='B323C16E-AF9E-4F51-B6A5-6C93BD1F8D19.png'></p><br>
+<p><img src='(CH%208)%20Scheduling%20The%20Multi-Level%20Feedback%20Queue%20(MLFQ)/B323C16E-AF9E-4F51-B6A5-6C93BD1F8D19.png'></p><br>
 <ul>
 <li>MLFQ <b>varies</b> the priority of a job based on its <b>observed behavior</b>
 <ul>
@@ -160,15 +160,15 @@
 </li>
 <li>In this way, MLFQ will try to learn/about processes as they run, and thus use the history of the job to predict its future behavior.</li>
 </ul><br>
-<h2 id='Attempt #1: How to Change Priority'>Attempt #1: How to Change Priority</h2><p><img src='C801E21B-8620-46A7-BD72-68048C1ACEEA.png'></p><br>
-<h3 id='Example 1: A Single Long-Running Job'>Example 1: A Single Long-Running Job</h3><p><img src='C07E6A29-957F-4C75-B1DE-F6765D00D9BB.png'></p><br>
+<h2 id='Attempt #1: How to Change Priority'>Attempt #1: How to Change Priority</h2><p><img src='(CH%208)%20Scheduling%20The%20Multi-Level%20Feedback%20Queue%20(MLFQ)/C801E21B-8620-46A7-BD72-68048C1ACEEA.png'></p><br>
+<h3 id='Example 1: A Single Long-Running Job'>Example 1: A Single Long-Running Job</h3><p><img src='(CH%208)%20Scheduling%20The%20Multi-Level%20Feedback%20Queue%20(MLFQ)/C07E6A29-957F-4C75-B1DE-F6765D00D9BB.png'></p><br>
 <h3 id='Example 2: Along Came A Short Job'>Example 2: Along Came A Short Job</h3><ul>
 <li>We assume the new job is short.</li>
 <li>Over-time, if it is not we decrease its priority.</li>
 <li>This way we <b>approximates SJF</b></li>
 </ul><br>
-<p><img src='FDC80501-5F08-4E77-B5E7-82EE591D4E8B.png'></p><br>
-<h3 id='Example 3: What About I/O?'>Example 3: What About I/O?</h3><p><img src='16E91818-D6E4-48AD-A22A-887A068A61DE.png'></p><ul>
+<p><img src='(CH%208)%20Scheduling%20The%20Multi-Level%20Feedback%20Queue%20(MLFQ)/FDC80501-5F08-4E77-B5E7-82EE591D4E8B.png'></p><br>
+<h3 id='Example 3: What About I/O?'>Example 3: What About I/O?</h3><p><img src='(CH%208)%20Scheduling%20The%20Multi-Level%20Feedback%20Queue%20(MLFQ)/16E91818-D6E4-48AD-A22A-887A068A61DE.png'></p><ul>
 <li>An interactive job B (shown in gray) that needs the CPU only for 1 ms before performing an I/O competing for the CPU with a long-running batch job A (shown in black).</li>
 <li>The MLFQ approach keeps B at the highest priority because B keeps releasing the CPU; if B is an interactive job, MLFQ further achieves its goal of running interactive jobs quickly.</li>
 </ul><br>
@@ -176,8 +176,8 @@
 <li><b>Starvation</b>: if there are “too many” interactive jobs in the system, they will combine to consume all CPU time, and thus long-running jobs will never receive any CPU time (they <b>starve</b>).</li>
 <li>A program may <b>change its behavior</b> over time; what was CPU-bound may transition to a phase of interactivity. With our current approach, such a job would be out of luck and not be treated like the other interactive jobs in the system.</li>
 </ul><br>
-<p><img src='24FE8F40-03F0-4866-A011-A2B0C43BBB8F.png'></p><br>
-<h2 id='Attempt #2: The Priority Boost'>Attempt #2: The Priority Boost</h2><p><img src='5F811C3A-093E-442D-B72C-0404060E571B.png'></p><br>
+<p><img src='(CH%208)%20Scheduling%20The%20Multi-Level%20Feedback%20Queue%20(MLFQ)/24FE8F40-03F0-4866-A011-A2B0C43BBB8F.png'></p><br>
+<h2 id='Attempt #2: The Priority Boost'>Attempt #2: The Priority Boost</h2><p><img src='(CH%208)%20Scheduling%20The%20Multi-Level%20Feedback%20Queue%20(MLFQ)/5F811C3A-093E-442D-B72C-0404060E571B.png'></p><br>
 <ul>
 <li>First, processes are <b>guaranteed not to starve</b>: by sitting in the top queue, a job will share the CPU with other high-priority jobs in a round-robin fashion, and thus eventually receive service.</li>
 <li>Second, <b>if</b> a CPU-bound job has <b>become interactive</b>, <b>the scheduler treats it properly once it has received the priority boost</b></li>
@@ -186,7 +186,7 @@
 <li><b>Too high</b>, long-running jobs could <b>starve</b></li>
 <li><b>Too low</b>, and <b>interactive jobs</b> may <b>not get a proper share of the CPU</b></li>
 </ul><br>
-<h2 id='Attempt #3: Better Accounting'>Attempt #3: Better Accounting</h2><p><img src='D038BFE7-EFB8-4A6E-A22C-E075C5966D6B.png'></p><br>
+<h2 id='Attempt #3: Better Accounting'>Attempt #3: Better Accounting</h2><p><img src='(CH%208)%20Scheduling%20The%20Multi-Level%20Feedback%20Queue%20(MLFQ)/D038BFE7-EFB8-4A6E-A22C-E075C5966D6B.png'></p><br>
 <ul>
 <li><b>How to prevent “Gaming”?</b> (a process design in such a way to maximize its Resource consumption)</li>
 <li>The <b>problem</b> lies in <b>4b</b> which let a <b>program retain its priority</b></li>
@@ -197,8 +197,8 @@
 </li>
 <li>So, <b>we rewrite 4a & 4b into</b></li>
 </ul><br>
-<p><img src='80884581-E679-4153-A58E-A34BB1D9E0D9.png'></p><br>
-<h2 id='All refined rules'>All refined rules</h2><p><img src='87B9BD6D-D000-4E77-B6CE-BBB9C325520B.png'></p><br>
+<p><img src='(CH%208)%20Scheduling%20The%20Multi-Level%20Feedback%20Queue%20(MLFQ)/80884581-E679-4153-A58E-A34BB1D9E0D9.png'></p><br>
+<h2 id='All refined rules'>All refined rules</h2><p><img src='(CH%208)%20Scheduling%20The%20Multi-Level%20Feedback%20Queue%20(MLFQ)/87B9BD6D-D000-4E77-B6CE-BBB9C325520B.png'></p><br>
 <br>
 <br>
 <br>

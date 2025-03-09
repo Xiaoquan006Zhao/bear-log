@@ -202,9 +202,9 @@
 <h3 id='Database Option Groups'>Database Option Groups</h3><ul>
 <li>Different database engines offer various features or <b>options</b> to help you <b>manage</b> your databases and improve <b>security</b></li>
 </ul><br>
-<h3 id='Database Instance Classes'>Database Instance Classes</h3><p><img src='A1EDD66A-378C-4AB3-85CE-52F1357FA7B5.png'><br>
-<img src='74A349F4-4289-44D9-817A-3191A7F7910E.png'><br>
-<img src='AE039F4D-7E22-4532-9711-1FAD67DE44C7.png'></p><br>
+<h3 id='Database Instance Classes'>Database Instance Classes</h3><p><img src='Database%20Services/A1EDD66A-378C-4AB3-85CE-52F1357FA7B5.png'><br>
+<img src='Database%20Services/74A349F4-4289-44D9-817A-3191A7F7910E.png'><br>
+<img src='Database%20Services/AE039F4D-7E22-4532-9711-1FAD67DE44C7.png'></p><br>
 <h2 id='Storage'>Storage</h2><ul>
 <li>You also have to decide how fast the storage must be to meet the performance requirements of your database-backed application.</li>
 </ul><br>
@@ -240,7 +240,7 @@
 </li>
 <li><b>Burst IOPS</b></li>
 </ul><br>
-<p><img src='F7DE8106-369E-4976-BF6E-64FB11ECFF66.png'></p><br>
+<p><img src='Database%20Services/F7DE8106-369E-4976-BF6E-64FB11ECFF66.png'></p><br>
 <h3 id='Provisioned IOPS SSD (io1)'>Provisioned IOPS SSD (io1)</h3><ul>
 <li>Provisioned IOPS SSD lets you simply allocate the number of IOPS you need when you create your instance.</li>
 <li>There’s no concept of bursting in io1 storage.</li>
@@ -280,7 +280,7 @@
 <li>In a multi-AZ deployment, you have a <b>primary database instance</b> in one availability zone that handles reads and writes to the database, and you have a <b>standby database instance</b> in a different availability zone.</li>
 <li>If the primary instance experiences an outage, it will fail over to the standby instance, usually within two minutes.</li>
 </ul><br>
-<p><img src='23AC9EF0-F5AA-4EE6-BBC5-EB9E3FB002E7.png'></p><ul>
+<p><img src='Database%20Services/23AC9EF0-F5AA-4EE6-BBC5-EB9E3FB002E7.png'></p><ul>
 <li>Will <b>impact performance</b>, test first</li>
 <li>Multi-region failover <b>isn’t supported for Microsoft SQL Server, PostgreSQL, or Oracle</b></li>
 </ul><br>
@@ -377,8 +377,8 @@
 </ul>
 </li>
 </ul><br>
-<p><img src='0E38CF3A-7F20-468C-90EA-405B328CC5B6.png'></p><br>
-<h3 id='Types of NoSQL Databases'>Types of NoSQL Databases</h3><p><img src='447526B1-D8D4-4E6B-B928-7DE772038C76.png'></p><br>
+<p><img src='Database%20Services/0E38CF3A-7F20-468C-90EA-405B328CC5B6.png'></p><br>
+<h3 id='Types of NoSQL Databases'>Types of NoSQL Databases</h3><p><img src='Database%20Services/447526B1-D8D4-4E6B-B928-7DE772038C76.png'></p><br>
 <h2 id='DynamoDB'>DynamoDB</h2><ul>
 <li>handle thousands of reads and writes per second</li>
 </ul><br>
@@ -399,9 +399,9 @@
 <h3 id='Attributes and Items'>Attributes and Items</h3><ul>
 <li>When you create an attribute (key value pair), you must define the data type. Data types fall into the following three categories:</li>
 </ul><br>
-<p><img src='CC3AF5D8-3EE3-4836-9305-407621F03B7D.png'><br>
-<img src='AF50C57C-0B48-47FD-A5AD-4ECBF4670C49.png'><br>
-<img src='3DE5FAAB-7391-4A69-8FE7-9ECA73C6EEB4.png'></p><br>
+<p><img src='Database%20Services/CC3AF5D8-3EE3-4836-9305-407621F03B7D.png'><br>
+<img src='Database%20Services/AF50C57C-0B48-47FD-A5AD-4ECBF4670C49.png'><br>
+<img src='Database%20Services/3DE5FAAB-7391-4A69-8FE7-9ECA73C6EEB4.png'></p><br>
 <h3 id='Throughput Capacity'>Throughput Capacity</h3><ul>
 <li>When creating a table, you have the option of having DynamoDB operate in <b>on-demand mode or provisioned mode</b></li>
 <li>When you read an item from a table, that read may be <b>strongly consistent or eventually consistent</b></li>
@@ -412,7 +412,7 @@
 <h4 id='Auto Scaling (just for provisioned mode)'>Auto Scaling (just for provisioned mode)</h4><ul>
 <li>To configure Auto Scaling, you specify a minimum and maximum RCU and WCU. You also specify a desired utilization percentage. DynamoDB will automatically adjust your RCU and WCU to keep your utilization at this percentage.</li>
 </ul><br>
-<h4 id='Reserved Capacity'>Reserved Capacity</h4><p><img src='D57D5C3A-D322-4840-A87A-4C873D570C36.png'></p><br>
+<h4 id='Reserved Capacity'>Reserved Capacity</h4><p><img src='Database%20Services/D57D5C3A-D322-4840-A87A-4C873D570C36.png'></p><br>
 <h3 id='Reading Data'>Reading Data</h3><ul>
 <li><b>Scan</b></li>
 <li><b>Query</b> (by partition or sort key)</li>

@@ -118,21 +118,21 @@
     </head>
     <body>
         <div class="document-wrapper">
-            <h1 id='(CH 17) Free-Space Management'>(CH 17) Free-Space Management</h1><h2 id='Low-level Mechanisms'>Low-level Mechanisms</h2><h3 id='Splitting'>Splitting</h3><p><img src='6462AC28-DF17-4D48-938B-FB23AD1D8E3B.png'></p><ul>
+            <h1 id='(CH 17) Free-Space Management'>(CH 17) Free-Space Management</h1><h2 id='Low-level Mechanisms'>Low-level Mechanisms</h2><h3 id='Splitting'>Splitting</h3><p><img src='(CH%2017)%20Free-Space%20Management/6462AC28-DF17-4D48-938B-FB23AD1D8E3B.png'></p><ul>
 <li>Request memory <b>shorter</b> than the address space, the space is <b>Split</b> return the amount of memory requested and keep the rest of the address in the free list.</li>
 </ul><br>
 <h3 id='Coalescing'>Coalescing</h3><ul>
 <li>When a memory is <b>freed</b>, it’s <b>added</b> to the free list</li>
 </ul><br>
-<p><img src='4AF80150-FF1A-4F6F-969B-53329E7B1C48.png'></p><ul>
+<p><img src='(CH%2017)%20Free-Space%20Management/4AF80150-FF1A-4F6F-969B-53329E7B1C48.png'></p><ul>
 <li>if the newly-freed space sits right next to one existing free chunks, merge them into a single larger free chunk.</li>
 </ul><br>
-<p><img src='7F7567EC-3ED4-4962-9333-F1C2BEFE0D70.png'></p><br>
+<p><img src='(CH%2017)%20Free-Space%20Management/7F7567EC-3ED4-4962-9333-F1C2BEFE0D70.png'></p><br>
 <h2 id='Tracking The Size Of Allocated Regions'>Tracking The Size Of Allocated Regions</h2><ul>
 <li>To accomplish this task, most allocators store a little bit of extra information in a <b>header</b>block which is kept in memory,</li>
 </ul><br>
-<p><img src='ABD83D42-B5E9-4528-B171-58CE46E2C590.png'><br>
-<img src='F76D6C33-A522-4A5C-8A2E-EF123F3B5220.png'></p><br>
+<p><img src='(CH%2017)%20Free-Space%20Management/ABD83D42-B5E9-4528-B171-58CE46E2C590.png'><br>
+<img src='(CH%2017)%20Free-Space%20Management/F76D6C33-A522-4A5C-8A2E-EF123F3B5220.png'></p><br>
 <h2 id='Basic Strategies to manage free space'>Basic Strategies to manage free space</h2><h3 id='Best Fit'>Best Fit</h3><ul>
 <li>Search through the free list and find chunks of free memory that are as big or bigger than the requested size.</li>
 <li>Return the one that is the smallest in that group of candidates;</li>

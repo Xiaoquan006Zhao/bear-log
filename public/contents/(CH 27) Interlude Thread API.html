@@ -118,23 +118,23 @@
     </head>
     <body>
         <div class="document-wrapper">
-            <h1 id='(CH 27) Interlude: Thread API'>(CH 27) Interlude: Thread API</h1><h2 id='Thread Creation'>Thread Creation</h2><p><img src='081C96B7-E228-4028-9AF5-75025B70443C.png'></p><ul>
+            <h1 id='(CH 27) Interlude: Thread API'>(CH 27) Interlude: Thread API</h1><h2 id='Thread Creation'>Thread Creation</h2><p><img src='(CH%2027)%20Interlude%20Thread%20API/081C96B7-E228-4028-9AF5-75025B70443C.png'></p><ul>
 <li>The <b>first</b>, thread, is a pointer to a structure of type pthread_t; we’ll use this structure to interact with this thread, and thus we need to pass it to pthread create() in order to initialize it.</li>
 <li>The <b>second</b> argument, attr, is used to specify any attributes this thread might have. Some examples include setting the stack size or perhaps information about the scheduling priority of the thread. An attribute is initialized with a separate call to pthread attr init(); see the manual page for details. However, in most cases, the defaults will be fine; in this case, we will simply pass the value NULL in.</li>
 <li>The <b>third</b> argument is the most complex, but is really just asking: which function should this thread start running in? In C, we call this a <b>function pointer</b>, and this one tells us the following is expected: a function name (start routine), which is passed a single argument of type void * (as indicated in the parentheses after start routine), and which returns a value of type void * (i.e., a <b>void pointer</b>).</li>
 <li>The <b>fourth</b> argument, arg, is exactly the argument to be passed to the function where the thread begins execution.</li>
 </ul><br>
-<h2 id='Thread Completion'>Thread Completion</h2><p><img src='7DEE6B2B-5A86-42A3-8074-C152539AE6B3.png'></p><ul>
+<h2 id='Thread Completion'>Thread Completion</h2><p><img src='(CH%2027)%20Interlude%20Thread%20API/7DEE6B2B-5A86-42A3-8074-C152539AE6B3.png'></p><ul>
 <li>The <b>first</b> is of type pthread_t, and is used to specify which thread to wait for. This value is exactly what you passed into the thread library during creation; if you held onto it, you can now use it to wait for the thread to stop running.</li>
 <li>The <b>second</b> argument is a pointer to the return value you expect to get back. Because the routine can return anything, it is defined to return a pointer to void; because the pthread join() routine /changes/the value of the passed in argument, you need to pass in a pointer to that value, not just the value itself.</li>
 </ul><br>
-<h2 id='Locks'>Locks</h2><p><img src='F0553349-A761-4EFC-83B6-5A3645E5019F.png'></p><br>
+<h2 id='Locks'>Locks</h2><p><img src='(CH%2027)%20Interlude%20Thread%20API/F0553349-A761-4EFC-83B6-5A3645E5019F.png'></p><br>
 <h3 id='Proper initialization'>Proper initialization</h3><ul>
 <li>With POSIX threads, there are two ways to initialize locks.</li>
 </ul><br>
-<p><img src='EAE78FF3-2FB2-4A0C-A536-C77AD5166C6D.png'><br>
-<img src='784D6D17-C059-4A0C-ABDC-71CC026CBCAC.png'></p><br>
-<h2 id='Condition Variables'>Condition Variables</h2><p><img src='9BD8D7BD-8A15-4EED-B25C-5538F438B7D3.png'></p><ul>
+<p><img src='(CH%2027)%20Interlude%20Thread%20API/EAE78FF3-2FB2-4A0C-A536-C77AD5166C6D.png'><br>
+<img src='(CH%2027)%20Interlude%20Thread%20API/784D6D17-C059-4A0C-ABDC-71CC026CBCAC.png'></p><br>
+<h2 id='Condition Variables'>Condition Variables</h2><p><img src='(CH%2027)%20Interlude%20Thread%20API/9BD8D7BD-8A15-4EED-B25C-5538F438B7D3.png'></p><ul>
 <li>The first routine, pthread_cond wait(), puts the calling thread to sleep, and thus waits for some other thread to signal it, usually when something in the program has changed that the now-sleeping thread might care about.</li>
 </ul><br>
 <br>

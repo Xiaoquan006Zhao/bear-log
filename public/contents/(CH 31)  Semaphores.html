@@ -127,13 +127,13 @@
 </ul>
 </li>
 </ul><br>
-<p><img src='AE922B5E-0506-49BF-B115-5EE36D203A54.png'></p><br>
-<h2 id='Binary Semaphores (Locks)'>Binary Semaphores (Locks)</h2><p><img src='B1C753EF-D6FC-455A-954B-7D99B8A586F3.png'><br>
-<img src='1E4B7570-E5C6-4AC0-9004-513EBDD2E975.png'></p><br>
-<h2 id='Semaphores As Condition Variables'>Semaphores As Condition Variables</h2><p><img src='6AA9DA68-B0CE-4A8E-8EC5-D4DF1A7CE5AC.png'></p><ul>
+<p><img src='(CH%2031)%20%20Semaphores/AE922B5E-0506-49BF-B115-5EE36D203A54.png'></p><br>
+<h2 id='Binary Semaphores (Locks)'>Binary Semaphores (Locks)</h2><p><img src='(CH%2031)%20%20Semaphores/B1C753EF-D6FC-455A-954B-7D99B8A586F3.png'><br>
+<img src='(CH%2031)%20%20Semaphores/1E4B7570-E5C6-4AC0-9004-513EBDD2E975.png'></p><br>
+<h2 id='Semaphores As Condition Variables'>Semaphores As Condition Variables</h2><p><img src='(CH%2031)%20%20Semaphores/6AA9DA68-B0CE-4A8E-8EC5-D4DF1A7CE5AC.png'></p><ul>
 <li>The value of the semaphore should be set to is 0.</li>
 </ul><br>
-<h2 id='The Producer/Consumer (Bounded-Buffer) Problem'>The Producer/Consumer (Bounded-Buffer) Problem</h2><h3 id='First Attempt'>First Attempt</h3><p><img src='BEE8933F-EE98-4208-B3B3-C84D05D029E4.png'></p><ul>
+<h2 id='The Producer/Consumer (Bounded-Buffer) Problem'>The Producer/Consumer (Bounded-Buffer) Problem</h2><h3 id='First Attempt'>First Attempt</h3><p><img src='(CH%2031)%20%20Semaphores/BEE8933F-EE98-4208-B3B3-C84D05D029E4.png'></p><ul>
 <li>let us assume that there are multiple producers and multiple consumers. We now have a problem: a race condition. Do you see where it occurs?</li>
 <li>Imagine two producers (Pa and Pb) both calling into put() at roughly the same time. Assume producer Pa gets to run first, and just starts to fill the first buffer entry (fill = 0 at line f1).
 <ul>
@@ -141,15 +141,15 @@
 </ul>
 </li>
 </ul><br>
-<h3 id='A Solution: Adding Mutual Exclusion'>A Solution: Adding Mutual Exclusion</h3><p><img src='30CF6E27-DFA9-4DAF-824C-3F391CA51C23.png'></p><ul>
+<h3 id='A Solution: Adding Mutual Exclusion'>A Solution: Adding Mutual Exclusion</h3><p><img src='(CH%2031)%20%20Semaphores/30CF6E27-DFA9-4DAF-824C-3F391CA51C23.png'></p><ul>
 <li>Because of deadlocks, Imagine two threads, one producer and one consumer. The consumer gets to run first. It ac- quires the mutex (line c0), and then calls sem_wait() on the full semaphore (line c1); because there is no data yet, this call causes the consumer to block and thus yield the CPU; importantly, though, the consumer still holds the lock.</li>
 </ul><br>
 <br>
 <h3 id='A Final Solution'>A Final Solution</h3><ul>
 <li>we simply move the mutex acquire and release to be just around the critical section; the full and empty wait and signal code is left outside. The result is a simple and working bounded buffer, a commonly-used pattern in multi-threaded programs.</li>
 </ul><br>
-<p><img src='AD3D0ECC-0614-47E8-BD98-28D8570CE413.png'></p><br>
-<h3 id='Reader-Writer Locks'>Reader-Writer Locks</h3><p><img src='76411E00-E555-49AB-9AE2-7D955AC10655.png'></p><br>
+<p><img src='(CH%2031)%20%20Semaphores/AD3D0ECC-0614-47E8-BD98-28D8570CE413.png'></p><br>
+<h3 id='Reader-Writer Locks'>Reader-Writer Locks</h3><p><img src='(CH%2031)%20%20Semaphores/76411E00-E555-49AB-9AE2-7D955AC10655.png'></p><br>
 <br>
 <br>
 <br>

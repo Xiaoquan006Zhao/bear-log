@@ -158,12 +158,12 @@
 <li>A single IAM policy can be associated with any number of identities, and a single identity can have as many as 10 managed policies</li>
 <li>If there is <b>conflict</b> in the policies, (one policy allows an action the other denies), it always denies.</li>
 </ul><br>
-<h3 id='User and Root Accounts'>User and Root Accounts</h3><p><img src='EAD8D6CA-E5F8-4333-BB88-B77690AF933F.png'></p><ul>
+<h3 id='User and Root Accounts'>User and Root Accounts</h3><p><img src='Authentication%20&%20Authorization%20%E2%80%94%20AWS%20Identity%20&%20Access%20Management/EAD8D6CA-E5F8-4333-BB88-B77690AF933F.png'></p><ul>
 <li>Before all that, however, you must create at least one new user and assign it enough authority to get the necessary work done.</li>
 <li>Typically, that means you give the main admin user the <b>AdministratorAccess policy</b>, and use that user to create other users, groups, and roles—each with just enough power to perform its specific task.</li>
 <li>Users can open the My Security Credentials page to manage their security settings.</li>
 </ul><br>
-<p><img src='A4A9D53A-B93C-4003-AB00-A2939027E9D8.png'></p><br>
+<p><img src='Authentication%20&%20Authorization%20%E2%80%94%20AWS%20Identity%20&%20Access%20Management/A4A9D53A-B93C-4003-AB00-A2939027E9D8.png'></p><br>
 <h3 id='Access Keys'>Access Keys</h3><ul>
 <li>Access keys provide authentication for programmatic or CLI-based access. Rather than having to find a way for your application to input a traditional username and password,</li>
 </ul><br>
@@ -173,7 +173,7 @@
 <h4 id='Key Rotation'>Key Rotation</h4><ul>
 <li>Best practices require that you regularly retire older access keys because the longer a key has been in use, the greater the chance that it’s been compromised.</li>
 </ul><br>
-<p><img src='941AAD81-48CC-46C7-A5D5-CC6F3C56F641.png'></p><br>
+<p><img src='Authentication%20&%20Authorization%20%E2%80%94%20AWS%20Identity%20&%20Access%20Management/941AAD81-48CC-46C7-A5D5-CC6F3C56F641.png'></p><br>
 <h3 id='Groups'>Groups</h3><ul>
 <li>Manually assigning appropriate access policies to each user can be time-consuming.</li>
 <li>The solution for such scenarios is to create a separate IAM group for each class of user and then associate each of your users with the group that fits their job description. You could create one group for developers, another for admins, and a third for your design team.</li>

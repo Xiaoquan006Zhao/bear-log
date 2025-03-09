@@ -125,7 +125,7 @@
 <h2 id='Swap Space'>Swap Space</h2><ul>
 <li>The first thing we will need to do is to <b>reserve some space on the disk</b> for moving pages back and forth.</li>
 </ul><br>
-<p><img src='BF9F00C6-0B40-4481-B238-A17FB24080FA.png'></p><br>
+<p><img src='(CH%2021)%20Beyond%20Physical%20Memory%20Mechanisms/BF9F00C6-0B40-4481-B238-A17FB24080FA.png'></p><br>
 <h2 id='The Present Bit'>The Present Bit</h2><ul>
 <li>when the hardware looks in the PTE, it may find that the page is /not present/in physical memory. The way the hardware (or the OS, in a software-managed TLB approach) determines this is through a new piece of information in each page-table entry, known as the <b>present bit</b>. If the present bit is set to one, it means the page is present in physical memory and everything proceeds as above; if it is set to zero, the page is /not/in memory but rather on disk somewhere. The act of accessing a page that is not in physical memory is commonly referred to as a <b>page fault</b>.</li>
 </ul><br>
@@ -133,8 +133,8 @@
 <li>the OS is put in charge to handle the page fault. The appropriately-named OS <b>page-fault handler</b>runs to determine what to do.</li>
 <li>The page table is a natural place to store such information. Thus, the OS could use the bits in the PTE normally used for data such as the PFN of the page for a disk address. When the OS receives a page fault for a page, it looks in the PTE to find the address, and issues the request to disk to fetch the page into memory.</li>
 </ul><br>
-<p><img src='3D59B239-464F-4E2C-ACE3-0947B30889A6.png'><br>
-<img src='62CC3851-B55C-4322-BF49-E3078EB4F88C.png'></p><br>
+<p><img src='(CH%2021)%20Beyond%20Physical%20Memory%20Mechanisms/3D59B239-464F-4E2C-ACE3-0947B30889A6.png'><br>
+<img src='(CH%2021)%20Beyond%20Physical%20Memory%20Mechanisms/62CC3851-B55C-4322-BF49-E3078EB4F88C.png'></p><br>
 <h2 id='When Replacements Really Occur'>When Replacements Really Occur</h2><ul>
 <li>To keep a small amount of memory free, most operating systems thus have some kind of <b>high watermark</b>(H W ) and <b>low watermark</b>(LW ) to help decide when to start evicting pages from memory.</li>
 <li>when the OS notices that there are fewer than LW pages available, a background thread that is responsible for freeing memory runs. The thread evicts pages until there are HW pages available.</li>

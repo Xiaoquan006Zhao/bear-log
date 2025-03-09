@@ -161,13 +161,13 @@
 </ul><br>
 <h2 id='Managing State'>Managing State</h2><ul>
 <li><b>Stateful</b>, holding data that other machines or services can not access</li>
-</ul><p><img src='180D9281-9856-4A32-ABE4-C969CAA5DD37.png'></p><ul>
+</ul><p><img src='Building%20the%20Front-End%20Layer/180D9281-9856-4A32-ABE4-C969CAA5DD37.png'></p><ul>
 <li><b>Statelessness</b> is a property of a service, server, or object indicating that it does not hold any data (state).
 <ul>
 <li>Statelessness makes instances of the same type <b>interchangeable</b>, allowing better scalability.</li>
 </ul>
 </li>
-</ul><p><img src='09C07E06-977F-41D5-89D6-764C73EA7C32.png'></p><br>
+</ul><p><img src='Building%20the%20Front-End%20Layer/09C07E06-977F-41D5-89D6-764C73EA7C32.png'></p><br>
 <h2 id='Managing HTTP Sessions (Cookies, Data Store, Load Balancer)'>Managing HTTP Sessions (Cookies, Data Store, Load Balancer)</h2><ul>
 <li><b>Cookies</b>, The framework serializes the session data, encrypts it, and includes it in the response <b>headers</b> as a new value of the session data cookie
 <ul>
@@ -175,7 +175,7 @@
 <li><b>Practical challenge</b>: Session storage becomes expensive. Send the entire session in every request even when some requests do not need them. (ID or security token is fine, kilobytes of session data will be slow)</li>
 </ul>
 </li>
-</ul><p><img src='02EBCB7C-1F24-4B9E-99DA-5A0C52FD7450.png'></p><br>
+</ul><p><img src='Building%20the%20Front-End%20Layer/02EBCB7C-1F24-4B9E-99DA-5A0C52FD7450.png'></p><br>
 <ul>
 <li><b>Dedicated Data Store</b> (Memcached, Redis, DynamoDB, or Cassandra or object-clustering technologies like Teracotta)
 <ul>
@@ -183,7 +183,7 @@
 <li>Data store might provide <b>automatic scalability</b> or implement <b>horizontal scalability</b> by the session ID</li>
 </ul>
 </li>
-</ul><p><img src='D429D4A0-7BB2-4F94-97D1-730C3FFE2DEC.png'></p><ul>
+</ul><p><img src='Building%20the%20Front-End%20Layer/D429D4A0-7BB2-4F94-97D1-730C3FFE2DEC.png'></p><ul>
 <li><b>Load Balancer with sticky session (Don’t recommend)</b>
 <ul>
 <li>The load balancer needs to make sure that requests with the same session cookie always go to the server that initially issued the cookie.</li>
@@ -203,7 +203,7 @@
 </ul>
 </li>
 <li><b>Private</b> user files</li>
-</ul><p><img src='0C375880-2A4D-47D1-9C3B-002701764A5F.png'></p><br>
+</ul><p><img src='Building%20the%20Front-End%20Layer/0C375880-2A4D-47D1-9C3B-002701764A5F.png'></p><br>
 <h3 id='Local (instead of building a high-available (replication) and scalable (partitioning))'>Local (instead of building a high-available (replication) and scalable (partitioning))</h3><ul>
 <li>Try <b>open-source data store</b> to store your files
 <ul>
@@ -238,7 +238,7 @@
 </li>
 </ul>
 </li>
-</ul><p><img src='4C968A0F-E71A-485F-8D61-5EEE181FA9BE.png'></p><ul>
+</ul><p><img src='Building%20the%20Front-End%20Layer/4C968A0F-E71A-485F-8D61-5EEE181FA9BE.png'></p><ul>
 <li>Plenty of providers from which to choose, including <a href='easydns.com'>easydns.com</a>, <a href='dnsmadeeasy.com'>dnsmadeeasy.com</a>, dnsimple. com, and <a href='dyn.com'>dyn.com</a> (Switch is usually easy)</li>
 </ul><br>
 <h3 id='Load Balancers'>Load Balancers</h3><ul>
@@ -247,9 +247,9 @@
 <li>If a server goes down, the user will still access its IP because it is cached</li>
 </ul>
 </li>
-</ul><p><img src='8FF342C0-414E-4D3B-9032-B1B1EAF87B05.png'></p><ul>
+</ul><p><img src='Building%20the%20Front-End%20Layer/8FF342C0-414E-4D3B-9032-B1B1EAF87B05.png'></p><ul>
 <li>Load Balancer</li>
-</ul><p><img src='453E0DFC-6489-4CCD-B7FB-DB2A0A0C31A4.png'></p><ul>
+</ul><p><img src='Building%20the%20Front-End%20Layer/453E0DFC-6489-4CCD-B7FB-DB2A0A0C31A4.png'></p><ul>
 <li><b>Seamlessly increase capacity</b>, Add more web servers at any time without your clients ever realizing it.</li>
 <li><b>Hidden server maintenance</b>, A server can be removed without affecting a single client (maybe a little more responding time)
 <ul>
@@ -271,7 +271,7 @@
 <li>In addition to publicly facing load balancers, some cloud providers, like Amazon and Azure, allow you to configure their <b>load balancers internally</b>.</li>
 </ul>
 </li>
-</ul><p><img src='901BDAE9-E176-4882-AF2C-5452B0EDA0A0.png'></p><br>
+</ul><p><img src='Building%20the%20Front-End%20Layer/901BDAE9-E176-4882-AF2C-5452B0EDA0A0.png'></p><br>
 <h4 id='Self-Managed open-source Software-Based Load Balancer'>Self-Managed open-source Software-Based Load Balancer</h4><ul>
 <li>You can use either a reverse proxy like <b>Nginx</b> or a specialized open-source load balancer product like <b>HAProxy</b> (2015 book, search for more options)</li>
 <li>You will need to scale the load balancer yourself.</li>
@@ -316,7 +316,7 @@
 <li>Scalability is about scaling <b>up</b> and <b>down</b> (<b>save cost</b> and help you handle unexpected <b>spikes</b>)</li>
 <li>The easiest way to implement auto-scaling is to use the hosting provider’s auto-scaling tools. (Amazon, Rackspace, Azure…)</li>
 </ul><br>
-<h2 id='Amazon Example'>Amazon Example</h2><p><img src='C720B7D0-B04C-49C2-B3C2-39AF9EB48913.png'></p><br>
+<h2 id='Amazon Example'>Amazon Example</h2><p><img src='Building%20the%20Front-End%20Layer/C720B7D0-B04C-49C2-B3C2-39AF9EB48913.png'></p><br>
 <br>
 <br>
 <br>

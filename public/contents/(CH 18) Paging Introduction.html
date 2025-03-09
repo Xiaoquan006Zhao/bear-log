@@ -122,18 +122,18 @@
 <li>The process is split into pages and the address space is also split into pages</li>
 <li>A <b>Page Table</b> is used to keep track of the <b>address translations</b></li>
 </ul><br>
-<p><img src='4B8BC8E2-2133-4D88-B6F7-69A9560715DA.png'></p><ul>
+<p><img src='(CH%2018)%20Paging%20Introduction/4B8BC8E2-2133-4D88-B6F7-69A9560715DA.png'></p><ul>
 <li>It is important to remember that this page table is a <b>per-process data structure</b></li>
 <li>To translate this virtual address that the process generated, we have to first split it into two components: the <b>virtual page number (VPN)</b>, and the <b>offset</b>within the page.</li>
 </ul><br>
 <h2 id='Translation address'>Translation address</h2><ul>
 <li>VPN is the number of bits necessary to identify the virtual memory’s page (if a process has 4 pages then VPN is 2 bits)</li>
 </ul><br>
-<p><img src='7D55D2EF-1E0A-43C6-89EB-4DBD78D3C352.png'></p><ul>
+<p><img src='(CH%2018)%20Paging%20Introduction/7D55D2EF-1E0A-43C6-89EB-4DBD78D3C352.png'></p><ul>
 <li>Then we can use <b>page Table</b> to locate the Physical page number</li>
 </ul><br>
-<p><img src='555F02E1-768F-4A05-97C6-AE2C2843F6C4.png'><br>
-<img src='25FC69F9-F9CC-4717-939F-E4A6D3ABE216.png'></p><br>
+<p><img src='(CH%2018)%20Paging%20Introduction/555F02E1-768F-4A05-97C6-AE2C2843F6C4.png'><br>
+<img src='(CH%2018)%20Paging%20Introduction/25FC69F9-F9CC-4717-939F-E4A6D3ABE216.png'></p><br>
 <br>
 <br>
 <p><span class='hashtag'><span class='hashtag-marker marker'>#</span>_book<span class='hashtag-separator-marker marker'>/</span>Programing<span class='hashtag-separator-marker marker'>/</span>Operating-Systems-Three-Easy-Pieces<span class='hashtag-separator-marker marker'>/</span>Virtualization</span></p>

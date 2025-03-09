@@ -184,11 +184,11 @@
 </ul><br>
 <hr><br>
 <br>
-<h2 id='EC2 Instances'>EC2 Instances</h2><h3 id='Provisioning Your Instance'>Provisioning Your Instance</h3><h4 id='EC2 Amazon Machine Images'>EC2 Amazon Machine Images</h4><p><img src='549A73CA-4954-43F3-A800-46B57FA06EA4.png'></p><br>
+<h2 id='EC2 Instances'>EC2 Instances</h2><h3 id='Provisioning Your Instance'>Provisioning Your Instance</h3><h4 id='EC2 Amazon Machine Images'>EC2 Amazon Machine Images</h4><p><img src='Amazon%20Elastic%20Compute%20Cloud%20and%20Amazon%20Elastic%20Block%20Store/549A73CA-4954-43F3-A800-46B57FA06EA4.png'></p><br>
 <h4 id='Instance Types'>Instance Types</h4><ul>
 <li><a href='aws.amazon.com/ec2/instance-types'>aws.amazon.com/ec2/instance-types</a></li>
 </ul><br>
-<p><img src='E9CCAC74-EF4A-4DD9-8BD7-DC8966015038.png'></p><br>
+<p><img src='Amazon%20Elastic%20Compute%20Cloud%20and%20Amazon%20Elastic%20Block%20Store/E9CCAC74-EF4A-4DD9-8BD7-DC8966015038.png'></p><br>
 <h2 id='Configuring an Environment for Your Instance'>Configuring an Environment for Your Instance</h2><ul>
 <li>AWS Regions</li>
 <li>VPCs</li>
@@ -198,11 +198,11 @@
 <li>You can optionally tell EC2 to execute commands on your instance as it boots by pointing to user data in your instance configuration (this is sometimes known as <b>bootstrapping</b>).</li>
 <li>Whether you specify the data during the console configuration process or by using the —user-data value with the AWS CLI, you can have script files bring your instance to any desired state.</li>
 </ul><br>
-<h3 id='Placement Groups'>Placement Groups</h3><p><img src='022D4B9C-8168-48C2-AEE5-DD1B408D105A.png'></p><br>
+<h3 id='Placement Groups'>Placement Groups</h3><p><img src='Amazon%20Elastic%20Compute%20Cloud%20and%20Amazon%20Elastic%20Block%20Store/022D4B9C-8168-48C2-AEE5-DD1B408D105A.png'></p><br>
 <h3 id='Instance Pricing'>Instance Pricing</h3><ul>
 <li>If you’re planning to keep the lights burning 24/7 for more than a year, then you’ll enjoy a significant discount by purchasing a <b>reserve instance</b>—generally over a term commitment of between one and three years.</li>
 </ul><br>
-<p><img src='C8E8ED3A-65FF-4FAC-90AA-68A4A81AB8EA.png'></p><ul>
+<p><img src='Amazon%20Elastic%20Compute%20Cloud%20and%20Amazon%20Elastic%20Block%20Store/C8E8ED3A-65FF-4FAC-90AA-68A4A81AB8EA.png'></p><ul>
 <li>For workloads that can withstand unexpected disruption (like computation-intensive genome research applications), purchasing instances on <b>Amazon’s spot market</b> can save you a lot of money.</li>
 <li>It will often make sense to <b>combine multiple models within a single application infrastructure</b>.
 <ul>
@@ -252,7 +252,7 @@
 </ul>
 </li>
 </ul><br>
-<p><img src='9FC9BCDB-3D9B-43AA-BEAF-8A0E8C469244.png'></p><br>
+<p><img src='Amazon%20Elastic%20Compute%20Cloud%20and%20Amazon%20Elastic%20Block%20Store/9FC9BCDB-3D9B-43AA-BEAF-8A0E8C469244.png'></p><br>
 <h3 id='EBS Volume Features'>EBS Volume Features</h3><ul>
 <li>All EBS volumes can be copied by creating an <b>snapshot</b>.
 <ul>
@@ -262,11 +262,11 @@
 </li>
 <li>EBS volumes can be <b>encrypted</b> to protect their data while at rest or as it’s sent back and forth to the EC2 host instance.</li>
 </ul><br>
-<p><img src='2B2EC5DD-C272-441E-B9D5-5399F2C7E830.png'></p><br>
+<p><img src='Amazon%20Elastic%20Compute%20Cloud%20and%20Amazon%20Elastic%20Block%20Store/2B2EC5DD-C272-441E-B9D5-5399F2C7E830.png'></p><br>
 <h3 id='Instance Store Volumes'>Instance Store Volumes</h3><ul>
 <li>Instance store volumes are <b>ephemeral</b> (lost if instance shut down)</li>
 </ul><br>
-<p><img src='E2F76AF3-4823-489F-997C-CEF324A632F5.png'></p><br>
+<p><img src='Amazon%20Elastic%20Compute%20Cloud%20and%20Amazon%20Elastic%20Block%20Store/E2F76AF3-4823-489F-997C-CEF324A632F5.png'></p><br>
 <h2 id='Securing Your EC2 Instance'>Securing Your EC2 Instance</h2><h3 id='Security Groups'>Security Groups</h3><ul>
 <li>An EC2 security group plays the role of a <b>firewall</b></li>
 <li>Security groups control traffic at the instance level. However, AWS also provides you with network access control lists (<b>NACLs</b>) that are associated with entire subnets rather than individual instances.</li>
@@ -277,7 +277,7 @@
 <h3 id='NAT Devices'>NAT Devices</h3><ul>
 <li>Give your private instance access to the Internet without allowing access to it from the Internet. (By NAT instance or NAT Gateway)</li>
 </ul><br>
-<p><img src='C2202EFE-EFFD-4613-9ABB-7D839BA65EF5.png'></p><br>
+<p><img src='Amazon%20Elastic%20Compute%20Cloud%20and%20Amazon%20Elastic%20Block%20Store/C2202EFE-EFFD-4613-9ABB-7D839BA65EF5.png'></p><br>
 <h3 id='Key Pairs'>Key Pairs</h3><ul>
 <li>To ensure properly secured sessions, you’ll need to generate a key pair, save the public key to your EC2 server, and save its private half to your local machine.</li>
 </ul><br>
@@ -307,7 +307,7 @@
 <h3 id='Auto Scaling Groups'>Auto Scaling Groups</h3><ul>
 <li>An /Auto Scaling group/is a group of EC2 instances that Auto Scaling manages.</li>
 </ul><br>
-<p><img src='9E207C75-CC1F-4BEA-A4A6-D37BCEC62D7B.png'></p><br>
+<p><img src='Amazon%20Elastic%20Compute%20Cloud%20and%20Amazon%20Elastic%20Block%20Store/9E207C75-CC1F-4BEA-A4A6-D37BCEC62D7B.png'></p><br>
 <h3 id='Specifying an Application Load Balancer Target Group'>Specifying an Application Load Balancer Target Group</h3><ul>
 <li>If you want to use an application load balancer (ALB) to distribute traffic to instances in your Auto Scaling group, just plug in the name of the ALB target group when creating the Auto Scaling group.</li>
 </ul><br>
@@ -349,7 +349,7 @@
 <li>Whenever the metric rises above the threshold, Auto Scaling simply increases the desired capacity.</li>
 <li>How much it increases the desired capacity, however, depends on which of the following <b>adjustment types</b> you choose:</li>
 </ul><br>
-<p><img src='A6FBA643-4CAB-4A77-942F-E9FAD0924CA0.png'></p><ul>
+<p><img src='Amazon%20Elastic%20Compute%20Cloud%20and%20Amazon%20Elastic%20Block%20Store/A6FBA643-4CAB-4A77-942F-E9FAD0924CA0.png'></p><ul>
 <li>After Auto Scaling completes the adjustment, it waits a <b>cool-down period</b> before executing the policy again, even if the alarm is still breaching.
 <ul>
 <li>The <b>default</b> cool-down period is <b>300 seconds</b>, but you can set it as high as you want or as low as 0</li>
@@ -360,8 +360,8 @@
 <li>If the demand on your application is <b>rapidly increasing</b>, a simple scaling policy may not add enough instances quickly enough.</li>
 <li>Add instances based on how much the aggregate metric exceeds the threshold</li>
 </ul><br>
-<p><img src='030AB9FD-EEF0-46F7-88D9-FEF170E8D1A7.png'><br>
-<img src='3062F58D-3876-4C8F-84C0-5681820CAAB7.png'></p><br>
+<p><img src='Amazon%20Elastic%20Compute%20Cloud%20and%20Amazon%20Elastic%20Block%20Store/030AB9FD-EEF0-46F7-88D9-FEF170E8D1A7.png'><br>
+<img src='Amazon%20Elastic%20Compute%20Cloud%20and%20Amazon%20Elastic%20Block%20Store/3062F58D-3876-4C8F-84C0-5681820CAAB7.png'></p><br>
 <h5 id='Target Tracking Policies'>Target Tracking Policies</h5><ul>
 <li>Select a metric and target value, and Auto Scaling will create a CloudWatch Alarm and a scaling policy to adjust the number of instances to keep the metric near that target.</li>
 <li>The metric you choose must <b>change proportionally</b> to the instance load.
@@ -375,8 +375,8 @@
 <h3 id='Scheduled Actions'>Scheduled Actions</h3><ul>
 <li>Scheduled actions are useful if you have a predictable load pattern and want to adjust your capacity proactively,</li>
 </ul><br>
-<p><img src='76028D18-414F-46E4-BC7F-82498F905090.png'><br>
-<img src='EB685B25-FD01-4CB1-B932-8C8733955D24.png'></p><br>
+<p><img src='Amazon%20Elastic%20Compute%20Cloud%20and%20Amazon%20Elastic%20Block%20Store/76028D18-414F-46E4-BC7F-82498F905090.png'><br>
+<img src='Amazon%20Elastic%20Compute%20Cloud%20and%20Amazon%20Elastic%20Block%20Store/EB685B25-FD01-4CB1-B932-8C8733955D24.png'></p><br>
 <h2 id='AWS Systems Manager'>AWS Systems Manager</h2><ul>
 <li>AWS Systems Manager <b>centralizes operational data</b> from multiple AWS services and <b>automates tasks</b> across your AWS resources.</li>
 </ul><br>
@@ -386,7 +386,7 @@
 <h3 id='OpsCenter'>OpsCenter</h3><ul>
 <li>OpsCenter aggregates and standardizes operational issues, referred to as OpsItems, while providing contextually relevant data that helps with diagnosis and remediation. Engineers working on an OpsItem get access to information such as:</li>
 </ul><br>
-<p><img src='C3E8A24A-5165-4FB1-B40E-2F0BB212F3F3.png'></p><br>
+<p><img src='Amazon%20Elastic%20Compute%20Cloud%20and%20Amazon%20Elastic%20Block%20Store/C3E8A24A-5165-4FB1-B40E-2F0BB212F3F3.png'></p><br>
 <h3 id='Incident Manager'>Incident Manager</h3><ul>
 <li>Helps you prepare for incidents with automated response plans that bring the right people and information together. With Incident Manager, you can automatically take action when a critical issue is detected by an Amazon CloudWatch alarm or Amazon EventBridge event.</li>
 <li>Incident Manager executes pre-configured response plans to engage responders via SMS and phone calls, links designated chat channels using AWS Chatbot, and executes AWS Systems Manager Automation runbooks.</li>
