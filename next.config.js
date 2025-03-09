@@ -7,6 +7,9 @@ const nextConfig = {
     // This will still show errors but won't fail the build
     ignoreBuildErrors: true,
   },
+  images: {
+    unoptimized: true,
+  },
 }
 
 module.exports = nextConfig
