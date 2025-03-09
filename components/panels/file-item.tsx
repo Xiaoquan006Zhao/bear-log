@@ -31,10 +31,11 @@ export function FileCard({ file, metadata, imageAttachments, isSelected, onClick
 
   return (
     <Card
-      className={`group flex flex-col h-full w-full overflow-hidden transition-colors cursor-pointer border ${
+      className={`file-card group flex flex-col h-full w-full overflow-hidden transition-colors cursor-pointer border ${
         isSelected ? "bg-secondary border-primary shadow-sm" : "hover:bg-secondary/40 border-border/50"
       }`}
       onClick={onClick}
+      data-selected={isSelected}
     >
       <div className="p-3 flex-shrink-0 w-full min-w-0">
         <div className="flex items-start gap-2 w-full min-w-0">

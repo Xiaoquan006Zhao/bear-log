@@ -65,17 +65,59 @@ export function useFolderStructure(onFileSelect: (filename: string) => void) {
   // Load files for selected folder with pagination
   const loadFolderFiles = useCallback(
     async (folderPath: string, page = 1, append = false) => {
+      // Prevent loading if already loading files and not appending
       if (loading.files && !append) return
 
+      // Set loading states
       setLoading((prev) => ({ ...prev, files: true }))
       setPagination((prev) => ({ ...prev, loading: true }))
 
       try {
         const result = await getFilesForFolder(folderPath, page, 20)
 
+        // Handle empty results
+        if (result.files.length === 0) {
+          setPagination({
+            page,
+            hasMore: false,
+            total: result.total,
+            loading: false,
+          })
+
+          if (!append) {
+            setCurrentFolderFiles([])
+          }
+
+          setLoading((prev) => ({ ...prev, files: false }))
+          return
+        }
+
         if (append) {
-          setCurrentFolderFiles((prev) => [...prev, ...result.files])
+          // When appending, add new files to the existing list
+          setCurrentFolderFiles((prev) => {
+            const newFiles = [...prev]
+
+            // Filter out duplicates (in case of race conditions)
+            result.files.forEach((file) => {
+              if (!newFiles.some((existing) => existing.file === file.file)) {
+                newFiles.push(file)
+              }
+            })
+
+            return newFiles
+          })
+
+          // If we're at the end of the list and loading more, select the first new file
+          const currentIndex = currentFolderFiles.findIndex((file) => file.file === result.files[0].file)
+          if (currentIndex === -1 && result.files.length > 0) {
+            // Only select if we're at the end of the current list
+            const lastVisible = document.querySelector('.file-card[data-selected="true"]')
+            if (lastVisible && lastVisible.getBoundingClientRect().bottom > window.innerHeight - 100) {
+              onFileSelect(result.files[0].file)
+            }
+          }
         } else {
+          // When not appending, replace the current list
           setCurrentFolderFiles(result.files)
 
           // Select first file if available
@@ -84,6 +126,7 @@ export function useFolderStructure(onFileSelect: (filename: string) => void) {
           }
         }
 
+        // Update pagination state
         setPagination({
           page,
           hasMore: result.hasMore,
@@ -92,9 +135,11 @@ export function useFolderStructure(onFileSelect: (filename: string) => void) {
         })
       } catch (error) {
         console.error("Error loading folder files:", error)
+
         if (!append) {
           setCurrentFolderFiles([])
         }
+
         setPagination({
           page,
           hasMore: false,
@@ -105,19 +150,24 @@ export function useFolderStructure(onFileSelect: (filename: string) => void) {
         setLoading((prev) => ({ ...prev, files: false }))
       }
     },
-    [loading.files, onFileSelect],
+    [loading.files, onFileSelect, currentFolderFiles],
   )
 
   // Load more files when scrolling
   const loadMoreFiles = useCallback(() => {
     if (pagination.hasMore && !pagination.loading) {
+      // Set loading state immediately to prevent multiple calls
+      setPagination((prev) => ({ ...prev, loading: true }))
       loadFolderFiles(selectedFolder, pagination.page + 1, true)
     }
-  }, [pagination, selectedFolder, loadFolderFiles])
+  }, [pagination.hasMore, pagination.loading, pagination.page, selectedFolder, loadFolderFiles])
 
   // Handle folder selection
   const selectFolder = useCallback(
     (path: string) => {
+      // Don't reload if selecting the same folder
+      if (path === selectedFolder) return
+
       setSelectedFolder(path)
       setPagination({
         page: 1,
@@ -133,10 +183,13 @@ export function useFolderStructure(onFileSelect: (filename: string) => void) {
         return newSet
       })
 
+      // Clear current files before loading new ones
+      setCurrentFolderFiles([])
+
       // Load files for this folder
       loadFolderFiles(path)
     },
-    [loadFolderFiles],
+    [selectedFolder, loadFolderFiles],
   )
 
   // Toggle folder expansion

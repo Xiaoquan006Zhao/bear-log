@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect } from "react"
+import { useCallback, useEffect, useRef } from "react"
 import { cn } from "@/lib/utils"
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable"
 import { FolderPanel } from "@/components/panels/folder-panel"
@@ -43,10 +43,21 @@ export function MainLayout() {
     setMiddlePanelCollapsed,
   } = useAppState()
 
+  // Ref to track if we're in the middle of a file selection
+  const isSelectingFileRef = useRef(false)
+
   // Handle file selection
   const selectFile = useCallback(
     (filename: string) => {
+      if (isSelectingFileRef.current) return
+
+      isSelectingFileRef.current = true
       loadFileContent(filename)
+
+      // Reset the flag after a short delay
+      setTimeout(() => {
+        isSelectingFileRef.current = false
+      }, 100)
     },
     [loadFileContent],
   )
@@ -91,11 +102,11 @@ export function MainLayout() {
 
   // Calculate panel sizes based on collapse state
   const getLeftPanelSize = useCallback(() => {
-    return leftPanelCollapsed ? 3 : 15
+    return leftPanelCollapsed ? 3 : 18
   }, [leftPanelCollapsed])
 
   const getMiddlePanelSize = useCallback(() => {
-    return middlePanelCollapsed ? 3 : 15
+    return middlePanelCollapsed ? 3 : 18
   }, [middlePanelCollapsed])
 
   const getRightPanelSize = useCallback(() => {

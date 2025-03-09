@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useEffect } from "react"
+import { useRef, useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { ChevronRight, Loader2, ChevronLeft } from "lucide-react"
 import { useVirtualizer } from "@tanstack/react-virtual"
@@ -38,6 +38,8 @@ export function FilesPanel({
 }: FilesPanelProps) {
   // Ref for virtualization
   const parentRef = useRef<HTMLDivElement>(null)
+  // Track if we're currently handling a keyboard navigation
+  const [isNavigating, setIsNavigating] = useState(false)
 
   // Setup virtualization for file list
   const rowVirtualizer = useVirtualizer({
@@ -58,45 +60,47 @@ export function FilesPanel({
       // Default height for files without images
       return 80
     },
-    overscan: 10, // Increase overscan to keep more items in the DOM
+    overscan: 5, // Reduce overscan for better performance
   })
-
-  // Check if we need to load more files
-  const checkAndLoadMoreFiles = () => {
-    if (pagination.hasMore && !pagination.loading) {
-      loadMoreFiles()
-      return true
-    }
-    return false
-  }
 
   // Handle keyboard navigation with pagination support
   useEffect(() => {
+    // Skip if panel is collapsed
+    if (collapsed) return
+
     const handleKeyDown = (e: KeyboardEvent) => {
       // Only handle if this panel is focused/active
       if (collapsed) return
 
+      // Find the current index
       const currentIndex = files.findIndex((file) => file.file === selectedFile)
+      if (currentIndex === -1) return // No file selected
 
       if (e.key === "ArrowDown") {
         e.preventDefault()
+        setIsNavigating(true)
 
-        // If we're at the last file and there are more files to load
-        if (currentIndex === files.length - 1) {
-          // Try to load more files
-          const loadingMore = checkAndLoadMoreFiles()
-
-          // If we're not loading more (no more to load), don't do anything
-          if (!loadingMore) return
-        }
-
-        // If we're not at the end, or we're loading more, select the next file
+        // If we're not at the end, select the next file
         if (currentIndex < files.length - 1) {
           selectFile(files[currentIndex + 1].file)
         }
-      } else if (e.key === "ArrowUp" && currentIndex > 0) {
+        // If we're at the last file and there are more files to load
+        else if (currentIndex === files.length - 1 && pagination.hasMore && !pagination.loading) {
+          // Load more files first, then selection will happen when files are loaded
+          loadMoreFiles()
+        }
+
+        setTimeout(() => setIsNavigating(false), 100)
+      } else if (e.key === "ArrowUp") {
         e.preventDefault()
-        selectFile(files[currentIndex - 1].file)
+        setIsNavigating(true)
+
+        // If we're not at the beginning, select the previous file
+        if (currentIndex > 0) {
+          selectFile(files[currentIndex - 1].file)
+        }
+
+        setTimeout(() => setIsNavigating(false), 100)
       }
     }
 
@@ -106,11 +110,11 @@ export function FilesPanel({
 
   // Scroll to selected file when it changes
   useEffect(() => {
-    if (selectedFile && !collapsed && files.length > 0) {
+    if (selectedFile && !collapsed && files.length > 0 && !isNavigating) {
       const selectedIndex = files.findIndex((file) => file.file === selectedFile)
 
       if (selectedIndex >= 0) {
-        // Immediate scrolling without timeout
+        // Scroll to the selected item
         rowVirtualizer.scrollToIndex(selectedIndex, {
           align: "auto",
           behavior: "auto",
@@ -122,25 +126,34 @@ export function FilesPanel({
         }
       }
     }
-  }, [selectedFile, files, collapsed, rowVirtualizer, pagination.hasMore, pagination.loading, loadMoreFiles])
+  }, [
+    selectedFile,
+    files,
+    collapsed,
+    rowVirtualizer,
+    pagination.hasMore,
+    pagination.loading,
+    loadMoreFiles,
+    isNavigating,
+  ])
 
   // Add an effect to check scroll position and load more if needed
   useEffect(() => {
     const checkScroll = () => {
-      if (collapsed || !parentRef.current) return
+      if (collapsed || !parentRef.current || pagination.loading) return
 
       const container = parentRef.current
       const scrollPosition = container.scrollTop + container.clientHeight
-      const scrollThreshold = container.scrollHeight * 0.8 // Load more when within 20% of the bottom
+      const scrollThreshold = container.scrollHeight - 200 // Load more when within 200px of the bottom
 
-      if (scrollPosition >= scrollThreshold && pagination.hasMore && !pagination.loading) {
+      if (scrollPosition >= scrollThreshold && pagination.hasMore) {
         loadMoreFiles()
       }
     }
 
     // Check on mount and when files or pagination changes
     checkScroll()
-  }, [files, pagination, collapsed, loadMoreFiles])
+  }, [files.length, pagination.hasMore, pagination.loading, collapsed, loadMoreFiles])
 
   if (collapsed) {
     return (
@@ -189,13 +202,13 @@ export function FilesPanel({
         ref={parentRef}
         className="flex-1 overflow-auto overflow-x-hidden"
         onScroll={(e) => {
-          if (collapsed) return // Don't process scroll events when collapsed
+          if (collapsed || pagination.loading) return // Don't process scroll events when collapsed or already loading
+
           const target = e.target as HTMLDivElement
-          if (
-            target.scrollHeight - target.scrollTop <= target.clientHeight * 1.5 &&
-            pagination.hasMore &&
-            !pagination.loading
-          ) {
+          const scrollBottom = target.scrollHeight - target.scrollTop - target.clientHeight
+
+          // Load more when we're within 200px of the bottom
+          if (scrollBottom < 200 && pagination.hasMore) {
             loadMoreFiles()
           }
         }}
@@ -224,9 +237,9 @@ export function FilesPanel({
                   }}
                   className="p-3"
                 >
-                  <div className="flex justify-center items-center h-full">
+                  <div className="flex justify-center items-center h-full bg-muted/20 rounded-md">
                     <Loader2 className="h-5 w-5 animate-spin mr-2" />
-                    <span>Loading more...</span>
+                    <span className="text-sm">Loading more files...</span>
                   </div>
                 </div>
               )
