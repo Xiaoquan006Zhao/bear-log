@@ -5,7 +5,7 @@ import path from "path"
 import { processHtmlContent, attachmentFolderExists, getImageAttachments } from "./attachment-utils"
 import { cache } from "react"
 
-const CONTENTS_DIR = path.join(process.cwd(), "/app/contents")
+const CONTENTS_DIR = path.join(process.cwd(), "/public/contents")
 
 export interface HtmlMetadata {
   title: string

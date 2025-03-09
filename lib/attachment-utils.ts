@@ -4,7 +4,7 @@ import fs from "fs/promises"
 import path from "path"
 import { cache } from "react"
 
-const CONTENTS_DIR = path.join(process.cwd(), "/app/contents")
+const CONTENTS_DIR = path.join(process.cwd(), "/public/contents")
 
 // Add caching for attachment existence checks to improve performance
 const attachmentFolderCache = new Map<string, boolean>()
