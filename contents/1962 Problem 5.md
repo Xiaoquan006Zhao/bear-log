@@ -1,0 +1,19 @@
+# 1962 Problem 5
+![](1962%20Problem%205/image.png)
+
+## Solution
+![](1962%20Problem%205/image%202.png)
+![](1962%20Problem%205/image%203.png)
+![](1962%20Problem%205/image%204.png)
+
+
+
+
+
+
+
+
+
+
+
+#_IMO/1950-1970/1962
