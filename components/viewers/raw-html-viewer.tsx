@@ -3,6 +3,9 @@
 import { useEffect, useRef, useState, forwardRef, useImperativeHandle, useCallback } from "react"
 import { LoadingIndicator } from "@/components/ui/loading-indicator"
 
+const primaryColor = "rgb(100, 116, 139)" // slate-500
+const accentColor = "rgb(238, 95, 39)" // blue-500
+
 // Define a ref type for external access to the component's methods
 export interface RawHtmlViewerRef {
   scrollToHeading: (id: string) => boolean
@@ -192,16 +195,8 @@ export const RawHtmlViewer = forwardRef<RawHtmlViewerRef, RawHtmlViewerProps>(
     // Get all headings within the main content
     const headings = mainContent.querySelectorAll("h1, h2, h3, h4, h5, h6")
 
-    // Keep track of processed headings to avoid duplicates
-    const processedHeadings = new Set()
-
     // Add folding functionality to each heading
     headings.forEach((heading) => {
-      // Skip if we've already processed this heading text
-      const headingText = heading.textContent?.trim()
-      if (!headingText || processedHeadings.has(headingText)) return
-      processedHeadings.add(headingText)
-
       // Create a wrapper for the heading and its content
       const sectionWrapper = doc.createElement("div")
       sectionWrapper.className = "section-wrapper"
@@ -238,16 +233,21 @@ export const RawHtmlViewer = forwardRef<RawHtmlViewerRef, RawHtmlViewerProps>(
       toggleButton.style.justifyContent = "center"
       toggleButton.style.width = "28px"
       toggleButton.style.height = "28px"
-      toggleButton.style.color = "rgb(100, 116, 139)" // slate-500
+      toggleButton.style.color = primaryColor
       toggleButton.style.cursor = "pointer" // Add cursor pointer to toggle button
 
+
       // Add hover effect - change color instead of background
-      toggleButton.addEventListener("mouseover", () => {
-        toggleButton.style.color = "rgb(59, 130, 246)" // Change to blue-500 for more prominence
+      toggleButton.addEventListener("mouseout", () => {
+        if (!isFolded) {
+          toggleButton.style.color = primaryColor
+        } else {
+          toggleButton.style.color = accentColor
+        }
       })
 
-      toggleButton.addEventListener("mouseout", () => {
-        toggleButton.style.color = "rgb(100, 116, 139)" // slate-500
+      toggleButton.addEventListener("mouseover", () => {
+        toggleButton.style.color = accentColor
       })
 
       // Clone the heading for the wrapper
@@ -308,6 +308,7 @@ export const RawHtmlViewer = forwardRef<RawHtmlViewerRef, RawHtmlViewerProps>(
           contentContainer.style.paddingTop = "0"
           contentContainer.style.paddingBottom = "0"
           toggleButton.style.transform = "rotate(-90deg)" // Rotate triangle to point right
+          toggleButton.style.color = accentColor 
 
           // After transition completes, set display to none to fully hide content
           setTimeout(() => {
@@ -331,6 +332,7 @@ export const RawHtmlViewer = forwardRef<RawHtmlViewerRef, RawHtmlViewerProps>(
           contentContainer.style.paddingTop = ""
           contentContainer.style.paddingBottom = ""
           toggleButton.style.transform = "rotate(0)" // Reset rotation
+          toggleButton.style.color = primaryColor
         }
 
         // Update iframe height after toggling
