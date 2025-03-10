@@ -37,7 +37,6 @@ export async function getFilesList(): Promise<string[]> {
 
 // Get the content of a specific HTML file and extract metadata
 export async function getFileContent(filename: string): Promise<{
-  content: string
   metadata: HtmlMetadata
   rawHtml: string
   hasAttachments: boolean
@@ -52,7 +51,6 @@ export async function getFileContent(filename: string): Promise<{
     const fileData = await response.json()
 
     return {
-      content: fileData.content,
       metadata: fileData.metadata,
       rawHtml: fileData.rawHtml,
       hasAttachments: fileData.hasAttachments,

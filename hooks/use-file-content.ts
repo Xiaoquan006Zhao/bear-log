@@ -137,10 +137,10 @@ export function useFileContent() {
 
         // Not in cache, fetch from server
         console.log(`Fetching ${filename} from server`)
-        const { content, metadata, hasAttachments, rawHtml } = await getFileContent(filename)
+        const { metadata, hasAttachments, rawHtml } = await getFileContent(filename)
 
         // Generate table of contents from the processed content
-        const toc = generateTableOfContents(content)
+        const toc = generateTableOfContents(rawHtml)
 
         // Update state (only rawHtml is stored)
         setRawHtml(rawHtml)

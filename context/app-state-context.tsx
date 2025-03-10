@@ -55,6 +55,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
 
   const {
     selectedFile,
+    rawHtml,
     fileMetadata,
     fileHasAttachments,
     loading: contentLoading,
@@ -62,7 +63,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     showToc,
     loadFileContent,
     setShowToc,
-    rawHtml,
+    clearCache, 
   } = useFileContent()
 
   // Callback for file selection

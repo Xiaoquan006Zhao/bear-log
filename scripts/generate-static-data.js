@@ -122,7 +122,7 @@ async function processAttachments(htmlFilename, htmlContent) {
   try {
     const folderExists = await checkAttachmentFolder(htmlFilename)
     if (!folderExists) {
-      return { content: htmlContent, imageAttachments: [] }
+      return {imageAttachments: [] }
     }
     await ensureDir(destFolderPath)
 
@@ -141,24 +141,14 @@ async function processAttachments(htmlFilename, htmlContent) {
         console.error(`Error copying file ${file}:`, error)
       }
     }
-    // Update URLs dynamically using the global ATTACHMENTS_URL
-    const processedHtml = htmlContent.replace(
-      /(src|href)=["'](?!https?:\/\/)([^"']+\.(png|jpg|jpeg|gif|svg|webp|pdf|mp3|mp4))["']/gi,
-      (match, attr, filePath) => {
-        const cleanPath = filePath.replace(/^\.\.?\//, "")
-        // Split each path segment and encode individually so slashes remain
-        const segments = cleanPath.split('/').map(segment => segment).join('/')
-        return `${attr}="${ATTACHMENTS_URL}/${baseName}/${segments}"`
-      }
-    )
     const imageRefs = extractImageReferences(htmlContent)
     const imageAttachments = imageRefs.slice(0, 4).map((file) => {
       return `${ATTACHMENTS_URL}/${baseName}/${path.basename(file)}`
     })
-    return { content: processedHtml, imageAttachments }
+    return {imageAttachments }
   } catch (error) {
     console.error(`Error processing attachments for ${htmlFilename}:`, error)
-    return { content: htmlContent, imageAttachments: [] }
+    return {imageAttachments: [] }
   }
 }
 
@@ -250,15 +240,14 @@ async function generateStaticData() {
 
       // Process attachments and get updated content
       const hasAttachments = await checkAttachmentFolder(file)
-      const { content: processedContent, imageAttachments } = hasAttachments
+      const { imageAttachments } = hasAttachments
         ? await processAttachments(file, content)
-        : { content, imageAttachments: [] }
+        : {imageAttachments: [] }
 
       // Store file details
       fileDetailsMap[file] = {
         metadata,
         hasAttachments,
-        content: processedContent,
         rawHtml: content,
         imageAttachments,
       }
@@ -269,7 +258,6 @@ async function generateStaticData() {
         JSON.stringify({
           metadata,
           hasAttachments,
-          content: processedContent,
           rawHtml: content,
         }),
       )
