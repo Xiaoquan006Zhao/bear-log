@@ -5,6 +5,7 @@
 const fs = require("fs")
 const path = require("path")
 const { promisify } = require("util")
+const { marked } = require("marked")
 
 const readdir = promisify(fs.readdir)
 const readFile = promisify(fs.readFile)
@@ -17,7 +18,125 @@ const HTML_OUTPUT_DIR = path.join(process.cwd(), "public", "data")
 const FOLDERS_DIR = path.join(process.cwd(), "public", "folders")
 const ATTACHMENTS_DIR = path.join(process.cwd(), "public", "data")
 const ATTACHMENTS_URL = "data" // Global declaration for URL prefix
+const SCRIPTS_DIR = path.join(process.cwd(), "scripts")
 
+
+function processHashtags(htmlContent) {
+  // Regular expression for finding hashtags with segments separated by /
+  const hashtagRegex = /<p>(#[^<\s]+(?:\/[^<\s]+)*)<\/p>/g;
+  
+  // Initialize variables to store overall processed content and generated tags
+  let generatedTags = "";
+  let processedHtmlContent = htmlContent.replace(hashtagRegex, (match, hashtag) => {
+    // Split the hashtag by / character
+    const segments = hashtag.split('/');
+    
+    let tags = "";
+    let currentTag = "";
+    for (let i = 0; i < segments.length; i++) {
+      currentTag += (currentTag === "" ? segments[i].substring(1) : "/" + segments[i]);
+      tags = (tags === "" ? currentTag : currentTag + ", ") + tags;
+    }
+
+    generatedTags = tags;
+    
+    // Format the hashtag with the first segment and the separator markers
+    let formattedHashtag = `<span class='hashtag'><span class='hashtag-marker marker'>#</span>${segments[0].substring(1)}`;
+    
+    // Add the remaining segments with separator markers
+    for (let i = 1; i < segments.length; i++) {
+      formattedHashtag += `<span class='hashtag-separator-marker marker'>/</span>${segments[i]}`;
+    }
+    
+    formattedHashtag += '</span>';
+    
+    return `<p>${formattedHashtag}</p>`;
+  });
+
+  return {
+    generatedTags,
+    processedHtmlContent
+  };
+}
+
+async function convertMarkdownToHtml(markdownPath, filename) {
+  try {
+    const markdown = await readFile(markdownPath, "utf8")
+    const styleTemplate = await readFile(path.join(SCRIPTS_DIR, "style-template.html"), "utf8")
+
+    let styleTag = "";
+    const styleMatch = styleTemplate.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
+    if (styleMatch && styleMatch[1]) {
+      styleTag = `<style>${styleMatch[1]}</style>`;
+    }
+    
+    // Extract any frontmatter metadata if present (simple implementation)
+    let content = markdown
+    let metadata = {
+      title: path.basename(filename, ".md"),
+      created: "unavailable",
+      modified: "unavailable",
+      tags: "",
+      uniqueId: `md-${Date.now()}-${Math.random().toString(36).substring(2, 10)}`,
+      lastDevice: "Markdown Import"
+    }
+    
+    // Check for frontmatter between --- markers
+    const frontmatterMatch = markdown.match(/^---\n([\s\S]*?)\n---\n/)
+    if (frontmatterMatch) {
+      content = markdown.substring(frontmatterMatch[0].length)
+      const frontmatter = frontmatterMatch[1]
+      
+      // Parse frontmatter
+      frontmatter.split("\n").forEach(line => {
+        const [key, value] = line.split(":").map(part => part.trim())
+        if (key && value) {
+          metadata[key.toLowerCase()] = value
+        }
+      })
+    }
+    
+    // Convert Markdown to HTML
+    const htmlContent = marked.parse(content)
+    const { generatedTags, processedHtmlContent } = processHashtags(htmlContent)
+    console.log(generatedTags);
+    metadata.tags = generatedTags;
+    // Create a complete HTML document with metadata
+    const fullHtml = `<!DOCTYPE html>
+<html>
+<head>
+  <title>${metadata.title}</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="bear-note-unique-identifier" content="${metadata.uniqueId}">
+  <meta name="created" content="${metadata.created}">
+  <meta name="modified" content="${metadata.modified}">
+  <meta name="tags" content="${metadata.tags}">
+  <meta name="last device" content="${metadata.lastDevice}">
+  ${styleTag}
+  </head>
+<body>
+<div class="document-wrapper">
+${processedHtmlContent}
+<br>
+<br>
+<br>
+</div>
+</body>
+</html>`
+
+    // Generate the output filename and path
+    const htmlFileName = path.basename(filename, '.md') + '.html';
+    const htmlFilePath = path.join(CONTENTS_DIR, htmlFileName);
+    
+    // Write the HTML content to a file
+    await writeFile(htmlFilePath, fullHtml);
+    console.log(`Written HTML file: ${htmlFilePath}`);
+  } catch (error) {
+    console.error(`Error converting markdown file ${markdownPath}:`, error)
+    return null
+  }
+}
 
 // Delete a folder and all its contents
 async function deleteFolder(folderPath) {
@@ -220,6 +339,14 @@ async function generateStaticData() {
     await ensureDir(HTML_OUTPUT_DIR)
     await ensureDir(FOLDERS_DIR)
     await ensureDir(ATTACHMENTS_DIR)
+
+    // Convert all markdown files to HTML
+    const markdownFiles = (await readdir(CONTENTS_DIR)).filter((file) => file.toLowerCase().endsWith(".md"))
+    for (const file of markdownFiles) {
+      const filePath = path.join(CONTENTS_DIR, file)
+      await convertMarkdownToHtml(filePath, file)
+    }
+
 
     // Get all HTML files
     const files = (await readdir(CONTENTS_DIR)).filter((file) => file.toLowerCase().endsWith(".html"))

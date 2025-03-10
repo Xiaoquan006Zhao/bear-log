@@ -50,6 +50,7 @@
     "embla-carousel-react": "latest",
     "input-otp": "latest",
     "lucide-react": "latest",
+    "marked": "^15.0.7",
     "next": "latest",
     "next-themes": "latest",
     "react": "latest",
