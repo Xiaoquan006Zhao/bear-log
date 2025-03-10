@@ -14,7 +14,7 @@ export interface HtmlMetadata {
 export async function getFilesList(): Promise<string[]> {
   try {
     // Fetch the folder structure from /folders
-    const response = await fetch("/folders/folder-structure.json")
+    const response = await fetch("folders/folder-structure.json")
     if (!response.ok) {
       throw new Error(`Failed to fetch folder structure: ${response.statusText}`)
     }
@@ -44,7 +44,7 @@ export async function getFileContent(filename: string): Promise<{
 }> {
   try {
     // Fetch the file data from the static JSON file
-    const response = await fetch(`/data/${filename}.json`)
+    const response = await fetch(`data/${filename}.json`)
     if (!response.ok) {
       throw new Error(`Failed to fetch file content: ${response.statusText}`)
     }
@@ -84,7 +84,7 @@ export async function getFileMetadataOnly(filename: string): Promise<HtmlMetadat
 // Get the overall folder structure from /folders
 export async function getFolderStructure(): Promise<any> {
   try {
-    const response = await fetch("/folders/folder-structure.json")
+    const response = await fetch("folders/folder-structure.json")
     if (!response.ok) {
       throw new Error(`Failed to fetch folder structure: ${response.statusText}`)
     }
@@ -112,7 +112,7 @@ export async function getFilesForFolder(
   hasMore: boolean
 }> {
   try {
-    const url = `/folders/${folderPath || ""}/index.json`
+    const url = `folders/${folderPath || ""}/index.json`
     console.log(`Fetching folder files from: ${url}`)
     const response = await fetch(url)
     if (!response.ok) {
@@ -133,3 +133,4 @@ export async function getFilesForFolder(
     return { files: [], total: 0, hasMore: false }
   }
 }
+
