@@ -48,7 +48,7 @@ export function TableOfContents({ items, htmlViewerRef }: TableOfContentsProps) 
                 <Button
                   variant="ghost"
                   className={cn(
-                    "w-full justify-start text-left mb-1 h-auto py-1.5 flex items-center",
+                    "w-full justify-start text-left mb-1 h-auto py-1.5 flex items-center cursor-pointer",
                     textSize,
                     item.level > 1 && "text-muted-foreground",
                     "pl-[calc(24px+var(--indent))] pr-2",

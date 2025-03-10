@@ -47,7 +47,7 @@ export function FolderItem({
         </Button>
         <Button
           variant={isSelected ? "secondary" : "ghost"}
-          className={`flex-1 justify-start text-left h-8 py-1 pl-1 pr-2 min-w-0 rounded-md ${
+          className={`flex-1 justify-start text-left h-8 py-1 pl-1 pr-2 min-w-0 rounded-md cursor-pointer ${
             isSelected ? "bg-secondary" : "bg-transparent"
           }`}
           onClick={() => selectFolder(node.path)}
