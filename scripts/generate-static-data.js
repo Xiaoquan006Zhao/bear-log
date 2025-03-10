@@ -16,7 +16,7 @@ const CONTENTS_DIR = path.join(process.cwd(), "contents")
 const HTML_OUTPUT_DIR = path.join(process.cwd(), "public", "data")
 const FOLDERS_DIR = path.join(process.cwd(), "public", "folders")
 const ATTACHMENTS_DIR = path.join(process.cwd(), "public", "data")
-const ATTACHMENTS_URL = "/data" // Global declaration for URL prefix
+const ATTACHMENTS_URL = "data" // Global declaration for URL prefix
 
 
 // Delete a folder and all its contents
