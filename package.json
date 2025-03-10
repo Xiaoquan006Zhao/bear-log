@@ -70,7 +70,7 @@
     "eslint": "latest",
     "eslint-config-next": "latest",
     "postcss": "latest",
-    "tailwindcss": "latest",
+    "tailwindcss": "^3.3.0",
     "typescript": "latest"
   }
 }
