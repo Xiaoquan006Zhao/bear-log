@@ -45,11 +45,36 @@ export const RawHtmlViewer = forwardRef<RawHtmlViewerRef, RawHtmlViewerProps>(
         html.offsetHeight,
       )
 
-      // Set iframe height to content height exactly, without extra buffer
+      // Set iframe height to content height exactly
       setIframeHeight(`${height}px`)
     } catch (error) {
       console.error("Error updating iframe height:", error)
     }
+  }, [])
+
+  // Custom smooth scroll function with adjustable duration
+  const smoothScrollTo = useCallback((element: HTMLElement, to: number, duration: number) => {
+    const start = element.scrollTop
+    const change = to - start
+    const startTime = performance.now()
+
+    const animateScroll = (currentTime: number) => {
+      const elapsedTime = currentTime - startTime
+
+      if (elapsedTime > duration) {
+        element.scrollTop = to
+        return
+      }
+
+      // Easing function: easeInOutQuad
+      let time = elapsedTime / duration
+      time = time < 0.5 ? 2 * time * time : -1 + (4 - 2 * time) * time
+
+      element.scrollTop = start + change * time
+      requestAnimationFrame(animateScroll)
+    }
+
+    requestAnimationFrame(animateScroll)
   }, [])
 
   // Expose methods to parent components via ref
@@ -73,17 +98,76 @@ export const RawHtmlViewer = forwardRef<RawHtmlViewerRef, RawHtmlViewerProps>(
         }
       }
 
-      // If element found, scroll the container to the element's position
+      // If element found, check if it's in a folded section and unfold it
       if (targetElement && containerRef.current) {
-        // Get element position relative to the iframe
-        const rect = targetElement.getBoundingClientRect()
-        const iframeRect = iframeRef.current.getBoundingClientRect()
+        // Find all ancestor section wrappers that might be folded
+        const doc = iframeRef.current.contentDocument
 
-        // Calculate the absolute position
-        const absoluteTop = rect.top + iframeRef.current.offsetTop
+        // Function to check if a section is folded
+        const isSectionFolded = (section) => {
+          const contentContainer = section.querySelector(".foldable-content")
+          return (
+            contentContainer &&
+            (contentContainer.style.display === "none" ||
+              contentContainer.style.height === "0px" ||
+              contentContainer.style.opacity === "0")
+          )
+        }
 
-        // Scroll the container
-        containerRef.current.scrollTop = absoluteTop
+        // Find all ancestor section wrappers
+        let currentElement = targetElement
+        const foldedAncestors = []
+
+        // Traverse up the DOM to find all folded ancestor sections
+        while (currentElement) {
+          const sectionWrapper = currentElement.closest(".section-wrapper")
+          if (!sectionWrapper) break
+
+          // Check if this section is folded
+          if (isSectionFolded(sectionWrapper)) {
+            foldedAncestors.push(sectionWrapper)
+          }
+
+          // Move up to the parent of the current section wrapper
+          currentElement = sectionWrapper.parentElement
+        }
+
+        // Unfold all folded ancestors, starting from the outermost one
+        if (foldedAncestors.length > 0) {
+          // Reverse the array to start from the outermost section
+          foldedAncestors.reverse().forEach((section) => {
+            const toggleButton = section.querySelector(".fold-toggle") as HTMLElement
+            if (toggleButton) {
+              toggleButton.click()
+            }
+          })
+        }
+
+        // Scroll to the element with a slight delay to allow for unfolding animations
+        setTimeout(
+          () => {
+            if (targetElement && containerRef.current) {
+              const iframeDoc = iframeRef.current.contentDocument
+              const docElement = iframeDoc.documentElement
+              const bodyElement = iframeDoc.body
+
+              // Get the position of the element within the iframe document
+              const elementOffsetTop =
+                targetElement.getBoundingClientRect().top +
+                (docElement.scrollTop || bodyElement.scrollTop) -
+                (docElement.clientTop || 0)
+
+              // Calculate the absolute position in the container
+              const iframeOffsetTop = iframeRef.current.offsetTop
+              const scrollPosition = elementOffsetTop + iframeOffsetTop
+
+              // Use custom smooth scroll with a faster duration 
+              smoothScrollTo(containerRef.current, scrollPosition, 300)
+            }
+          },
+          foldedAncestors.length > 0 ? 30 : 0,
+        ) // Small delay if we had to unfold sections
+
         return true
       }
 
@@ -96,19 +180,209 @@ export const RawHtmlViewer = forwardRef<RawHtmlViewerRef, RawHtmlViewerProps>(
     },
   }))
 
-  // Function to apply dark mode to the iframe
-  const applyDarkMode = useCallback((isDark: boolean) => {
+  // Function to add content folding functionality
+  const setupContentFolding = useCallback(() => {
     if (!iframeRef.current || !iframeRef.current.contentDocument) return
 
-    const iframeDoc = iframeRef.current.contentDocument
+    const doc = iframeRef.current.contentDocument
 
-    // Add or remove dark class on the html element
-    if (isDark) {
-      iframeDoc.documentElement.classList.add("dark")
-    } else {
-      iframeDoc.documentElement.classList.remove("dark")
+    // Find the main content container
+    const mainContent = doc.querySelector(".document-wrapper") || doc.body
+
+    // Get all headings within the main content
+    const headings = mainContent.querySelectorAll("h1, h2, h3, h4, h5, h6")
+
+    // Keep track of processed headings to avoid duplicates
+    const processedHeadings = new Set()
+
+    // Add folding functionality to each heading
+    headings.forEach((heading) => {
+      // Skip if we've already processed this heading text
+      const headingText = heading.textContent?.trim()
+      if (!headingText || processedHeadings.has(headingText)) return
+      processedHeadings.add(headingText)
+
+      // Create a wrapper for the heading and its content
+      const sectionWrapper = doc.createElement("div")
+      sectionWrapper.className = "section-wrapper"
+      sectionWrapper.style.width = "100%"
+
+      // Create the heading wrapper
+      const headingWrapper = doc.createElement("div")
+      headingWrapper.className = "heading-wrapper"
+      headingWrapper.style.position = "relative"
+      headingWrapper.style.display = "flex"
+      headingWrapper.style.alignItems = "center"
+      headingWrapper.style.width = "100%"
+      // Remove cursor pointer from heading wrapper since only the chevron is clickable now
+      headingWrapper.style.cursor = "default"
+
+      // Create toggle button
+      const toggleButton = doc.createElement("button")
+      toggleButton.className = "fold-toggle"
+      toggleButton.innerHTML = `
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" 
+  stroke="none" class="triangle-icon" style="display: block; margin: 0 auto;">
+  <polygon points="4,8 20,8 12,20" />
+</svg>
+`
+      toggleButton.style.background = "none"
+      toggleButton.style.border = "none"
+      toggleButton.style.padding = "3px"
+      toggleButton.style.marginRight = "4px"
+      toggleButton.style.borderRadius = "6px"
+      toggleButton.style.transition = "transform 0.3s ease, color 0.2s ease"
+      toggleButton.style.flexShrink = "0"
+      toggleButton.style.display = "flex"
+      toggleButton.style.alignItems = "center"
+      toggleButton.style.justifyContent = "center"
+      toggleButton.style.width = "28px"
+      toggleButton.style.height = "28px"
+      toggleButton.style.color = "rgb(100, 116, 139)" // slate-500
+      toggleButton.style.cursor = "pointer" // Add cursor pointer to toggle button
+
+      // Add hover effect - change color instead of background
+      toggleButton.addEventListener("mouseover", () => {
+        toggleButton.style.color = "rgb(59, 130, 246)" // Change to blue-500 for more prominence
+      })
+
+      toggleButton.addEventListener("mouseout", () => {
+        toggleButton.style.color = "rgb(100, 116, 139)" // slate-500
+      })
+
+      // Clone the heading for the wrapper
+      const headingClone = heading.cloneNode(true)
+      headingClone.style.margin = "0"
+      headingClone.style.flex = "1"
+
+      // Add elements to heading wrapper
+      headingWrapper.appendChild(toggleButton)
+      headingWrapper.appendChild(headingClone)
+
+      // Create content container
+      const contentContainer = doc.createElement("div")
+      contentContainer.className = "foldable-content"
+      contentContainer.style.transition = "all 0.3s ease"
+      contentContainer.style.overflow = "hidden"
+      contentContainer.style.width = "100%"
+      contentContainer.style.display = "block"
+
+      // Collect content until the next heading of same or higher level
+      const level = Number.parseInt(heading.tagName[1])
+      let currentElement = heading.nextElementSibling
+      const contentElements = []
+
+      while (currentElement) {
+        const isHeading = currentElement.tagName?.[0] === "H"
+        const currentLevel = isHeading ? Number.parseInt(currentElement.tagName[1]) : 999
+
+        if (isHeading && currentLevel <= level) break
+
+        const nextElement = currentElement.nextElementSibling
+        contentElements.push(currentElement)
+        currentElement = nextElement
+      }
+
+      // Move content to the container
+      contentElements.forEach((element) => {
+        contentContainer.appendChild(element)
+      })
+
+      // Add everything to the section wrapper
+      sectionWrapper.appendChild(headingWrapper)
+      sectionWrapper.appendChild(contentContainer)
+
+      // Replace the original heading with our section wrapper
+      heading.parentNode?.replaceChild(sectionWrapper, heading)
+
+      // Set up toggle functionality
+      let isFolded = false
+
+      const updateFoldState = () => {
+        if (isFolded) {
+          // When folding, use display: none after transition
+          contentContainer.style.height = "0px"
+          contentContainer.style.opacity = "0"
+          contentContainer.style.marginTop = "0"
+          contentContainer.style.marginBottom = "0"
+          contentContainer.style.paddingTop = "0"
+          contentContainer.style.paddingBottom = "0"
+          toggleButton.style.transform = "rotate(-90deg)" // Rotate triangle to point right
+
+          // After transition completes, set display to none to fully hide content
+          setTimeout(() => {
+            if (isFolded) {
+              contentContainer.style.display = "none"
+              updateIframeHeight()
+            }
+          }, 300)
+        } else {
+          // When unfolding, first set display to block
+          contentContainer.style.display = "block"
+
+          // Force a reflow
+          contentContainer.offsetHeight
+
+          // Then animate other properties
+          contentContainer.style.height = "auto"
+          contentContainer.style.opacity = "1"
+          contentContainer.style.marginTop = ""
+          contentContainer.style.marginBottom = ""
+          contentContainer.style.paddingTop = ""
+          contentContainer.style.paddingBottom = ""
+          toggleButton.style.transform = "rotate(0)" // Reset rotation
+        }
+
+        // Update iframe height after toggling
+        setTimeout(updateIframeHeight, 350)
+      }
+
+      // Handle click only on the toggle button
+      toggleButton.addEventListener("click", (e) => {
+        e.stopPropagation() // Prevent event bubbling
+        isFolded = !isFolded
+        updateFoldState()
+      })
+
+      // Handle image loading
+      const images = contentContainer.querySelectorAll("img")
+      images.forEach((img) => {
+        if (img.complete) {
+          // For already loaded images
+          updateIframeHeight()
+        } else {
+          // For images that will load
+          img.addEventListener("load", updateIframeHeight)
+          img.addEventListener("error", updateIframeHeight)
+        }
+      })
+    })
+
+    // Add styles
+    const style = doc.createElement("style")
+    style.textContent = `
+    .section-wrapper {
+      margin-bottom: 1em;
     }
-  }, [])
+    
+    .heading-wrapper {
+      user-select: none;
+    }
+    
+    .foldable-content {
+      width: 100%;
+    }
+    
+    .foldable-content img {
+      max-width: 100%;
+      height: auto;
+    }
+  `
+    doc.head.appendChild(style)
+
+    // Update iframe height
+    updateIframeHeight()
+  }, [updateIframeHeight])
 
   // Generate a simple hash for content to detect changes
   const generateContentHash = (content: string): string => {
@@ -121,38 +395,6 @@ export const RawHtmlViewer = forwardRef<RawHtmlViewerRef, RawHtmlViewerProps>(
     }
     return hash.toString()
   }
-
-  // Effect to sync dark mode with iframe
-  useEffect(() => {
-    // Function to check and apply dark mode
-    const syncDarkMode = () => {
-      const isDarkMode = document.documentElement.classList.contains("dark")
-      applyDarkMode(isDarkMode)
-    }
-
-    // Set up a MutationObserver to watch for dark mode changes in the parent document
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (
-          mutation.type === "attributes" &&
-          mutation.attributeName === "class" &&
-          mutation.target === document.documentElement
-        ) {
-          syncDarkMode()
-        }
-      })
-    })
-
-    // Start observing the document element for class changes
-    observer.observe(document.documentElement, { attributes: true })
-
-    // Initial sync
-    syncDarkMode()
-
-    return () => {
-      observer.disconnect()
-    }
-  }, [applyDarkMode])
 
   // Handle window resize events
   useEffect(() => {
@@ -200,14 +442,14 @@ export const RawHtmlViewer = forwardRef<RawHtmlViewerRef, RawHtmlViewerProps>(
 
       try {
         if (iframe.contentWindow && iframe.contentDocument?.body) {
-          // Add styles to the iframe content
+          // Add basic styles to the iframe content
           const style = document.createElement("style")
           style.textContent = `
             body, html {
               margin: 0;
               padding: 0;
               height: auto;
-              overflow: hidden !important; /* Change from visible to hidden */
+              overflow: hidden !important;
             }
             
             /* Ensure no extra space at the bottom */
@@ -215,48 +457,11 @@ export const RawHtmlViewer = forwardRef<RawHtmlViewerRef, RawHtmlViewerProps>(
               margin-bottom: 0;
               padding-bottom: 0;
             }
-            
-            /* Dark mode styles for iframe content */
-            .dark {
-              color-scheme: dark;
-            }
-            
-            .dark body {
-              background-color: hsl(222.2 84% 4.9%);
-              color: hsl(210 40% 98%);
-            }
-            
-            /* Style adjustments for specific elements in dark mode */
-            .dark a {
-              color: hsl(217.2 91.2% 59.8%);
-            }
-            
-            .dark img {
-              opacity: 0.8;
-            }
-            
-            .dark pre, .dark code {
-              background-color: hsl(217.2 32.6% 12%);
-            }
-            
-            .dark table {
-              border-color: hsl(217.2 32.6% 17.5%);
-            }
-            
-            .dark th, .dark td {
-              border-color: hsl(217.2 32.6% 17.5%);
-            }
-            
-            .dark blockquote {
-              border-color: hsl(217.2 32.6% 17.5%);
-              color: hsl(215 20.2% 65.1%);
-            }
           `
           iframe.contentDocument.head.appendChild(style)
 
-          // Apply current dark mode state
-          const isDarkMode = document.documentElement.classList.contains("dark")
-          applyDarkMode(isDarkMode)
+          // Set up content folding
+          setupContentFolding()
 
           // Update iframe height
           updateIframeHeight()
@@ -354,7 +559,7 @@ export const RawHtmlViewer = forwardRef<RawHtmlViewerRef, RawHtmlViewerProps>(
     return () => {
       iframe.removeEventListener("load", handleLoad)
     }
-  }, [htmlContent, baseUrl, applyDarkMode, updateIframeHeight])
+  }, [htmlContent, baseUrl, updateIframeHeight, setupContentFolding])
 
   return (
     <div ref={containerRef} className="w-full h-full relative overflow-auto scrollbar-custom">
@@ -370,7 +575,7 @@ export const RawHtmlViewer = forwardRef<RawHtmlViewerRef, RawHtmlViewerProps>(
         style={{
           height: iframeHeight,
           display: "block",
-          overflow: "hidden", // Ensure this is set to hidden
+          overflow: "hidden",
           border: "none",
           margin: 0,
           padding: 0,
