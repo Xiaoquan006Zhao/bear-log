@@ -60,7 +60,7 @@ export function FileCard({ file, metadata, imageAttachments, isSelected, onClick
       {/* Image Attachments Preview */}
       {imageAttachments.length > 0 && (
         <div className="flex-1 min-h-0 overflow-hidden">
-          <ImagePreviewGrid images={imageAttachments} maxHeight={120} />
+          <ImagePreviewGrid images={imageAttachments.slice(0, 3)} maxHeight={120} />
         </div>
       )}
     </Card>
