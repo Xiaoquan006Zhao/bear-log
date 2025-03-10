@@ -63,7 +63,7 @@ export function ContentPanel({
   const handlePanelResize = (sizes: number[]) => {
     if (sizes.length >= 2) {
       // If TOC panel gets too small, auto-collapse it
-      if (sizes[1] <= 10) {
+      if (sizes[1] <= 5) {
         setShowToc(false)
       }
     }
@@ -100,7 +100,7 @@ export function ContentPanel({
             {/* TOC Panel */}
             <ResizablePanel
               defaultSize={DEFAULT_TOC_WIDTH}
-              minSize={10}
+              minSize={3}
               maxSize={40}
               className="min-w-0 overflow-hidden"
             >
