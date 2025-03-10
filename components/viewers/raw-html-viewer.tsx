@@ -434,6 +434,7 @@ export const RawHtmlViewer = forwardRef<RawHtmlViewerRef, RawHtmlViewerProps>(
     // Reset container scroll position when content changes
     if (contentChanged) {
       container.scrollTop = 0
+      setIframeHeight("100%") // Reset iframe height when content changes
     }
 
     // Handle iframe load event
