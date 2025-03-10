@@ -1,4 +1,5 @@
 const nextConfig = {
+  output: "export",
   eslint: {
     // This will still show warnings but won't fail the build
     ignoreDuringBuilds: true,

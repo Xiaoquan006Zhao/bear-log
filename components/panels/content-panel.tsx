@@ -14,7 +14,6 @@ const DEFAULT_TOC_WIDTH = 25
 
 interface ContentPanelProps {
   selectedFile: string | null
-  fileContent: string
   rawHtml: string
   fileMetadata: HtmlMetadata | null
   fileHasAttachments: boolean
@@ -26,7 +25,6 @@ interface ContentPanelProps {
 
 export function ContentPanel({
   selectedFile,
-  fileContent,
   rawHtml,
   fileMetadata,
   fileHasAttachments,
@@ -57,7 +55,9 @@ export function ContentPanel({
   }
 
   // Calculate base URL for the iframe if needed
-  const baseUrl = fileHasAttachments ? `/api/attachments/${encodeURIComponent(selectedFile.replace(".html", ""))}/` : ""
+  // const baseUrl = fileHasAttachments ? `/api/attachments/${encodeURIComponent(selectedFile.replace(".html", ""))}/` : ""
+  const baseUrl = fileHasAttachments ? `/api/xx/` : ""
+
 
   // Handle TOC auto-collapse
   const handlePanelResize = (sizes: number[]) => {

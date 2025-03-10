@@ -55,7 +55,6 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
 
   const {
     selectedFile,
-    fileContent,
     fileMetadata,
     fileHasAttachments,
     loading: contentLoading,
@@ -102,7 +101,6 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
 
       // File Content
       selectedFile,
-      fileContent,
       rawHtml,
       fileMetadata,
       fileHasAttachments,
@@ -133,7 +131,6 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
 
       // File Content
       selectedFile,
-      fileContent,
       rawHtml,
       fileMetadata,
       fileHasAttachments,

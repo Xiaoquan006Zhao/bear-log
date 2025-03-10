@@ -34,7 +34,7 @@ export function ImagePreviewGrid({ images, maxHeight = 200 }: ImagePreviewGridPr
 
   // Extract filename from path for fallback display
   const getFilenameFromPath = (path: string) => {
-    // Remove API path prefix if present
+    // Remove API path prefix if present since we have changed to static website
     const cleanPath = path.replace(/^\/api\/attachments\/[^/]+\//, "")
     // Get the last part of the path (filename)
     return decodeURIComponent(cleanPath)

@@ -5,9 +5,8 @@ import { getFileContent, type HtmlMetadata } from "@/lib/file-utils"
 import { generateTableOfContents, type TocItem } from "@/lib/toc-utils"
 import storage from "@/lib/local-storage"
 
-// Define a cache entry type
+// Define a cache entry type without the content variable
 interface CacheEntry {
-  content: string
   rawHtml: string
   metadata: HtmlMetadata
   hasAttachments: boolean
@@ -21,7 +20,6 @@ const CACHE_STORAGE_KEY = "file-content-cache"
 
 export function useFileContent() {
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
-  const [fileContent, setFileContent] = useState<string>("")
   const [rawHtml, setRawHtml] = useState<string>("")
   const [fileMetadata, setFileMetadata] = useState<HtmlMetadata | null>(null)
   const [fileHasAttachments, setFileHasAttachments] = useState<boolean>(false)
@@ -111,7 +109,6 @@ export function useFileContent() {
           cachedEntry.timestamp = Date.now()
 
           // Use cached data
-          setFileContent(cachedEntry.content)
           setRawHtml(cachedEntry.rawHtml)
           setFileMetadata(cachedEntry.metadata)
           setFileHasAttachments(cachedEntry.hasAttachments)
@@ -132,16 +129,14 @@ export function useFileContent() {
         // Generate table of contents from the processed content
         const toc = generateTableOfContents(content)
 
-        // Update state
-        setFileContent(content)
+        // Update state (only rawHtml is stored)
         setRawHtml(rawHtml)
         setFileMetadata(metadata)
         setFileHasAttachments(hasAttachments)
         setTocItems(toc)
 
-        // Add to cache
+        // Add to cache (no content stored)
         cache.set(filename, {
-          content,
           rawHtml,
           metadata,
           hasAttachments,
@@ -156,7 +151,6 @@ export function useFileContent() {
         saveCache()
       } catch (error) {
         console.error("Error loading file content:", error)
-        setFileContent("<p>Error loading file content</p>")
         setRawHtml("<p>Error loading file content</p>")
         setFileMetadata(null)
         setFileHasAttachments(false)
@@ -191,7 +185,6 @@ export function useFileContent() {
 
   return {
     selectedFile,
-    fileContent,
     rawHtml,
     fileMetadata,
     fileHasAttachments,
@@ -203,4 +196,3 @@ export function useFileContent() {
     clearCache, // Expose this for debugging or manual cleanup
   }
 }
-

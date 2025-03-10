@@ -25,7 +25,6 @@ export function MainLayout() {
 
     // File Content
     selectedFile,
-    fileContent,
     rawHtml,
     fileMetadata,
     fileHasAttachments,
@@ -179,7 +178,6 @@ export function MainLayout() {
           <ResizablePanel defaultSize={getRightPanelSize()} minSize={30} className="flex flex-col overflow-hidden">
             <ContentPanel
               selectedFile={selectedFile}
-              fileContent={fileContent}
               rawHtml={rawHtml}
               fileMetadata={fileMetadata}
               fileHasAttachments={fileHasAttachments}
