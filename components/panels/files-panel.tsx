@@ -148,7 +148,7 @@ export function FilesPanel({
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 w-8 p-0 flex items-center justify-center pointer-events-auto"
+            className="h-8 w-8 p-0 flex items-center justify-center pointer-events-auto cursor-pointer"
             onClick={togglePanel}
           >
             <ChevronRight className="h-4 w-4" />
@@ -177,7 +177,7 @@ export function FilesPanel({
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 w-8 p-0 flex items-center justify-center flex-shrink-0"
+            className="h-8 w-8 p-0 flex items-center justify-center flex-shrink-0 cursor-pointer"
             onClick={togglePanel}
           >
             <ChevronLeft className="h-4 w-4" />

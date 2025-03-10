@@ -35,10 +35,10 @@ export function FolderPanel({
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 w-8 p-0 flex items-center justify-center"
+            className="h-8 w-8 p-0 flex items-center justify-center cursor-pointer"
             onClick={togglePanel}
           >
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-4 w-4 " />
           </Button>
         </div>
         <div className="flex-1"></div>
@@ -56,7 +56,7 @@ export function FolderPanel({
         <Button
           variant="ghost"
           size="sm"
-          className="h-8 w-8 p-0 ml-2 flex items-center justify-center shrink-0"
+          className="h-8 w-8 p-0 ml-2 flex items-center justify-center shrink-0 cursor-pointer"
           onClick={togglePanel}
         >
           <ChevronLeft className="h-4 w-4" />
