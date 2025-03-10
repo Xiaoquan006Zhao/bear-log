@@ -1,6 +1,63 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@config '../tailwind.config.js';
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
+
+/* Custom scrollbar styling */
+@utility panel-transition {
+  /* Add these new utility classes */
+  @apply transition-all duration-200 ease-in-out;
+}
+@utility hover-highlight {
+  @apply hover:bg-muted/70 transition-colors duration-150;
+}
+@utility scrollbar-custom {
+  /* Update the existing scrollbar styles to be more consistent */
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--muted-foreground) / 0.3);
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(var(--muted-foreground) / 0.5);
+  }
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--muted-foreground) / 0.3) transparent;
+}
+@utility no-scrollbar {
+  /* Add an additional utility class for no scrollbar */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
 
 @layer base {
   :root {
@@ -72,52 +129,6 @@
   }
   body {
     @apply bg-background text-foreground;
-  }
-}
-
-/* Custom scrollbar styling */
-@layer utilities {
-  /* Add these new utility classes */
-  .panel-transition {
-    @apply transition-all duration-200 ease-in-out;
-  }
-
-  .hover-highlight {
-    @apply hover:bg-muted/70 transition-colors duration-150;
-  }
-
-  /* Update the existing scrollbar styles to be more consistent */
-  .scrollbar-custom::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-
-  .scrollbar-custom::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  .scrollbar-custom::-webkit-scrollbar-thumb {
-    background-color: hsl(var(--muted-foreground) / 0.3);
-    border-radius: 3px;
-  }
-
-  .scrollbar-custom::-webkit-scrollbar-thumb:hover {
-    background-color: hsl(var(--muted-foreground) / 0.5);
-  }
-
-  .scrollbar-custom {
-    scrollbar-width: thin;
-    scrollbar-color: hsl(var(--muted-foreground) / 0.3) transparent;
-  }
-
-  /* Add an additional utility class for no scrollbar */
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
   }
 }
 

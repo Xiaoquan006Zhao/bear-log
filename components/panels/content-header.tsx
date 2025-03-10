@@ -24,7 +24,7 @@ export function ContentHeader({ fileMetadata, fileHasAttachments, showToc, setSh
   }
 
   return (
-    <div className="px-4 py-3 border-b flex-shrink-0 flex items-center justify-between">
+    <div className="px-4 py-3 border-b shrink-0 flex items-center justify-between">
       <div className="flex-1 min-w-0 mr-2">
         <h2 className="text-lg font-semibold truncate" title={fileMetadata?.title || ""}>
           {fileMetadata?.title || ""}
@@ -33,7 +33,7 @@ export function ContentHeader({ fileMetadata, fileHasAttachments, showToc, setSh
           {fileMetadata?.created && (
             <div className="flex items-center">
               <Badge variant="outline" className="text-xs flex items-center gap-1">
-                <Calendar className="h-3 w-3 flex-shrink-0" />
+                <Calendar className="h-3 w-3 shrink-0" />
                 <span>Created: {formatDate(fileMetadata.created)}</span>
               </Badge>
             </div>
@@ -41,7 +41,7 @@ export function ContentHeader({ fileMetadata, fileHasAttachments, showToc, setSh
           {fileMetadata?.modified && (
             <div className="flex items-center">
               <Badge variant="outline" className="text-xs flex items-center gap-1">
-                <Clock className="h-3 w-3 flex-shrink-0" />
+                <Clock className="h-3 w-3 shrink-0" />
                 <span>Modified: {formatDate(fileMetadata.modified)}</span>
               </Badge>
             </div>
@@ -49,14 +49,14 @@ export function ContentHeader({ fileMetadata, fileHasAttachments, showToc, setSh
           {fileHasAttachments && (
             <div className="flex items-center">
               <Badge variant="outline" className="text-xs flex items-center gap-1">
-                <Paperclip className="h-3 w-3 flex-shrink-0" />
+                <Paperclip className="h-3 w-3 shrink-0" />
                 <span>Attachments</span>
               </Badge>
             </div>
           )}
         </div>
       </div>
-      <div className="flex items-center gap-2 flex-shrink-0">
+      <div className="flex items-center gap-2 shrink-0">
         <Button
           variant="outline"
           size="sm"

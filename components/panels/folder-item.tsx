@@ -31,7 +31,7 @@ export function FolderItem({
         <Button
           variant="ghost"
           size="icon"
-          className="h-6 w-6 p-0 flex-shrink-0"
+          className="h-6 w-6 p-0 shrink-0"
           onClick={() => toggleFolder(node.path)}
           disabled={Object.keys(node.children).length === 0}
         >
@@ -53,10 +53,10 @@ export function FolderItem({
           onClick={() => selectFolder(node.path)}
           title={node.name}
         >
-          <Folder className={`h-4 w-4 mr-2 flex-shrink-0 ${isSelected ? "text-primary" : "text-muted-foreground"}`} />
+          <Folder className={`h-4 w-4 mr-2 shrink-0 ${isSelected ? "text-primary" : "text-muted-foreground"}`} />
           <span className="truncate">{node.name}</span>
           {node.totalUniqueFiles > 0 && (
-            <Badge variant="outline" className="ml-2 text-xs flex-shrink-0">
+            <Badge variant="outline" className="ml-2 text-xs shrink-0">
               {node.totalUniqueFiles}
             </Badge>
           )}

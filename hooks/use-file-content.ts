@@ -30,6 +30,18 @@ export function useFileContent() {
   // Use a ref for the cache to avoid re-renders when cache changes
   const contentCache = useRef<Map<string, CacheEntry>>(new Map())
 
+  // Function to clear the cache (useful for debugging or manual cleanup)
+  const clearCache = useCallback(() => {
+    contentCache.current.clear()
+    storage.remove(CACHE_STORAGE_KEY)
+    console.log("Content cache cleared")
+  }, [])
+
+  // Clear cache on component mount
+  useEffect(() => {
+    clearCache()
+  }, [clearCache])
+
   // Load cache from localStorage on mount
   useEffect(() => {
     try {
@@ -110,6 +122,7 @@ export function useFileContent() {
 
           // Use cached data
           setRawHtml(cachedEntry.rawHtml)
+          
           setFileMetadata(cachedEntry.metadata)
           setFileHasAttachments(cachedEntry.hasAttachments)
           setTocItems(cachedEntry.tocItems)
@@ -161,13 +174,6 @@ export function useFileContent() {
     },
     [cleanupCache, saveCache],
   )
-
-  // Function to clear the cache (useful for debugging or manual cleanup)
-  const clearCache = useCallback(() => {
-    contentCache.current.clear()
-    storage.remove(CACHE_STORAGE_KEY)
-    console.log("Content cache cleared")
-  }, [])
 
   // Load showToc preference from localStorage on mount
   useEffect(() => {

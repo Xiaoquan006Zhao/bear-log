@@ -32,12 +32,12 @@ export function FileCard({ file, metadata, imageAttachments, isSelected, onClick
   return (
     <Card
       className={`file-card group flex flex-col h-full w-full overflow-hidden transition-colors cursor-pointer border ${
-        isSelected ? "bg-secondary border-primary shadow-sm" : "hover:bg-secondary/40 border-border/50"
+        isSelected ? "bg-secondary border-primary shadow-xs" : "hover:bg-secondary/40 border-border/50"
       }`}
       onClick={onClick}
       data-selected={isSelected}
     >
-      <div className="p-3 flex-shrink-0 w-full min-w-0">
+      <div className="p-3 shrink-0 w-full min-w-0">
         <div className="flex items-start gap-2 w-full min-w-0">
           <div className="flex-1 min-w-0">
             <div className="font-medium text-sm overflow-hidden text-ellipsis">
@@ -45,7 +45,7 @@ export function FileCard({ file, metadata, imageAttachments, isSelected, onClick
             </div>
             {(metadata.modified || metadata.created) && (
               <div className="text-xs text-muted-foreground mt-1 flex items-center">
-                <Calendar className="h-3 w-3 mr-1 flex-shrink-0" />
+                <Calendar className="h-3 w-3 mr-1 shrink-0" />
                 <div className="overflow-hidden text-ellipsis">
                   <span className="whitespace-nowrap block overflow-hidden text-ellipsis">
                     {formatDate(metadata.modified || metadata.created || "")}

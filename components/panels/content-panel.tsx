@@ -56,8 +56,8 @@ export function ContentPanel({
 
   // Calculate base URL for the iframe if needed
   // const baseUrl = fileHasAttachments ? `/api/attachments/${encodeURIComponent(selectedFile.replace(".html", ""))}/` : ""
-  const baseUrl = fileHasAttachments ? `/api/xx/` : ""
-
+  const baseUrl = '/data/'
+  const altAttachmentDirectory = selectedFile.replace(".html", "")
 
   // Handle TOC auto-collapse
   const handlePanelResize = (sizes: number[]) => {
@@ -90,7 +90,7 @@ export function ContentPanel({
                 </div>
               ) : (
                 <div className="h-full">
-                  <RawHtmlViewer ref={htmlViewerRef} htmlContent={rawHtml} baseUrl={baseUrl} />
+                  <RawHtmlViewer ref={htmlViewerRef} htmlContent={rawHtml} baseUrl={baseUrl} altAttachmentDirectory={altAttachmentDirectory} />
                 </div>
               )}
             </ResizablePanel>
@@ -116,7 +116,7 @@ export function ContentPanel({
               </div>
             ) : (
               <div className="h-full">
-                <RawHtmlViewer ref={htmlViewerRef} htmlContent={rawHtml} baseUrl={baseUrl} />
+                <RawHtmlViewer ref={htmlViewerRef} htmlContent={rawHtml}  baseUrl={baseUrl} altAttachmentDirectory={altAttachmentDirectory} />
               </div>
             )}
           </div>

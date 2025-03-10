@@ -31,7 +31,7 @@ export function FolderPanel({
   if (collapsed) {
     return (
       <div className="h-full bg-muted/50 flex flex-col">
-        <div className="p-4 flex-shrink-0 flex justify-center border-b">
+        <div className="p-4 shrink-0 flex justify-center border-b">
           <Button
             variant="ghost"
             size="sm"
@@ -48,15 +48,15 @@ export function FolderPanel({
 
   return (
     <>
-      <div className="px-4 py-3 border-b flex-shrink-0 flex items-center justify-between">
-        <h2 className="text-lg font-semibold flex items-center gap-3">
+      <div className="px-4 py-3 border-b shrink-0 flex items-center justify-between">
+        <h2 className="text-lg font-semibold flex items-center gap-3 min-w-0 overflow-hidden">
           
-          <span className="truncate">Xiaoquan's Notes</span>
+          <span className="truncate overflow-hidden text-ellipsis">Xiaoquan's Notes</span>
         </h2>
         <Button
           variant="ghost"
           size="sm"
-          className="h-8 w-8 p-0 flex items-center justify-center flex-shrink-0"
+          className="h-8 w-8 p-0 ml-2 flex items-center justify-center shrink-0"
           onClick={togglePanel}
         >
           <ChevronLeft className="h-4 w-4" />

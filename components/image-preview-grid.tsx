@@ -48,7 +48,7 @@ export function ImagePreviewGrid({ images, maxHeight = 200 }: ImagePreviewGridPr
         {images.map((src, index) => (
           <div
             key={index}
-            className="relative bg-gray-100 dark:bg-gray-900 overflow-hidden flex-shrink-0"
+            className="relative bg-gray-100 dark:bg-gray-900 overflow-hidden shrink-0"
             style={{ height: "100%" }}
           >
             {imageStates[index] === "error" ? (
