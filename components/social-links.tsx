@@ -18,7 +18,7 @@ export function SocialLinks({ collapsed = false }: SocialLinksProps) {
   const [emailHovered, setEmailHovered] = useState(false)
 
   // Your email address
-  const emailAddress = "your.email@example.com"
+  const emailAddress = "xiaoquan0622@gmail.com"
 
   // Function to copy email to clipboard
   const copyEmailToClipboard = (e: React.MouseEvent) => {
@@ -80,7 +80,7 @@ export function SocialLinks({ collapsed = false }: SocialLinksProps) {
 
   return (
     <TooltipProvider delayDuration={10}>
-      <div className={`flex ${collapsed ? "flex-col" : "flex-wrap"} gap-1 justify-center p-2`}>
+      <div className={`flex ${collapsed ? "flex-col" : "flex-wrap"} gap-1 justify-start p-2`}>
         {links.map((link) => (
           <Tooltip key={link.name}>
             <TooltipTrigger asChild>
