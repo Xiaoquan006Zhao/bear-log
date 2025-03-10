@@ -7,30 +7,24 @@ export interface TocItem {
 
 // Generate TOC from HTML string (used before iframe rendering)
 export function generateTableOfContents(htmlContent: string): TocItem[] {
-  // Create a temporary div to parse HTML
-  const div = document.createElement("div")
-  div.innerHTML = htmlContent
+  // Use the DOMParser API to parse the HTML without attaching it to the live DOM
+  const parser = new DOMParser()
+  const doc = parser.parseFromString(htmlContent, "text/html")
 
-  // Find all heading elements
-  const headings = div.querySelectorAll("h1, h2, h3, h4, h5, h6")
+  // Now `doc` is a standalone Document, not in the live DOM—no requests will occur
+  const headings = doc.querySelectorAll("h1, h2, h3, h4, h5, h6")
 
-  // Convert headings to TOC items
+  // Process the headings as needed
   const toc: TocItem[] = Array.from(headings).map((heading, index) => {
-    // Get heading level from tag name (h1 = 1, h2 = 2, etc)
     const level = Number.parseInt(heading.tagName[1])
-
-    // Generate an ID if none exists
     const id = heading.id || `heading-${index}`
-    heading.id = id
 
     return {
       id,
       text: heading.textContent || "",
-      level,
-      // Don't store the element reference since it's from a temporary div
+      level
     }
   })
-
   return toc
 }
 
