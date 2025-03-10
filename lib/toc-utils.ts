@@ -17,7 +17,9 @@ export function generateTableOfContents(htmlContent: string): TocItem[] {
   // Process the headings as needed
   const toc: TocItem[] = Array.from(headings).map((heading, index) => {
     const level = Number.parseInt(heading.tagName[1])
-    const id = heading.id || `heading-${index}`
+    const id = `heading-${index}`
+
+    heading.id = id
 
     return {
       id,
