@@ -56,7 +56,7 @@ export function ContentPanel({
 
   // Calculate base URL for the iframe if needed
   // const baseUrl = fileHasAttachments ? `/api/attachments/${encodeURIComponent(selectedFile.replace(".html", ""))}/` : ""
-  const baseUrl = '/data/'
+  const baseUrl = 'data/'
   const altAttachmentDirectory = selectedFile.replace(".html", "")
 
   // Handle TOC auto-collapse
