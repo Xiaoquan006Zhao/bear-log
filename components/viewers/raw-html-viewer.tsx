@@ -83,7 +83,7 @@ export const RawHtmlViewer = forwardRef<RawHtmlViewerRef, RawHtmlViewerProps>(
         const absoluteTop = rect.top + iframeRef.current.offsetTop
 
         // Scroll the container
-        containerRef.current.scrollTop = absoluteTop - 100 // 100px offset for better visibility
+        containerRef.current.scrollTop = absoluteTop
         return true
       }
 
