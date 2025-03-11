@@ -48,6 +48,8 @@
     "cmdk": "1.0.4",
     "date-fns": "4.1.0",
     "embla-carousel-react": "8.5.2",
+    "flexsearch": "^0.7.43",
+    "html-to-text": "^9.0.5",
     "input-otp": "1.4.2",
     "lucide-react": "0.479.0",
     "lunr": "^2.3.9",

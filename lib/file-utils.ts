@@ -112,15 +112,18 @@ export async function getFilesForFolder(
   try {
     const url = `folders/${folderPath || ""}/index.json`
     console.log(`Fetching folder files from: ${url}`)
+
     const response = await fetch(url)
     if (!response.ok) {
       console.error(`Failed to fetch folder files: ${response.status} ${response.statusText}`)
       return { files: [], total: 0, hasMore: false }
     }
     const folderData = await response.json()
+
     const startIndex = (page - 1) * limit
     const endIndex = Math.min(startIndex + limit, folderData.files?.length || 0)
     const paginatedFiles = folderData.files?.slice(startIndex, endIndex) || []
+    
     return {
       files: paginatedFiles,
       total: folderData.files?.length || 0,
