@@ -29,7 +29,7 @@ interface AppStateContextType {
   loadFileContent: (filename: string) => void
   setShowToc: (show: boolean) => void
   searchTerm: string
-  onSearchTermChange: () => void
+  onSearchTermChange: (e: React.ChangeEvent<HTMLInputElement> ) => void
 
   // Panel State
   leftPanelCollapsed: boolean
