@@ -28,6 +28,8 @@ interface AppStateContextType {
   showToc: boolean
   loadFileContent: (filename: string) => void
   setShowToc: (show: boolean) => void
+  searchTerm: string
+  onSearchTermChange: () => void
 
   // Panel State
   leftPanelCollapsed: boolean
