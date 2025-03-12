@@ -43,6 +43,8 @@ export function FilesPanel({
   // Ref for virtualization
   const parentRef = useRef<HTMLDivElement>(null)
   const [previousSelectedFile, setPreviousSelectedFile] = useState(selectedFile)
+  const [searchActive, setSearchActive] = useState(false)
+
 
   // Setup virtualization for file list
   const rowVirtualizer = useVirtualizer({
@@ -167,22 +169,27 @@ export function FilesPanel({
 
   return (
     <>
-      <div className="p-4 border-b flex-shrink-0 flex items-center justify-between">
-        <div className="flex items-center gap-2 min-w-0 max-w-[calc(100%-100px)]">
-          <h2 className="text-lg font-semibold truncate" title={folderDisplayName}>
-            {folderDisplayName}
-          </h2>
+      <div className="p-4 border-b flex justify-between">
+        <div className="flex items-center gap-2 min-w-0 max-w-[calc(100%-20px)]">
+        {!searchActive && (<h2 className="text-lg font-semibold truncate" title={folderDisplayName}>
+          {folderDisplayName}
+        </h2>)}
         </div>
-        <div className="flex items-center gap-2">
-          <AnimatedSearchInput value={searchTerm} onChange={onSearchTermChange} />
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 w-8 p-0 flex items-center justify-center flex-shrink-0 cursor-pointer"
-            onClick={togglePanel}
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
+
+        <div className={`${searchActive ? 'flex-1' : 'flex'} items-center gap-1`}>
+        <AnimatedSearchInput
+          value={searchTerm}
+          onChange={onSearchTermChange}
+          onExpandChange={(expanded) => setSearchActive(expanded)}
+        />
+        {!searchActive && (<Button
+          variant="ghost"
+          size="sm"
+          className="h-8 w-8 p-0 flex items-center justify-center flex-shrink-0 cursor-pointer"
+          onClick={togglePanel}
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </Button>)}
         </div>
       </div>
       <div

@@ -1,3 +1,4 @@
+// animated-search-input.tsx
 "use client"
 
 import { useState, useRef, useEffect } from "react"
@@ -8,32 +9,48 @@ interface AnimatedSearchInputProps {
   value: string
   onChange: any
   onClear?: () => void
+  onExpandChange?: (expanded: boolean) => void
 }
 
-export default function AnimatedSearchInput({ value, onChange, onClear }: AnimatedSearchInputProps) {
+export default function AnimatedSearchInput({ value, onChange, onClear, onExpandChange }: AnimatedSearchInputProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
   const handleSearchIconClick = () => {
     setIsExpanded(true)
-    // Focus the input after expanding
-    setTimeout(() => {
-      inputRef.current?.focus()
-    }, 150)
+    if (onExpandChange) {
+      onExpandChange(true)
+    }
   }
 
   const handleClearClick = () => {
-    // Use the dedicated onClear handler if provided
     if (typeof onClear === "function") {
       onClear()
+    } else if (typeof onChange === "function") {
+      try {
+        onChange({ target: { value: "" } })
+      } catch (e) {
+        console.error("Failed to clear input via onChange", e)
+      }
     }
+
+    if (inputRef.current) {
+      inputRef.current.value = ""
+    }
+
     setIsExpanded(false)
+    if (onExpandChange) {
+      onExpandChange(false)
+    }
   }
 
   const handleClickOutside = (event: MouseEvent) => {
     if (containerRef.current && !containerRef.current.contains(event.target as Node) && value === "") {
       setIsExpanded(false)
+      if (onExpandChange) {
+        onExpandChange(false)
+      }
     }
   }
 
@@ -49,20 +66,20 @@ export default function AnimatedSearchInput({ value, onChange, onClear }: Animat
       <div
         ref={containerRef}
         className={cn(
-          "flex items-center h-8 rounded-full border border-input bg-background transition-all duration-200 ease-out origin-right",
-          isExpanded ? "w-full min-w-[120px]" : "w-8",
+          "flex items-center h-8 rounded-full border border-input bg-background transition-all duration-50 ease-in-out origin-right",
+          isExpanded ? "w-full" : "w-8",
         )}
       >
         <div
           className={cn(
-            "flex items-center justify-center h-full transition-opacity duration-150",
-            isExpanded ? "opacity-0 w-0 absolute" : "opacity-100 w-8 relative",
+            "flex items-center justify-center h-full aspect-square transition-all",
+            isExpanded ? "opacity-0 w-0" : "opacity-100 w-8",
           )}
         >
           <button
             type="button"
             onClick={handleSearchIconClick}
-            className="flex items-center justify-center h-full w-full rounded-full text-muted-foreground hover:text-foreground transition-colors"
+            className="flex items-center justify-center h-full w-full cursor-pointer rounded-full text-muted-foreground hover:text-foreground"
           >
             <Search className="h-3.5 w-3.5" />
           </button>
@@ -70,8 +87,8 @@ export default function AnimatedSearchInput({ value, onChange, onClear }: Animat
 
         <div
           className={cn(
-            "flex-1 h-full transition-all duration-200 ease-in-out",
-            isExpanded ? "opacity-100 visible" : "opacity-0 invisible absolute",
+            "flex-1 h-full transition-all duration-50",
+            isExpanded ? "opacity-100" : "opacity-0 w-0 pointer-events-none",
           )}
         >
           <input
@@ -80,6 +97,11 @@ export default function AnimatedSearchInput({ value, onChange, onClear }: Animat
             placeholder="Search..."
             value={value}
             onChange={onChange}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") {
+                handleClearClick()
+              }
+            }}
             className="h-full w-full bg-transparent border-none outline-none focus:ring-0 focus:outline-none pl-3 pr-8 text-sm"
           />
         </div>
@@ -88,7 +110,7 @@ export default function AnimatedSearchInput({ value, onChange, onClear }: Animat
           <button
             type="button"
             onClick={handleClearClick}
-            className="absolute right-2 flex items-center justify-center h-4 w-4 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors"
+            className="absolute right-2 flex items-center cursor-pointer justify-center h-4 w-4 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
           >
             <X className="h-3 w-3" />
           </button>
@@ -97,4 +119,3 @@ export default function AnimatedSearchInput({ value, onChange, onClear }: Animat
     </div>
   )
 }
-
