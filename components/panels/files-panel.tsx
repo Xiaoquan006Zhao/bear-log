@@ -6,7 +6,6 @@ import { ChevronRight, Loader2, ChevronLeft } from "lucide-react"
 import { useVirtualizer } from "@tanstack/react-virtual"
 import { FileCard } from "@/components/panels/file-item"
 import type { HtmlMetadata } from "@/lib/file-utils"
-import { Badge } from "@/components/ui/badge"
 import AnimatedSearchInput from "@/components/animated-search-input"
 
 interface FilesPanelProps {
@@ -173,11 +172,6 @@ export function FilesPanel({
           <h2 className="text-lg font-semibold truncate" title={folderDisplayName}>
             {folderDisplayName}
           </h2>
-          {pagination.total > 0 && (
-            <Badge variant="outline" className="text-xs flex-shrink-0">
-              {pagination.total}
-            </Badge>
-          )}
         </div>
         <div className="flex items-center gap-2">
           <AnimatedSearchInput value={searchTerm} onChange={onSearchTermChange} />
@@ -211,7 +205,6 @@ export function FilesPanel({
             height: `${rowVirtualizer.getTotalSize()}px`,
             width: "100%",
             position: "relative",
-            minWidth: "250px",
           }}
         >
           {rowVirtualizer.getVirtualItems().map((virtualRow) => {
