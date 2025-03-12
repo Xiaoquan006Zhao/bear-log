@@ -1,77 +1,163 @@
-// This script generates static JSON files for the HTML viewer app,
-// deleting previous generated folders (html, folders, and attachments)
-// so that every generation is new. Processed HTML files are moved to the html folder,
-// and folder JSON files are written into a separate folders folder.
-const fs = require("fs")
-const path = require("path")
-const { promisify } = require("util")
-const { marked } = require("marked")
+const fs = require("fs");
+const fsPromises = fs.promises;
+const path = require("path");
+const { marked } = require("marked");
+const lunr = require("lunr");  // Ensure lunr is installed via npm
+const jsdom = require("jsdom");
+const { JSDOM } = jsdom;
 
-const readdir = promisify(fs.readdir)
-const readFile = promisify(fs.readFile)
-const writeFile = promisify(fs.writeFile)
-const stat = promisify(fs.stat)
-const mkdir = promisify(fs.mkdir)
+// Directories
+const BASE_DIR = process.cwd();
+const CONTENTS_DIR = path.join(BASE_DIR, "contents");
+const HTML_OUTPUT_DIR = path.join(BASE_DIR, "public", "data");
+const FOLDERS_DIR = path.join(BASE_DIR, "public", "folders");
+const ATTACHMENTS_DIR = path.join(BASE_DIR, "public", "data");
+const ATTACHMENTS_URL = "data"; // URL prefix for attachments
+const SCRIPTS_DIR = path.join(BASE_DIR, "scripts");
 
-const CONTENTS_DIR = path.join(process.cwd(), "contents")
-const HTML_OUTPUT_DIR = path.join(process.cwd(), "public", "data")
-const FOLDERS_DIR = path.join(process.cwd(), "public", "folders")
-const ATTACHMENTS_DIR = path.join(process.cwd(), "public", "data")
-const ATTACHMENTS_URL = "data" // Global declaration for URL prefix
-const SCRIPTS_DIR = path.join(process.cwd(), "scripts")
+/* -----------------------------------------------
+   Helper Functions
+----------------------------------------------- */
 
 
+function stripHtml(html) {
+  const dom = new JSDOM(html);
+  return dom.window.document.body.textContent || "";
+}
+
+
+// Process hashtags in HTML content and return processed HTML and generated tags.
 function processHashtags(htmlContent) {
-  // Regular expression for finding hashtags with segments separated by /
   const hashtagRegex = /<p>(#[^<\s]+(?:\/[^<\s]+)*)<\/p>/g;
-  
-  // Initialize variables to store overall processed content and generated tags
   let generatedTags = "";
-  let processedHtmlContent = htmlContent.replace(hashtagRegex, (match, hashtag) => {
-    // Split the hashtag by / character
-    const segments = hashtag.split('/');
-    
-    let tags = "";
+  const processedHtmlContent = htmlContent.replace(hashtagRegex, (match, hashtag) => {
+    const segments = hashtag.split("/");
     let currentTag = "";
-    for (let i = 0; i < segments.length; i++) {
-      currentTag += (currentTag === "" ? segments[i].substring(1) : "/" + segments[i]);
-      tags = (tags === "" ? currentTag : currentTag + ", ") + tags;
+    let tags = "";
+    for (const segment of segments) {
+      currentTag += currentTag ? "/" + segment.replace(/^#/, "") : segment.replace(/^#/, "");
+      tags = tags ? `${currentTag}, ${tags}` : currentTag;
     }
-
     generatedTags = tags;
-    
-    // Format the hashtag with the first segment and the separator markers
-    let formattedHashtag = `<span class='hashtag'><span class='hashtag-marker marker'>#</span>${segments[0].substring(1)}`;
-    
-    // Add the remaining segments with separator markers
+
+    let formattedHashtag = `<span class='hashtag'><span class='hashtag-marker marker'>#</span>${segments[0].replace(/^#/, "")}`;
     for (let i = 1; i < segments.length; i++) {
       formattedHashtag += `<span class='hashtag-separator-marker marker'>/</span>${segments[i]}`;
     }
-    
     formattedHashtag += '</span>';
-    
     return `<p>${formattedHashtag}</p>`;
   });
-
-  return {
-    generatedTags,
-    processedHtmlContent
-  };
+  return { generatedTags, processedHtmlContent };
 }
 
+// Ensure a directory exists; create it if necessary.
+async function ensureDir(dirPath) {
+  try {
+    await fsPromises.stat(dirPath);
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      await fsPromises.mkdir(dirPath, { recursive: true });
+    } else {
+      throw error;
+    }
+  }
+}
+
+// Delete a folder and all its contents.
+async function deleteFolder(folderPath) {
+  try {
+    await fsPromises.rm(folderPath, { recursive: true, force: true });
+    console.log(`Deleted folder: ${folderPath}`);
+  } catch (error) {
+    console.error(`Error deleting folder ${folderPath}:`, error);
+  }
+}
+
+// Extract metadata from an HTML string.
+function extractMetadata(html) {
+  const metadata = {
+    title: "",
+    created: "",
+    modified: "",
+    tags: "",
+    uniqueId: "",
+    lastDevice: "",
+  };
+
+  const titleMatch = html.match(/<title>(.*?)<\/title>/i);
+  if (titleMatch?.[1]) {
+    metadata.title = titleMatch[1];
+  }
+  const metaRegex = /<meta\s+name=["']([^"']+)["']\s+content=["']([^"']+)["']/gi;
+  let match;
+  while ((match = metaRegex.exec(html)) !== null) {
+    const key = match[1].toLowerCase();
+    const content = match[2];
+    switch (key) {
+      case "created":
+        metadata.created = content;
+        break;
+      case "modified":
+        metadata.modified = content;
+        break;
+      case "tags":
+        metadata.tags = content;
+        break;
+      case "bear-note-unique-identifier":
+        metadata.uniqueId = content;
+        break;
+      case "last device":
+        metadata.lastDevice = content;
+        break;
+      default:
+        metadata[key] = content;
+    }
+  }
+  return metadata;
+}
+
+// Check if an attachment folder exists for a given HTML file.
+async function checkAttachmentFolder(htmlFilename) {
+  try {
+    const baseName = htmlFilename.replace(/\.html$/, "");
+    const folderPath = path.join(CONTENTS_DIR, baseName);
+    const stats = await fsPromises.stat(folderPath);
+    return stats.isDirectory();
+  } catch (error) {
+    return false;
+  }
+}
+
+// Extract local image references from HTML content.
+function extractImageReferences(htmlContent) {
+  const imageRefs = [];
+  const regex = /<img\s+[^>]*?src=["'](?!https?:\/\/)([^"']+\.(png|jpg|jpeg|gif|svg|webp))["'][^>]*>/gi;
+  let match;
+  while ((match = regex.exec(htmlContent)) !== null) {
+    if (match[1]) {
+      const cleanPath = match[1].replace(/^\.\.?\//, "").trim();
+      imageRefs.push(cleanPath);
+    }
+  }
+  return imageRefs;
+}
+
+/* -----------------------------------------------
+   Core Processing Functions
+----------------------------------------------- */
+
+// Convert a Markdown file to HTML, processing any frontmatter, and write the HTML file.
 async function convertMarkdownToHtml(markdownPath, filename) {
   try {
-    const markdown = await readFile(markdownPath, "utf8")
-    const styleTemplate = await readFile(path.join(SCRIPTS_DIR, "style-template.html"), "utf8")
+    const markdown = await fsPromises.readFile(markdownPath, "utf8");
+    const styleTemplate = await fsPromises.readFile(path.join(SCRIPTS_DIR, "style-template.html"), "utf8");
 
     let styleTag = "";
     const styleMatch = styleTemplate.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
-    if (styleMatch && styleMatch[1]) {
+    if (styleMatch?.[1]) {
       styleTag = `<style>${styleMatch[1]}</style>`;
     }
-    
-    // Extract any frontmatter metadata if present (simple implementation)
-    let content = markdown
+
     let metadata = {
       title: path.basename(filename, ".md"),
       created: "unavailable",
@@ -79,29 +165,24 @@ async function convertMarkdownToHtml(markdownPath, filename) {
       tags: "",
       uniqueId: `md-${Date.now()}-${Math.random().toString(36).substring(2, 10)}`,
       lastDevice: "Markdown Import"
-    }
-    
-    // Check for frontmatter between --- markers
-    const frontmatterMatch = markdown.match(/^---\n([\s\S]*?)\n---\n/)
+    };
+    let content = markdown;
+
+    const frontmatterMatch = markdown.match(/^---\n([\s\S]*?)\n---\n/);
     if (frontmatterMatch) {
-      content = markdown.substring(frontmatterMatch[0].length)
-      const frontmatter = frontmatterMatch[1]
-      
-      // Parse frontmatter
-      frontmatter.split("\n").forEach(line => {
-        const [key, value] = line.split(":").map(part => part.trim())
+      content = markdown.substring(frontmatterMatch[0].length);
+      frontmatterMatch[1].split("\n").forEach(line => {
+        const [key, value] = line.split(":").map(part => part.trim());
         if (key && value) {
-          metadata[key.toLowerCase()] = value
+          metadata[key.toLowerCase()] = value;
         }
-      })
+      });
     }
-    
-    // Convert Markdown to HTML
-    const htmlContent = marked.parse(content)
-    const { generatedTags, processedHtmlContent } = processHashtags(htmlContent)
-    console.log(generatedTags);
+
+    const htmlContent = marked.parse(content);
+    const { generatedTags, processedHtmlContent } = processHashtags(htmlContent);
     metadata.tags = generatedTags;
-    // Create a complete HTML document with metadata
+
     const fullHtml = `<!DOCTYPE html>
 <html>
 <head>
@@ -114,165 +195,58 @@ async function convertMarkdownToHtml(markdownPath, filename) {
   <meta name="tags" content="${metadata.tags}">
   <meta name="last device" content="${metadata.lastDevice}">
   ${styleTag}
-  </head>
+</head>
 <body>
-<div class="document-wrapper">
-${processedHtmlContent}
-<br>
-<br>
-<br>
-</div>
+  <div class="document-wrapper">
+    ${processedHtmlContent}
+    <br><br><br>
+  </div>
 </body>
-</html>`
+</html>`;
 
-    // Generate the output filename and path
-    const htmlFileName = path.basename(filename, '.md') + '.html';
+    const htmlFileName = path.basename(filename, ".md") + ".html";
     const htmlFilePath = path.join(CONTENTS_DIR, htmlFileName);
-    
-    // Write the HTML content to a file
-    await writeFile(htmlFilePath, fullHtml);
+    await fsPromises.writeFile(htmlFilePath, fullHtml);
     console.log(`Written HTML file: ${htmlFilePath}`);
   } catch (error) {
-    console.error(`Error converting markdown file ${markdownPath}:`, error)
-    return null
+    console.error(`Error converting markdown file ${markdownPath}:`, error);
+    return null;
   }
 }
 
-// Delete a folder and all its contents
-async function deleteFolder(folderPath) {
-  try {
-    await fs.promises.rm(folderPath, { recursive: true, force: true })
-    console.log(`Deleted folder: ${folderPath}`)
-  } catch (error) {
-    console.error(`Error deleting folder ${folderPath}:`, error)
-  }
-}
-
-async function ensureDir(dirPath) {
-  try {
-    await stat(dirPath)
-  } catch (error) {
-    if (error.code === "ENOENT") {
-      await mkdir(dirPath, { recursive: true })
-    } else {
-      throw error
-    }
-  }
-}
-
-// Extract metadata from HTML content
-function extractMetadata(html) {
-  const metadata = {
-    title: "",
-    created: "",
-    modified: "",
-    tags: "",
-    uniqueId: "",
-    lastDevice: "",
-  }
-  // Extract title
-  const titleMatch = html.match(/<title>(.*?)<\/title>/i)
-  if (titleMatch && titleMatch[1]) {
-    metadata.title = titleMatch[1]
-  }
-  // Extract meta tags
-  const metaRegex = /<meta\s+name=["']([^"']+)["']\s+content=["']([^"']+)["']/gi
-  let match
-  while ((match = metaRegex.exec(html)) !== null) {
-    const name = match[1].toLowerCase()
-    const content = match[2]
-    switch (name) {
-      case "created":
-        metadata.created = content
-        break
-      case "modified":
-        metadata.modified = content
-        break
-      case "tags":
-        metadata.tags = content
-        break
-      case "bear-note-unique-identifier":
-        metadata.uniqueId = content
-        break
-      case "last device":
-        metadata.lastDevice = content
-        break
-      default:
-        metadata[name] = content
-    }
-  }
-  return metadata
-}
-
-// Check if a folder exists for attachments
-async function checkAttachmentFolder(htmlFilename) {
-  try {
-    const baseName = htmlFilename.replace(/\.html$/, "")
-    const folderPath = path.join(CONTENTS_DIR, baseName)
-    const stats = await stat(folderPath)
-    return stats.isDirectory()
-  } catch (error) {
-    return false
-  }
-}
-
-// Extract image references from HTML content
-function extractImageReferences(htmlContent) {
-  const imageRefs = []
-  const regex = /<img\s+[^>]*?src=["'](?!https?:\/\/)([^"']+\.(png|jpg|jpeg|gif|svg|webp))["'][^>]*>/gi
-  let match
-  while ((match = regex.exec(htmlContent)) !== null) {
-    if (match[1]) {
-      const cleanPath = match[1].replace(/^\.\.?\//g, "").trim()
-      imageRefs.push(cleanPath)
-    }
-  }
-  return imageRefs
-}
-
-
-// ...
-
+// Process attachments: copy files from the source attachment folder to the public data folder,
+// and return up to 4 image attachment URLs.
 async function processAttachments(htmlFilename, htmlContent) {
-  const baseName = htmlFilename.replace(/\.html$/, "")
-  const sourceFolderPath = path.join(CONTENTS_DIR, baseName)
-  // Use the raw baseName for file system copy into the data/ folder
-  const destFolderPath = path.join(ATTACHMENTS_DIR, baseName)
-  try {
-    const folderExists = await checkAttachmentFolder(htmlFilename)
-    if (!folderExists) {
-      return {imageAttachments: [] }
-    }
-    await ensureDir(destFolderPath)
+  const baseName = htmlFilename.replace(/\.html$/, "");
+  const sourceFolderPath = path.join(CONTENTS_DIR, baseName);
+  const destFolderPath = path.join(ATTACHMENTS_DIR, baseName);
 
-    const files = await readdir(sourceFolderPath)
-    for (const file of files) {
-      const sourceFilePath = path.join(sourceFolderPath, file)
-      const destFilePath = path.join(destFolderPath, file)
-      
-      try {
-        const fileStat = await stat(sourceFilePath)
-        if (fileStat.isFile()) {
-          const fileContent = await readFile(sourceFilePath)
-          await writeFile(destFilePath, fileContent)
-        }
-      } catch (error) {
-        console.error(`Error copying file ${file}:`, error)
+  const folderExists = await checkAttachmentFolder(htmlFilename);
+  if (!folderExists) return { imageAttachments: [] };
+
+  await ensureDir(destFolderPath);
+  const files = await fsPromises.readdir(sourceFolderPath);
+  for (const file of files) {
+    const sourceFilePath = path.join(sourceFolderPath, file);
+    const destFilePath = path.join(destFolderPath, file);
+    try {
+      const fileStat = await fsPromises.stat(sourceFilePath);
+      if (fileStat.isFile()) {
+        const fileContent = await fsPromises.readFile(sourceFilePath);
+        await fsPromises.writeFile(destFilePath, fileContent);
       }
+    } catch (error) {
+      console.error(`Error copying file ${file}:`, error);
     }
-    const imageRefs = extractImageReferences(htmlContent)
-    const imageAttachments = imageRefs.slice(0, 4).map((file) => {
-      return `${ATTACHMENTS_URL}/${baseName}/${path.basename(file)}`
-    })
-    return {imageAttachments }
-  } catch (error) {
-    console.error(`Error processing attachments for ${htmlFilename}:`, error)
-    return {imageAttachments: [] }
   }
+  const imageRefs = extractImageReferences(htmlContent);
+  const imageAttachments = imageRefs
+    .slice(0, 4)
+    .map(file => `${ATTACHMENTS_URL}/${baseName}/${path.basename(file)}`);
+  return { imageAttachments };
 }
 
-
-// Generate folder structure based on file tags
+// Generate a nested folder structure based on file metadata tags.
 async function generateFolderStructure(files, metadataMap) {
   const root = {
     name: "root",
@@ -280,21 +254,22 @@ async function generateFolderStructure(files, metadataMap) {
     children: {},
     files: [],
     totalUniqueFiles: 0,
-  }
+  };
+
   for (const file of files) {
-    const metadata = metadataMap[file]
+    const metadata = metadataMap[file];
     if (!metadata.tags || metadata.tags.trim() === "") {
-      root.files.push(file)
-      continue
+      root.files.push(file);
+      continue;
     }
-    const tagsList = metadata.tags.split(", ")
+    const tagsList = metadata.tags.split(", ");
     for (const tagPath of tagsList) {
-      const parts = tagPath.split("/")
-      let currentNode = root
-      let currentPath = ""
+      const parts = tagPath.split("/");
+      let currentNode = root;
+      let currentPath = "";
       for (let j = 0; j < parts.length; j++) {
-        const part = parts[j]
-        currentPath = currentPath ? `${currentPath}/${part}` : part
+        const part = parts[j];
+        currentPath = currentPath ? `${currentPath}/${part}` : part;
         if (!currentNode.children[part]) {
           currentNode.children[part] = {
             name: part,
@@ -302,209 +277,217 @@ async function generateFolderStructure(files, metadataMap) {
             children: {},
             files: [],
             totalUniqueFiles: 0,
-          }
+          };
         }
-        currentNode = currentNode.children[part]
+        currentNode = currentNode.children[part];
         if (j === parts.length - 1 && !currentNode.files.includes(file)) {
-          currentNode.files.push(file)
+          currentNode.files.push(file);
         }
       }
     }
   }
+
   const calculateFileCounts = (node) => {
-    const uniqueFiles = new Set(node.files)
+    const uniqueFiles = new Set(node.files);
     for (const childKey in node.children) {
-      const childNode = node.children[childKey]
-      const childUniqueFiles = calculateFileCounts(childNode)
-      childUniqueFiles.forEach((file) => uniqueFiles.add(file))
+      const childUniqueFiles = calculateFileCounts(node.children[childKey]);
+      for (const file of childUniqueFiles) {
+        uniqueFiles.add(file);
+      }
     }
-    node.totalUniqueFiles = uniqueFiles.size
-    return uniqueFiles
-  }
-  calculateFileCounts(root)
-  return root
+    node.totalUniqueFiles = uniqueFiles.size;
+    return uniqueFiles;
+  };
+  calculateFileCounts(root);
+  return root;
 }
 
-// Main function to generate all the static data
+/* -----------------------------------------------
+   Folder Structure Helpers
+----------------------------------------------- */
+
+// Retrieve all folder paths (e.g. "", "foo", "foo/bar") from the folder structure.
+function getAllFolderPaths(folderStructure) {
+  const paths = new Set([""]); // Include root
+  const traverse = (node, currentPath) => {
+    paths.add(currentPath);
+    for (const childKey in node.children) {
+      traverse(node.children[childKey], node.children[childKey].path);
+    }
+  };
+  traverse(folderStructure, "");
+  return Array.from(paths);
+}
+
+// Get all files that belong to a given folder (including subfolders).
+function getFilesForFolder(folderStructure, folderPath) {
+  let currentNode = folderStructure;
+  if (folderPath !== "") {
+    const parts = folderPath.split("/");
+    for (const part of parts) {
+      if (currentNode.children[part]) {
+        currentNode = currentNode.children[part];
+      } else {
+        console.warn(`Folder path not found: ${folderPath}`);
+        return [];
+      }
+    }
+  }
+  const allFiles = new Set();
+  const collectFiles = (node) => {
+    node.files.forEach(file => allFiles.add(file));
+    for (const childKey in node.children) {
+      collectFiles(node.children[childKey]);
+    }
+  };
+  collectFiles(currentNode);
+  console.log(`Collected ${allFiles.size} files for folder: ${folderPath || "root"}`);
+  return Array.from(allFiles);
+}
+
+/* -----------------------------------------------
+   Main Static Data Generation
+----------------------------------------------- */
+
 async function generateStaticData() {
   try {
-    console.log("Starting static data generation...")
+    console.log("Starting static data generation...");
 
-    // Delete previously generated folders before populating them
-    await deleteFolder(HTML_OUTPUT_DIR)
-    await deleteFolder(FOLDERS_DIR)
-    await deleteFolder(ATTACHMENTS_DIR)
+    // Delete previously generated folders.
+    await Promise.all([
+      deleteFolder(HTML_OUTPUT_DIR),
+      deleteFolder(FOLDERS_DIR),
+      deleteFolder(ATTACHMENTS_DIR)
+    ]);
 
-    // Ensure data directories exist
-    await ensureDir(HTML_OUTPUT_DIR)
-    await ensureDir(FOLDERS_DIR)
-    await ensureDir(ATTACHMENTS_DIR)
+    // Ensure required directories exist.
+    await Promise.all([
+      ensureDir(HTML_OUTPUT_DIR),
+      ensureDir(FOLDERS_DIR),
+      ensureDir(ATTACHMENTS_DIR)
+    ]);
 
-    // Convert all markdown files to HTML
-    const markdownFiles = (await readdir(CONTENTS_DIR)).filter((file) => file.toLowerCase().endsWith(".md"))
+    // Convert all Markdown files to HTML.
+    const allFiles = await fsPromises.readdir(CONTENTS_DIR);
+    const markdownFiles = allFiles.filter(file => file.toLowerCase().endsWith(".md"));
     for (const file of markdownFiles) {
-      const filePath = path.join(CONTENTS_DIR, file)
-      await convertMarkdownToHtml(filePath, file)
+      await convertMarkdownToHtml(path.join(CONTENTS_DIR, file), file);
     }
 
+    // Process all generated HTML files.
+    const htmlFiles = (await fsPromises.readdir(CONTENTS_DIR)).filter(file => file.toLowerCase().endsWith(".html"));
+    console.log(`Found ${htmlFiles.length} HTML files`);
 
-    // Get all HTML files
-    const files = (await readdir(CONTENTS_DIR)).filter((file) => file.toLowerCase().endsWith(".html"))
-    console.log(`Found ${files.length} HTML files`)
+    const metadataMap = {};
+    const fileDetailsMap = {};
 
-    // Process each file
-    const metadataMap = {}
-    const fileDetailsMap = {}
+    for (const file of htmlFiles) {
+      console.log(`Processing ${file}...`);
+      const filePath = path.join(CONTENTS_DIR, file);
+      const content = await fsPromises.readFile(filePath, "utf8");
 
-    for (const file of files) {
-      console.log(`Processing ${file}...`)
-      const filePath = path.join(CONTENTS_DIR, file)
-      const content = await readFile(filePath, "utf8")
+      const metadata = extractMetadata(content);
+      metadataMap[file] = metadata;
 
-      // Extract metadata
-      const metadata = extractMetadata(content)
-      metadataMap[file] = metadata
-
-      // Process attachments and get updated content
-      const hasAttachments = await checkAttachmentFolder(file)
+      const hasAttachments = await checkAttachmentFolder(file);
       const { imageAttachments } = hasAttachments
         ? await processAttachments(file, content)
-        : {imageAttachments: [] }
+        : { imageAttachments: [] };
 
-      // Store file details
       fileDetailsMap[file] = {
         metadata,
         hasAttachments,
         rawHtml: content,
         imageAttachments,
-      }
+      };
 
-      // Write individual file data to JSON using the raw file name.
-      await writeFile(
-        path.join(HTML_OUTPUT_DIR, `${file}.json`),
-        JSON.stringify({
-          metadata,
-          hasAttachments,
-          rawHtml: content,
-        }),
-      )
+      const jsonFilePath = path.join(HTML_OUTPUT_DIR, `${file}.json`);
+      await fsPromises.writeFile(jsonFilePath, JSON.stringify({
+        metadata,
+        hasAttachments,
+        rawHtml: content,
+      }));
     }
 
-    // Generate folder structure
-    const folderStructure = await generateFolderStructure(files, metadataMap)
+    // Generate overall folder structure.
+    const folderStructure = await generateFolderStructure(htmlFiles, metadataMap);
+    await fsPromises.writeFile(path.join(FOLDERS_DIR, "folder-structure.json"), JSON.stringify(folderStructure));
 
-    // Write the overall folder structure to JSON
-    await writeFile(path.join(FOLDERS_DIR, "folder-structure.json"), JSON.stringify(folderStructure))
-
-    // Generate individual JSON files for each folder, mirroring the tag hierarchy.
+    // For each folder, generate two separate JSON files: index.json and search-index.json.
     for (const folderPath of getAllFolderPaths(folderStructure)) {
-      const filesInFolder = getFilesForFolder(folderStructure, folderPath)
-      console.log(`Processing folder: ${folderPath || "root"}, found ${filesInFolder.length} files`)
+      const filesInFolder = getFilesForFolder(folderStructure, folderPath);
+      console.log(`Processing folder: ${folderPath || "root"}, found ${filesInFolder.length} files`);
 
-      // Prepare file details for the folder
-      const fileDetails = filesInFolder.map((file) => {
-        if (!metadataMap[file]) {
-          console.warn(`Missing metadata for file: ${file}`)
-          return {
-            file,
-            metadata: {
-              title: file,
-              created: "",
-              modified: "",
-              tags: "",
-              uniqueId: "",
-              lastDevice: "",
-            },
-            hasAttachments: false,
-            imageAttachments: [],
-          }
-        }
+      // Prepare file details including rawHtml (for search indexing).
+      const fileDetails = filesInFolder.map(file => {
+        const details = fileDetailsMap[file];
+        const meta = metadataMap[file] || {
+          title: file,
+          created: "",
+          modified: "",
+          tags: "",
+          uniqueId: "",
+          lastDevice: "",
+        };
         return {
           file,
-          metadata: metadataMap[file],
-          hasAttachments: fileDetailsMap[file]?.hasAttachments || false,
-          imageAttachments: fileDetailsMap[file]?.imageAttachments || [],
-        }
-      })
+          metadata: meta,
+          hasAttachments: details?.hasAttachments || false,
+          imageAttachments: details?.imageAttachments || [],
+          rawHtml: details?.rawHtml || ""
+        };
+      });
 
-      // Sort by title
-      fileDetails.sort((a, b) => (a.metadata.title || a.file).localeCompare(b.metadata.title || b.file))
+      // Sort file details by title.
+      fileDetails.sort((a, b) => (a.metadata.title || a.file).localeCompare(b.metadata.title || b.file));
 
-      // Determine output path:
-      // For the root folder (empty string) write to FOLDERS_DIR/index.json.
-      // For nested folders, create corresponding nested directories and write an index.json file.
-      let outputPath
+      // Build Lunr search index for this folder.
+      const idx = lunr(function () {
+        this.ref('file');
+        this.field('title');
+        this.field('content');
+        fileDetails.forEach(doc => {
+          this.add({
+            file: doc.file,
+            title: doc.metadata.title,
+            content: stripHtml(doc.rawHtml)
+          });
+        });
+      });
+
+      // Determine output paths for folder index and search index.
+      let indexOutputPath, searchIndexOutputPath;
       if (folderPath === "") {
-        outputPath = path.join(FOLDERS_DIR, "index.json")
+        indexOutputPath = path.join(FOLDERS_DIR, "index.json");
+        searchIndexOutputPath = path.join(FOLDERS_DIR, "search-index.json");
       } else {
-        const parts = folderPath.split("/")
-        const folderDir = path.join(FOLDERS_DIR, ...parts)
-        await ensureDir(folderDir)
-        outputPath = path.join(folderDir, "index.json")
+        const folderDir = path.join(FOLDERS_DIR, ...folderPath.split("/"));
+        await ensureDir(folderDir);
+        indexOutputPath = path.join(folderDir, "index.json");
+        searchIndexOutputPath = path.join(folderDir, "search-index.json");
       }
 
-      await writeFile(
-        outputPath,
-        JSON.stringify({
-          files: fileDetails,
-          total: fileDetails.length,
-          hasMore: false,
-        }),
-      )
-      console.log(`Wrote ${fileDetails.length} files to ${outputPath}`)
+      // Prepare the folder index JSON (omit rawHtml from file details).
+      const folderIndex = {
+        files: fileDetails.map(({ rawHtml, ...rest }) => rest),
+        total: fileDetails.length,
+        hasMore: false
+      };
+
+      await fsPromises.writeFile(indexOutputPath, JSON.stringify(folderIndex));
+      console.log(`Wrote folder index for ${folderPath || "root"} to ${indexOutputPath}`);
+
+      // Write the search index JSON.
+      await fsPromises.writeFile(searchIndexOutputPath, JSON.stringify(idx.toJSON()));
+      console.log(`Wrote search index for ${folderPath || "root"} to ${searchIndexOutputPath}`);
     }
 
-    console.log("Static data generation complete!")
+    console.log("Static data generation complete!");
   } catch (error) {
-    console.error("Error generating static data:", error)
-    process.exit(1)
+    console.error("Error generating static data:", error);
+    process.exit(1);
   }
 }
 
-// Helper function to get all folder paths from the folder structure.
-// Returns folder paths as strings (e.g. "", "foo", "foo/bar", etc.)
-function getAllFolderPaths(folderStructure) {
-  const paths = new Set([""]) // Include root
-
-  const traverse = (node, currentPath) => {
-    paths.add(currentPath)
-    for (const childKey in node.children) {
-      const childNode = node.children[childKey]
-      traverse(childNode, childNode.path)
-    }
-  }
-  traverse(folderStructure, "")
-  return paths
-}
-
-// Helper function to get files for a folder
-function getFilesForFolder(folderStructure, folderPath) {
-  // Find the selected folder
-  let currentNode = folderStructure
-  if (folderPath !== "") {
-    const parts = folderPath.split("/")
-    for (const part of parts) {
-      if (currentNode.children[part]) {
-        currentNode = currentNode.children[part]
-      } else {
-        console.warn(`Folder path not found: ${folderPath}, part: ${part}`)
-        return []
-      }
-    }
-  }
-
-  // Collect all files from this folder and its subfolders
-  const allFiles = new Set()
-  const collectFiles = (node) => {
-    node.files.forEach((file) => allFiles.add(file))
-    for (const childKey in node.children) {
-      collectFiles(node.children[childKey])
-    }
-  }
-  collectFiles(currentNode)
-  console.log(`Collected ${allFiles.size} files for folder: ${folderPath || "root"}`)
-  return Array.from(allFiles)
-}
-
-// Run the static data generation
-generateStaticData().catch(console.error)
+// Run the static data generation.
+generateStaticData().catch(console.error);

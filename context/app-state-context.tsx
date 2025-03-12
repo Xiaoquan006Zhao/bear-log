@@ -84,6 +84,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     selectFolder,
     toggleFolder,
     loadMoreFiles,
+    searchTerm,
+    onSearchTermChange,
   } = useFolderStructure(handleFileSelect)
 
   // Create context value object
@@ -110,6 +112,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       showToc,
       loadFileContent,
       setShowToc,
+      searchTerm,
+      onSearchTermChange,
 
       // Panel State
       leftPanelCollapsed,
@@ -129,6 +133,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       selectFolder,
       toggleFolder,
       loadMoreFiles,
+      searchTerm,
+      onSearchTermChange,
 
       // File Content
       selectedFile,

@@ -1,4 +1,5 @@
 "use client"
+const lunr = require("lunr");
 
 export interface HtmlMetadata {
   title: string
@@ -104,26 +105,62 @@ export async function getFilesForFolder(
   folderPath: string,
   page = 1,
   limit = 20,
+  searchTerm = "",
 ): Promise<{
   files: { file: string; metadata: HtmlMetadata; hasAttachments: boolean; imageAttachments: string[] }[]
   total: number
   hasMore: boolean
 }> {
   try {
-    const url = `folders/${folderPath || ""}/index.json`
-    console.log(`Fetching folder files from: ${url}`)
+    const structureUrl = `folders/${folderPath || ""}/index.json`
+    console.log(`Fetching folder files from: ${structureUrl}`)
 
-    const response = await fetch(url)
+    const response = await fetch(structureUrl)
     if (!response.ok) {
       console.error(`Failed to fetch folder files: ${response.status} ${response.statusText}`)
       return { files: [], total: 0, hasMore: false }
     }
     const folderData = await response.json()
-
     const startIndex = (page - 1) * limit
     const endIndex = Math.min(startIndex + limit, folderData.files?.length || 0)
+
+    if (searchTerm != "") {
+      console.log(`Searching for term: ${searchTerm}`)
+
+      const searchIndexUrl = `folders/${folderPath || ""}/search-index.json`
+      const response = await fetch(searchIndexUrl)
+      if (!response.ok) {
+        console.error(`Failed to fetch search index: ${response.status} ${response.statusText}`)
+        return { files: [], total: 0, hasMore: false }
+      }
+
+      const searchIndexJson = await response.json()
+      const searchIndex = lunr.Index.load(searchIndexJson);
+
+      let lunrSearchTerm = ""
+      for (const term of searchTerm.trim().split(" ")) {
+        lunrSearchTerm += `+*${term}* `
+      }
+
+      const results = searchIndex.search(lunrSearchTerm);
+      const filteredFiles = folderData.files?.filter((fileInstance: any) => {
+        return results.some((result: any) => {
+          return result.ref == fileInstance.file;
+        });
+      });
+
+      const filteredPaginatedFiles = filteredFiles?.slice(startIndex, endIndex) || []
+
+      const filteredTotal = filteredFiles?.length || 0
+      const filteredHasMore = endIndex < filteredTotal
+      return {
+        files: filteredPaginatedFiles,
+        total: filteredTotal,
+        hasMore: filteredHasMore,
+      }
+    }
     const paginatedFiles = folderData.files?.slice(startIndex, endIndex) || []
-    
+
     return {
       files: paginatedFiles,
       total: folderData.files?.length || 0,

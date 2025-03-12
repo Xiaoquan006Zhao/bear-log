@@ -33,6 +33,8 @@ export function MainLayout() {
     showToc,
     loadFileContent,
     setShowToc,
+    searchTerm,
+    onSearchTermChange,
 
     // Panel State
     leftPanelCollapsed,
@@ -169,6 +171,8 @@ export function MainLayout() {
               togglePanel={toggleMiddlePanel}
               selectFile={selectFile}
               loadMoreFiles={loadMoreFiles}
+              searchTerm={searchTerm}
+              onSearchTermChange={onSearchTermChange}
             />
           </ResizablePanel>
 

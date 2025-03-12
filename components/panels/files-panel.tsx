@@ -7,6 +7,7 @@ import { useVirtualizer } from "@tanstack/react-virtual"
 import { FileCard } from "@/components/panels/file-item"
 import type { HtmlMetadata } from "@/lib/file-utils"
 import { Badge } from "@/components/ui/badge"
+import AnimatedSearchInput from "@/components/animated-search-input"
 
 interface FilesPanelProps {
   selectedFolder: string
@@ -23,6 +24,8 @@ interface FilesPanelProps {
   togglePanel: () => void
   selectFile: (filename: string) => void
   loadMoreFiles: () => void
+  searchTerm: string
+  onSearchTermChange: () => void
 }
 
 export function FilesPanel({
@@ -35,6 +38,8 @@ export function FilesPanel({
   togglePanel,
   selectFile,
   loadMoreFiles,
+  searchTerm,
+  onSearchTermChange,
 }: FilesPanelProps) {
   // Ref for virtualization
   const parentRef = useRef<HTMLDivElement>(null)
@@ -164,16 +169,18 @@ export function FilesPanel({
   return (
     <>
       <div className="p-4 border-b flex-shrink-0 flex items-center justify-between">
-          <div className="flex items-center gap-2 min-w-0 max-w-[calc(100%-40px)]">
-            <h2 className="text-lg font-semibold truncate" title={folderDisplayName}>
-              {folderDisplayName}
-            </h2>
-            {pagination.total > 0 && (
-              <Badge variant="outline" className="text-xs flex-shrink-0">
-                {pagination.total}
-              </Badge>
-            )}
-          </div>
+        <div className="flex items-center gap-2 min-w-0 max-w-[calc(100%-100px)]">
+          <h2 className="text-lg font-semibold truncate" title={folderDisplayName}>
+            {folderDisplayName}
+          </h2>
+          {pagination.total > 0 && (
+            <Badge variant="outline" className="text-xs flex-shrink-0">
+              {pagination.total}
+            </Badge>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          <AnimatedSearchInput value={searchTerm} onChange={onSearchTermChange} />
           <Button
             variant="ghost"
             size="sm"
@@ -183,6 +190,7 @@ export function FilesPanel({
             <ChevronLeft className="h-4 w-4" />
           </Button>
         </div>
+      </div>
       <div
         ref={parentRef}
         className={`flex-1 overflow-auto ${collapsed ? "pointer-events-none" : ""}`}

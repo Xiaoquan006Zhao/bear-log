@@ -30,6 +30,9 @@ export function useFolderStructure(onFileSelect: (filename: string) => void) {
     loading: false,
   })
 
+  // Add search term state
+  const [searchTerm, setSearchTerm] = useState("")
+
   // Load folder structure on initial render
   useEffect(() => {
     const loadFolderStructure = async () => {
@@ -42,14 +45,14 @@ export function useFolderStructure(onFileSelect: (filename: string) => void) {
         // If root has files, load them
         if (structure.files.length > 0) {
           setSelectedFolder("")
-          loadFolderFiles("")
+          loadFolderFiles("", 1, false, searchTerm)
         } else {
           // Otherwise, try to select the first folder
           const firstFolder = Object.values(structure.children)[0]
           if (firstFolder) {
             setSelectedFolder(firstFolder.path)
             setExpandedFolders(new Set([firstFolder.path]))
-            loadFolderFiles(firstFolder.path)
+            loadFolderFiles(firstFolder.path, 1, false, searchTerm)
           }
         }
       } catch (error) {
@@ -60,20 +63,20 @@ export function useFolderStructure(onFileSelect: (filename: string) => void) {
     }
 
     loadFolderStructure()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Load files for selected folder with pagination
+  // Load files for selected folder with pagination and search term
   const loadFolderFiles = useCallback(
-    async (folderPath: string, page = 1, append = false) => {
+    async (folderPath: string, page = 1, append = false, term = searchTerm) => {
       // Prevent loading if already loading files and not appending
       if (loading.files && !append) return
 
-      // Set loading states
       setLoading((prev) => ({ ...prev, files: true }))
       setPagination((prev) => ({ ...prev, loading: true }))
 
       try {
-        const result = await getFilesForFolder(folderPath, page, 20)
+        const result = await getFilesForFolder(folderPath, page, 20, term)
 
         // Handle empty results
         if (result.files.length === 0) {
@@ -93,40 +96,32 @@ export function useFolderStructure(onFileSelect: (filename: string) => void) {
         }
 
         if (append) {
-          // When appending, add new files to the existing list
+          // Append new files to the existing list while avoiding duplicates
           setCurrentFolderFiles((prev) => {
             const newFiles = [...prev]
-
-            // Filter out duplicates (in case of race conditions)
             result.files.forEach((file) => {
               if (!newFiles.some((existing) => existing.file === file.file)) {
                 newFiles.push(file)
               }
             })
-
             return newFiles
           })
-
-          // If we're at the end of the list and loading more, select the first new file
+          // Optionally select a file when appending if conditions are met
           const currentIndex = currentFolderFiles.findIndex((file) => file.file === result.files[0].file)
           if (currentIndex === -1 && result.files.length > 0) {
-            // Only select if we're at the end of the current list
             const lastVisible = document.querySelector('.file-card[data-selected="true"]')
             if (lastVisible && lastVisible.getBoundingClientRect().bottom > window.innerHeight - 100) {
               onFileSelect(result.files[0].file)
             }
           }
         } else {
-          // When not appending, replace the current list
+          // Replace the current list when not appending
           setCurrentFolderFiles(result.files)
-
-          // Select first file if available
           if (result.files.length > 0) {
             onFileSelect(result.files[0].file)
           }
         }
 
-        // Update pagination state
         setPagination({
           page,
           hasMore: result.hasMore,
@@ -135,11 +130,9 @@ export function useFolderStructure(onFileSelect: (filename: string) => void) {
         })
       } catch (error) {
         console.error("Error loading folder files:", error)
-
         if (!append) {
           setCurrentFolderFiles([])
         }
-
         setPagination({
           page,
           hasMore: false,
@@ -150,22 +143,39 @@ export function useFolderStructure(onFileSelect: (filename: string) => void) {
         setLoading((prev) => ({ ...prev, files: false }))
       }
     },
-    [loading.files, onFileSelect, currentFolderFiles],
+    [loading.files, onFileSelect, currentFolderFiles, searchTerm],
   )
+
+  // Reset files and pagination when the search term changes
+  useEffect(() => {
+    // Reset pagination and files when search term changes
+    setPagination({
+      page: 1,
+      hasMore: false,
+      total: 0,
+      loading: false,
+    })
+    setCurrentFolderFiles([])
+    loadFolderFiles(selectedFolder, 1, false, searchTerm)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchTerm, selectedFolder])
+
+  // Function to update search term from a UI element
+  const onSearchTermChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value)
+  }
 
   // Load more files when scrolling
   const loadMoreFiles = useCallback(() => {
     if (pagination.hasMore && !pagination.loading) {
-      // Set loading state immediately to prevent multiple calls
       setPagination((prev) => ({ ...prev, loading: true }))
-      loadFolderFiles(selectedFolder, pagination.page + 1, true)
+      loadFolderFiles(selectedFolder, pagination.page + 1, true, searchTerm)
     }
-  }, [pagination.hasMore, pagination.loading, pagination.page, selectedFolder, loadFolderFiles])
+  }, [pagination.hasMore, pagination.loading, pagination.page, selectedFolder, loadFolderFiles, searchTerm])
 
   // Handle folder selection
   const selectFolder = useCallback(
     (path: string) => {
-      // Don't reload if selecting the same folder
       if (path === selectedFolder) return
 
       setSelectedFolder(path)
@@ -175,21 +185,15 @@ export function useFolderStructure(onFileSelect: (filename: string) => void) {
         total: 0,
         loading: false,
       })
-
-      // Also expand the folder
       setExpandedFolders((prev) => {
         const newSet = new Set(prev)
         newSet.add(path)
         return newSet
       })
-
-      // Clear current files before loading new ones
       setCurrentFolderFiles([])
-
-      // Load files for this folder
-      loadFolderFiles(path)
+      loadFolderFiles(path, 1, false, searchTerm)
     },
-    [selectedFolder, loadFolderFiles],
+    [selectedFolder, loadFolderFiles, searchTerm],
   )
 
   // Toggle folder expansion
@@ -216,6 +220,7 @@ export function useFolderStructure(onFileSelect: (filename: string) => void) {
     loadMoreFiles,
     selectFolder,
     toggleFolder,
+    searchTerm,
+    onSearchTermChange,
   }
 }
-
