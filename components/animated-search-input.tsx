@@ -1,4 +1,3 @@
-// animated-search-input.tsx
 "use client"
 
 import { useState, useRef, useEffect } from "react"
@@ -21,6 +20,9 @@ export default function AnimatedSearchInput({ value, onChange, onClear, onExpand
     setIsExpanded(true)
     if (onExpandChange) {
       onExpandChange(true)
+    }
+    if (inputRef.current) {
+      inputRef.current.focus()
     }
   }
 
