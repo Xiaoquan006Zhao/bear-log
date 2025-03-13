@@ -15,7 +15,8 @@ You can check my notes at: https://xiaoquan-notes.netlify.app/ or https://xiaoqu
 6. For first-time use, you will need to
     1. **Either** Set-up github workflow action and change the build process from `next build` to `npm run build` in the `nextjs.yml`
     2. **Or** Deploy to Netlify and avoid the setup by following https://www.netlify.com/blog/2016/09/29/a-step-by-step-guide-deploying-on-netlify/
-7. You *Will* need to re-export and put them in the `contents` folder and `git push` *if you want to change the shared notes.*
+7. Update the personal contact information in `personalize/config.js`
+8. You *Will* need to re-export and put them in the `contents` folder and `git push` *if you want to change the shared notes.*
 
 # Supported Features
 1. Folder-structure generated from #tag
@@ -24,7 +25,7 @@ You can check my notes at: https://xiaoquan-notes.netlify.app/ or https://xiaoqu
 4. Header folding
 
 # Not So Supported Feature
-6. Searching(Filtering) Notes within current folder (achieved by `flexsearch` though the default setting has limited language support and no OCR search).
+6. Searching(Filtering) Notes within current folder (achieved by `lunrjs` though the default setting has limited language support and no OCR search).
 7. No highlighting matched terms, I would suggest use the browser's `Ctrl+F` or `Cmd+F` if you need it.
 8. No Folder icon 
 9. No custom themes (limited by the Bear export process)
