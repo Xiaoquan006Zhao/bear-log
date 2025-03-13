@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, forwardRef, useImperativeHandle, useCallba
 import { LoadingIndicator } from "@/components/ui/loading-indicator"
 
 const primaryColor = "rgb(100, 116, 139)" // slate-500
-const accentColor = "rgb(238, 39, 52)" // blue-500
+const accentColor = "rgb(238, 39, 52)" // red-500
 
 export interface RawHtmlViewerRef {
   scrollToHeading: (id: string) => boolean
@@ -170,6 +170,8 @@ export const RawHtmlViewer = forwardRef<RawHtmlViewerRef, RawHtmlViewerProps>(
       style.textContent = `
         .section-wrapper { margin-bottom: 1em; }
         .foldable-content img { max-width: 100%; height: auto; }
+        body { overflow: hidden; } /* Disable scrolling in iframe body */
+        html { overflow: hidden; } /* Disable scrolling in iframe html */
       `
       doc.head.appendChild(style)
       updateIframeHeight()
@@ -244,6 +246,7 @@ export const RawHtmlViewer = forwardRef<RawHtmlViewerRef, RawHtmlViewerProps>(
           ref={iframeRef}
           style={{ height: iframeHeight }}
           className="w-full border-0"
+          scrolling="no"
           sandbox="allow-same-origin allow-scripts"
         />
       </div>
