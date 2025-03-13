@@ -4,9 +4,8 @@ import { useEffect, useRef, useState, forwardRef, useImperativeHandle, useCallba
 import { LoadingIndicator } from "@/components/ui/loading-indicator"
 
 const primaryColor = "rgb(100, 116, 139)" // slate-500
-const accentColor = "rgb(238, 95, 39)" // blue-500
+const accentColor = "rgb(238, 39, 52)" // blue-500
 
-// Define a ref type for external access to the component's methods
 export interface RawHtmlViewerRef {
   scrollToHeading: (id: string) => boolean
   scrollToTop: () => void
@@ -20,575 +19,228 @@ interface RawHtmlViewerProps {
 
 export const RawHtmlViewer = forwardRef<RawHtmlViewerRef, RawHtmlViewerProps>(
   ({ htmlContent, baseUrl = "", altAttachmentDirectory = "" }, ref) => {
-  const iframeRef = useRef<HTMLIFrameElement>(null)
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [loading, setLoading] = useState(true)
-  const [iframeHeight, setIframeHeight] = useState("100%")
+    const iframeRef = useRef<HTMLIFrameElement>(null)
+    const containerRef = useRef<HTMLDivElement>(null)
+    const [loading, setLoading] = useState(true)
+    const [iframeHeight, setIframeHeight] = useState("100%")
+    const contentHashRef = useRef<string>("")
 
-  // Track content changes to force scroll reset
-  const contentHashRef = useRef<string>("")
+    const updateIframeHeight = useCallback(() => {
+      const iframe = iframeRef.current
+      if (!iframe?.contentDocument) return
 
-  // Function to calculate and set iframe height
-  const updateIframeHeight = useCallback(() => {
-    if (!iframeRef.current || !iframeRef.current.contentDocument) return
+      requestAnimationFrame(() => {
+        try {
+          const doc = iframe.contentDocument
+          const height = Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight)
+          setIframeHeight(`${height}px`)
+        } catch (error) {
+          console.error("Iframe height error:", error)
+        }
+      })
+    }, [])
 
-    try {
-      const doc = iframeRef.current.contentDocument
-      const body = doc.body
-      const html = doc.documentElement
-
-      if (!body || !html) return
-
-      // Get the scroll height of the content
-      const height = Math.max(
-        body.scrollHeight,
-        body.offsetHeight,
-        html.clientHeight,
-        html.scrollHeight,
-        html.offsetHeight,
-      )
-
-      // Set iframe height to content height exactly
-      setIframeHeight(`${height}px`)
-    } catch (error) {
-      console.error("Error updating iframe height:", error)
-    }
-  }, [])
-
-  // Custom smooth scroll function with adjustable duration
-  const smoothScrollTo = useCallback((element: HTMLElement, to: number, duration: number) => {
-    const start = element.scrollTop
-    const change = to - start
-    const startTime = performance.now()
-
-    const animateScroll = (currentTime: number) => {
-      const elapsedTime = currentTime - startTime
-
-      if (elapsedTime > duration) {
-        element.scrollTop = to
-        return
+    const smoothScrollTo = useCallback((element: HTMLElement, to: number, duration: number) => {
+      const start = element.scrollTop
+      const change = to - start
+      const startTime = performance.now()
+      const animate = (time: number) => {
+        const elapsed = time - startTime
+        const progress = Math.min(elapsed / duration, 1)
+        const ease = progress < 0.5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress
+        element.scrollTop = start + change * ease
+        if (progress < 1) requestAnimationFrame(animate)
       }
+      requestAnimationFrame(animate)
+    }, [])
 
-      // Easing function: easeInOutQuad
-      let time = elapsedTime / duration
-      time = time < 0.5 ? 2 * time * time : -1 + (4 - 2 * time) * time
+    useImperativeHandle(ref, () => ({
+      scrollToHeading: (id) => {
+        const iframe = iframeRef.current
+        if (!iframe?.contentDocument) return false
 
-      element.scrollTop = start + change * time
-      requestAnimationFrame(animateScroll)
-    }
-
-    requestAnimationFrame(animateScroll)
-  }, [])
-
-  // Expose methods to parent components via ref
-  useImperativeHandle(ref, () => ({
-    scrollToHeading: (id: string) => {
-      if (!iframeRef.current || !iframeRef.current.contentDocument) return false
-
-      // Try to find the element by ID first
-      let targetElement = iframeRef.current.contentDocument.getElementById(id)
-
-      // If not found by ID, try to find by generated ID pattern
-      if (!targetElement && id.startsWith("heading-")) {
-        // Extract the index from the ID
-        const index = Number.parseInt(id.replace("heading-", ""), 10)
-        if (!isNaN(index)) {
-          // Find all headings and get the one at the specified index
-          const headings = iframeRef.current.contentDocument.querySelectorAll("h1, h2, h3, h4, h5, h6")
-          if (index < headings.length) {
-            targetElement = headings[index] as HTMLElement
-          }
+        let el = iframe.contentDocument.getElementById(id)
+        if (!el && id.startsWith("heading-")) {
+          const idx = Number.parseInt(id.replace("heading-", ""))
+          const headings = iframe.contentDocument.querySelectorAll("h1, h2, h3, h4, h5, h6")
+          el = idx < headings.length ? (headings[idx] as HTMLElement) : null
         }
-      }
+        if (!el) return false
 
-      // If element found, check if it's in a folded section and unfold it
-      if (targetElement && containerRef.current) {
-        // Find all ancestor section wrappers that might be folded
-        const doc = iframeRef.current.contentDocument
-
-        // Function to check if a section is folded
-        const isSectionFolded = (section) => {
-          const contentContainer = section.querySelector(".foldable-content")
-          return (
-            contentContainer &&
-            (contentContainer.style.display === "none" ||
-              contentContainer.style.height === "0px" ||
-              contentContainer.style.opacity === "0")
-          )
+        const unfoldedSections = []
+        let current = el
+        while (current) {
+          const section = current.closest(".section-wrapper")
+          if (!section) break
+          const content = section.querySelector(".foldable-content") as HTMLElement
+          if (content?.style.display === "none") unfoldedSections.push(section)
+          current = section.parentElement
         }
 
-        // Find all ancestor section wrappers
-        let currentElement = targetElement
-        const foldedAncestors = []
+        unfoldedSections.reverse().forEach((sec) => {
+          const btn = sec.querySelector(".fold-toggle") as HTMLElement
+          btn?.click()
+        })
 
-        // Traverse up the DOM to find all folded ancestor sections
-        while (currentElement) {
-          const sectionWrapper = currentElement.closest(".section-wrapper")
-          if (!sectionWrapper) break
-
-          // Check if this section is folded
-          if (isSectionFolded(sectionWrapper)) {
-            foldedAncestors.push(sectionWrapper)
-          }
-
-          // Move up to the parent of the current section wrapper
-          currentElement = sectionWrapper.parentElement
-        }
-
-        // Unfold all folded ancestors, starting from the outermost one
-        if (foldedAncestors.length > 0) {
-          // Reverse the array to start from the outermost section
-          foldedAncestors.reverse().forEach((section) => {
-            const toggleButton = section.querySelector(".fold-toggle") as HTMLElement
-            if (toggleButton) {
-              toggleButton.click()
-            }
-          })
-        }
-
-        // Scroll to the element with a slight delay to allow for unfolding animations
         setTimeout(
           () => {
-            if (targetElement && containerRef.current) {
-              const iframeDoc = iframeRef.current.contentDocument
-              const docElement = iframeDoc.documentElement
-              const bodyElement = iframeDoc.body
-
-              // Get the position of the element within the iframe document
-              const elementOffsetTop =
-                targetElement.getBoundingClientRect().top +
-                (docElement.scrollTop || bodyElement.scrollTop) -
-                (docElement.clientTop || 0)
-
-              // Calculate the absolute position in the container
-              const iframeOffsetTop = iframeRef.current.offsetTop
-              const scrollPosition = elementOffsetTop + iframeOffsetTop
-
-              // Use custom smooth scroll with a faster duration 
-              smoothScrollTo(containerRef.current, scrollPosition, 300)
-            }
+            const top = el.getBoundingClientRect().top + iframe.contentWindow!.scrollY
+            smoothScrollTo(containerRef.current!, top + iframe.offsetTop, 300)
           },
-          foldedAncestors.length > 0 ? 30 : 0,
-        ) // Small delay if we had to unfold sections
-
+          unfoldedSections.length ? 30 : 0,
+        )
         return true
-      }
+      },
+      scrollToTop: () => containerRef.current && (containerRef.current.scrollTop = 0),
+    }))
 
-      return false
-    },
-    scrollToTop: () => {
-      if (containerRef.current) {
-        containerRef.current.scrollTop = 0
-      }
-    },
-  }))
+    const setupContentFolding = useCallback(() => {
+      const iframe = iframeRef.current
+      if (!iframe?.contentDocument) return
+      const doc = iframe.contentDocument
+      const main = doc.querySelector(".document-wrapper") || doc.body
+      const headings = main.querySelectorAll("h1, h2, h3, h4, h5, h6")
 
-  // Function to add content folding functionality
-  const setupContentFolding = useCallback(() => {
-    if (!iframeRef.current || !iframeRef.current.contentDocument) return
+      headings.forEach((h) => {
+        const section = doc.createElement("div")
+        section.className = "section-wrapper"
 
-    const doc = iframeRef.current.contentDocument
+        const wrapper = doc.createElement("div")
+        wrapper.className = "heading-wrapper"
+        wrapper.style.cssText = "display:flex;align-items:center;cursor:default;width:100%"
 
-    // Find the main content container
-    const mainContent = doc.querySelector(".document-wrapper") || doc.body
+        const btn = doc.createElement("button")
+        btn.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" 
+          stroke="none" class="triangle-icon" style="display: block; margin: 0 auto;">
+          <polygon points="4,8 20,8 12,20" />
+        </svg>
+        `
+        btn.className = "fold-toggle"
+        Object.assign(btn.style, {
+          background: "none",
+          border: "none",
+          marginRight: "4px",
+          cursor: "pointer",
+          color: primaryColor,
+        })
 
-    // Get all headings within the main content
-    const headings = mainContent.querySelectorAll("h1, h2, h3, h4, h5, h6")
+        const clone = h.cloneNode(true) as HTMLElement
+        clone.style.margin = "0"
+        clone.style.flex = "1"
 
-    // Add folding functionality to each heading
-    headings.forEach((heading) => {
-      // Create a wrapper for the heading and its content
-      const sectionWrapper = doc.createElement("div")
-      sectionWrapper.className = "section-wrapper"
-      sectionWrapper.style.width = "100%"
+        wrapper.append(btn, clone)
+        section.appendChild(wrapper)
 
-      // Create the heading wrapper
-      const headingWrapper = doc.createElement("div")
-      headingWrapper.className = "heading-wrapper"
-      headingWrapper.style.position = "relative"
-      headingWrapper.style.display = "flex"
-      headingWrapper.style.alignItems = "center"
-      headingWrapper.style.width = "100%"
-      // Remove cursor pointer from heading wrapper since only the chevron is clickable now
-      headingWrapper.style.cursor = "default"
+        const content = doc.createElement("div")
+        content.className = "foldable-content"
+        content.style.cssText = "transition:all .3s ease;overflow:hidden;width:100%;display:block"
 
-      // Create toggle button
-      const toggleButton = doc.createElement("button")
-      toggleButton.className = "fold-toggle"
-      toggleButton.innerHTML = `
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" 
-  stroke="none" class="triangle-icon" style="display: block; margin: 0 auto;">
-  <polygon points="4,8 20,8 12,20" />
-</svg>
-`
-      toggleButton.style.background = "none"
-      toggleButton.style.border = "none"
-      toggleButton.style.padding = "3px"
-      toggleButton.style.marginRight = "4px"
-      toggleButton.style.borderRadius = "6px"
-      toggleButton.style.transition = "transform 0.3s ease, color 0.2s ease"
-      toggleButton.style.flexShrink = "0"
-      toggleButton.style.display = "flex"
-      toggleButton.style.alignItems = "center"
-      toggleButton.style.justifyContent = "center"
-      toggleButton.style.width = "28px"
-      toggleButton.style.height = "28px"
-      toggleButton.style.color = primaryColor
-      toggleButton.style.cursor = "pointer" // Add cursor pointer to toggle button
-
-
-      // Add hover effect - change color instead of background
-      toggleButton.addEventListener("mouseout", () => {
-        if (!isFolded) {
-          toggleButton.style.color = primaryColor
-        } else {
-          toggleButton.style.color = accentColor
-        }
-      })
-
-      toggleButton.addEventListener("mouseover", () => {
-        toggleButton.style.color = accentColor
-      })
-
-      // Clone the heading for the wrapper
-      const headingClone = heading.cloneNode(true)
-      headingClone.style.margin = "0"
-      headingClone.style.flex = "1"
-
-      // Add elements to heading wrapper
-      headingWrapper.appendChild(toggleButton)
-      headingWrapper.appendChild(headingClone)
-
-      // Create content container
-      const contentContainer = doc.createElement("div")
-      contentContainer.className = "foldable-content"
-      contentContainer.style.transition = "all 0.3s ease"
-      contentContainer.style.overflow = "hidden"
-      contentContainer.style.width = "100%"
-      contentContainer.style.display = "block"
-
-      // Collect content until the next heading of same or higher level
-      const level = Number.parseInt(heading.tagName[1])
-      let currentElement = heading.nextElementSibling
-      const contentElements = []
-
-      while (currentElement) {
-        const isHeading = currentElement.tagName?.[0] === "H"
-        const currentLevel = isHeading ? Number.parseInt(currentElement.tagName[1]) : 999
-
-        if (isHeading && currentLevel <= level) break
-
-        const nextElement = currentElement.nextElementSibling
-        contentElements.push(currentElement)
-        currentElement = nextElement
-      }
-
-      // Move content to the container
-      contentElements.forEach((element) => {
-        contentContainer.appendChild(element)
-      })
-
-      // Add everything to the section wrapper
-      sectionWrapper.appendChild(headingWrapper)
-      sectionWrapper.appendChild(contentContainer)
-
-      // Replace the original heading with our section wrapper
-      heading.parentNode?.replaceChild(sectionWrapper, heading)
-
-      // Set up toggle functionality
-      let isFolded = false
-
-      const updateFoldState = () => {
-        if (isFolded) {
-          // When folding, use display: none after transition
-          contentContainer.style.height = "0px"
-          contentContainer.style.opacity = "0"
-          contentContainer.style.marginTop = "0"
-          contentContainer.style.marginBottom = "0"
-          contentContainer.style.paddingTop = "0"
-          contentContainer.style.paddingBottom = "0"
-          toggleButton.style.transform = "rotate(-90deg)" // Rotate triangle to point right
-          toggleButton.style.color = accentColor 
-
-          // After transition completes, set display to none to fully hide content
-          setTimeout(() => {
-            if (isFolded) {
-              contentContainer.style.display = "none"
-              updateIframeHeight()
-            }
-          }, 300)
-        } else {
-          // When unfolding, first set display to block
-          contentContainer.style.display = "block"
-
-          // Force a reflow
-          contentContainer.offsetHeight
-
-          // Then animate other properties
-          contentContainer.style.height = "auto"
-          contentContainer.style.opacity = "1"
-          contentContainer.style.marginTop = ""
-          contentContainer.style.marginBottom = ""
-          contentContainer.style.paddingTop = ""
-          contentContainer.style.paddingBottom = ""
-          toggleButton.style.transform = "rotate(0)" // Reset rotation
-          toggleButton.style.color = primaryColor
+        let next = h.nextElementSibling
+        const level = Number.parseInt(h.tagName[1])
+        while (next && (!/^H[1-6]$/.test(next.tagName) || Number.parseInt(next.tagName[1]) > level)) {
+          const temp = next.nextElementSibling
+          content.appendChild(next)
+          next = temp
         }
 
-        // Update iframe height after toggling
-        setTimeout(updateIframeHeight, 350)
-      }
+        section.appendChild(content)
+        h.replaceWith(section)
 
-      // Handle click only on the toggle button
-      toggleButton.addEventListener("click", (e) => {
-        e.stopPropagation() // Prevent event bubbling
-        isFolded = !isFolded
-        updateFoldState()
-      })
-
-      // Handle image loading
-      const images = contentContainer.querySelectorAll("img")
-      images.forEach((img) => {
-        if (img.complete) {
-          // For already loaded images
+        let folded = false
+        btn.addEventListener("click", () => {
+          folded = !folded
+          content.style.display = folded ? "none" : "block"
+          btn.style.transform = folded ? "rotate(-90deg)" : "rotate(0)"
+          btn.style.color = folded ? accentColor : primaryColor
           updateIframeHeight()
-        } else {
-          // For images that will load
-          img.addEventListener("load", updateIframeHeight)
-          img.addEventListener("error", updateIframeHeight)
-        }
+        })
       })
-    })
 
-    // Add styles
-    const style = doc.createElement("style")
-    style.textContent = `
-    .section-wrapper {
-      margin-bottom: 1em;
-    }
-    
-    .heading-wrapper {
-      user-select: none;
-    }
-    
-    .foldable-content {
-      width: 100%;
-    }
-    
-    .foldable-content img {
-      max-width: 100%;
-      height: auto;
-    }
-  `
-    doc.head.appendChild(style)
-
-    // Update iframe height
-    updateIframeHeight()
-  }, [updateIframeHeight])
-
-  // Generate a simple hash for content to detect changes
-  const generateContentHash = (content: string): string => {
-    let hash = 0
-    if (content.length === 0) return hash.toString()
-    for (let i = 0; i < Math.min(content.length, 1000); i++) {
-      const char = content.charCodeAt(i)
-      hash = (hash << 5) - hash + char
-      hash = hash & hash // Convert to 32bit integer
-    }
-    return hash.toString()
-  }
-
-  // Handle window resize events
-  useEffect(() => {
-    const handleResize = () => {
+      const style = doc.createElement("style")
+      style.textContent = `
+        .section-wrapper { margin-bottom: 1em; }
+        .foldable-content img { max-width: 100%; height: auto; }
+      `
+      doc.head.appendChild(style)
       updateIframeHeight()
-    }
+    }, [updateIframeHeight])
 
-    window.addEventListener("resize", handleResize)
+    const generateContentHash = (content: string) =>
+      [...content].reduce((a, c) => ((a << 5) - a + c.charCodeAt(0)) | 0, 0).toString()
 
-    // Set up a resize observer on the container
-    const resizeObserver = new ResizeObserver(() => {
-      updateIframeHeight()
-    })
+    useEffect(() => {
+      const iframe = iframeRef.current
+      if (!iframe || !htmlContent) return
 
-    if (containerRef.current) {
-      resizeObserver.observe(containerRef.current)
-    }
-
-    return () => {
-      window.removeEventListener("resize", handleResize)
-      resizeObserver.disconnect()
-    }
-  }, [updateIframeHeight])
-
-  // Handle iframe content loading
-  useEffect(() => {
-    if (!iframeRef.current || !htmlContent || !containerRef.current) return
-
-    // Generate a hash for the new content
-    const newContentHash = generateContentHash(htmlContent)
-    const contentChanged = contentHashRef.current !== newContentHash
-    contentHashRef.current = newContentHash
-
-    const iframe = iframeRef.current
-    const container = containerRef.current
-
-    // Reset container scroll position when content changes
-    if (contentChanged) {
-      container.scrollTop = 0
-      setIframeHeight("100%") // Reset iframe height when content changes
-    }
-
-    // Handle iframe load event
-    const handleLoad = () => {
-      setLoading(false)
-
-      try {
-        if (iframe.contentWindow && iframe.contentDocument?.body) {
-          // Add basic styles to the iframe content
-          const style = document.createElement("style")
-          style.textContent = `
-            body, html {
-              margin: 0;
-              padding: 0;
-              height: auto;
-              overflow: hidden !important;
-            }
-            
-            /* Ensure no extra space at the bottom */
-            body > *:last-child {
-              margin-bottom: 0;
-              padding-bottom: 0;
-            }
-          `
-          iframe.contentDocument.head.appendChild(style)
-
-          // Set up content folding
-          setupContentFolding()
-
-          // Update iframe height
-          updateIframeHeight()
-
-          // Set up mutation observer to detect content changes
-          const mutationObserver = new MutationObserver(() => {
-            updateIframeHeight()
-          })
-
-          mutationObserver.observe(iframe.contentDocument.body, {
-            childList: true,
-            subtree: true,
-            attributes: true,
-          })
-
-          // Set up load event listeners for images
-          const images = iframe.contentDocument.querySelectorAll("img")
-          images.forEach((img) => {
-            img.addEventListener("load", updateIframeHeight)
-            img.addEventListener("error", updateIframeHeight)
-          })
-
-          return () => {
-            mutationObserver.disconnect()
-            images.forEach((img) => {
-              img.removeEventListener("load", updateIframeHeight)
-              img.removeEventListener("error", updateIframeHeight)
-            })
-          }
-        }
-      } catch (error) {
-        console.error("Error setting up iframe:", error)
+      const hash = generateContentHash(htmlContent)
+      if (contentHashRef.current !== hash) {
+        contentHashRef.current = hash
+        containerRef.current!.scrollTop = 0
+        setIframeHeight("100%")
       }
-    }
 
-    iframe.addEventListener("load", handleLoad)
-
-    // Write content to iframe
-    const doc = iframe.contentWindow?.document
-    if (doc) {
-      doc.open()
-
-      // Process HTML to handle relative paths if needed
+      const doc = iframe.contentWindow?.document
+      doc?.open()
       let processedHtml = htmlContent
 
-      // If we have a baseUrl, add a base tag to handle relative paths
+      // Add base URL if provided
       if (baseUrl) {
         processedHtml = processedHtml.replace(/<head>/i, `<head><base href="${baseUrl}">`)
       }
 
-      // Add error handler for ResizeObserver loop limit error
-      processedHtml = processedHtml.replace(
-        /<\/head>/i,
-        `<script>
-            document.addEventListener('error', function(e) {
-              const target = e.target;
-              console.log('Image Failed to load:', e.target.src);
-              if (target && (target.tagName === 'IMG' || target.tagName === 'AUDIO' || target.tagName === 'VIDEO' || target.tagName === 'SOURCE')) {
-                const srcAttr = target.tagName === 'SOURCE' ? 'srcset' : 'src';
-                const originalSrc = target.getAttribute(srcAttr);
-                // If the src is already in altDirectory, we don't want to loop infinitely.
-                if (originalSrc && !originalSrc.includes('${altAttachmentDirectory}')) {
-                  const newSrc = originalSrc.startsWith('/')
-                    ? '/' + '${altAttachmentDirectory}' + originalSrc
-                    : '${altAttachmentDirectory}/' + originalSrc;
-                  target.setAttribute(srcAttr, newSrc);
-                }
-              }
-            }, true);
+      // Write the HTML to the iframe
+      doc?.write(processedHtml)
 
-            // Suppress ResizeObserver error
-            window.addEventListener('error', function(e) {
-              if (e.message === 'ResizeObserver loop limit exceeded' || 
-                  e.message.includes('ResizeObserver loop completed with undelivered notifications')) {
-                e.stopPropagation();
-                e.stopImmediatePropagation();
-                e.preventDefault();
-                console.warn('Ignored:', e.message);
-              }
-            });
+      // Add the fallback script for media loading errors
+      if (altAttachmentDirectory && doc) {
+        const script = doc.createElement("script")
+        script.textContent = `
+      document.addEventListener('error', function(e) {
+        const target = e.target;
+        if (target && (target.tagName === 'IMG' || target.tagName === 'AUDIO' || target.tagName === 'VIDEO' || target.tagName === 'SOURCE')) {
+          const srcAttr = target.tagName === 'SOURCE' ? 'srcset' : 'src';
+          const originalSrc = target.getAttribute(srcAttr);
+          if (originalSrc && !originalSrc.includes('${altAttachmentDirectory}')) {
+            const newSrc = originalSrc.startsWith('/') ? '/${altAttachmentDirectory}' + originalSrc : '${altAttachmentDirectory}/' + originalSrc;
+            console.log('Image Failed to load:', originalSrc, 'Trying:', newSrc);
+            target.setAttribute(srcAttr, newSrc);
+          }
+        }
+      }, true);
+    `
+        doc.head.appendChild(script)
+      }
 
-            // Log whenever an IMG finishes loading
-            document.addEventListener('load', function(e) {
-              if (e.target && e.target.tagName === 'IMG') {
-                console.log('Image attempted to load:', e.target.src);
-              }
-            }, true);
-          </script></head>`
-      )
+      doc?.close()
 
-      doc.write(processedHtml)
-      doc.close()
-    }
+      const handleLoad = () => {
+        setLoading(false)
+        setupContentFolding()
+        updateIframeHeight()
+      }
 
-    return () => {
-      iframe.removeEventListener("load", handleLoad)
-    }
-  }, [htmlContent, baseUrl, updateIframeHeight, setupContentFolding])
+      iframe.addEventListener("load", handleLoad)
+      return () => iframe.removeEventListener("load", handleLoad)
+    }, [htmlContent, baseUrl, setupContentFolding, updateIframeHeight, altAttachmentDirectory])
 
-  return (
-    <div ref={containerRef} className="w-full h-full relative overflow-auto scrollbar-custom">
-      {loading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-10">
-          <LoadingIndicator text="Loading content..." />
-        </div>
-      )}
-
-      <iframe
-        ref={iframeRef}
-        className="w-full border-0"
-        style={{
-          height: iframeHeight,
-          display: "block",
-          overflow: "hidden",
-          border: "none",
-          margin: 0,
-          padding: 0,
-        }}
-        title="HTML Content"
-        sandbox="allow-same-origin allow-scripts"
-      />
-    </div>
-  )
-})
+    return (
+      <div ref={containerRef} className="w-full h-full relative overflow-auto scrollbar-custom">
+        {loading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-10">
+            <LoadingIndicator text="Loading content..." />
+          </div>
+        )}
+        <iframe
+          ref={iframeRef}
+          style={{ height: iframeHeight }}
+          className="w-full border-0"
+          sandbox="allow-same-origin allow-scripts"
+        />
+      </div>
+    )
+  },
+)
 
 RawHtmlViewer.displayName = "RawHtmlViewer"
 
