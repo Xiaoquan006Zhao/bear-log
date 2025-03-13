@@ -155,6 +155,15 @@ export const RawHtmlViewer = forwardRef<RawHtmlViewerRef, RawHtmlViewerProps>(
           btn.style.color = folded ? accentColor : primaryColor
           updateIframeHeight()
         })
+
+        // Add hover effect to change color on hover
+        btn.addEventListener("mouseenter", () => {
+          if (!folded) btn.style.color = accentColor
+        })
+
+        btn.addEventListener("mouseleave", () => {
+          if (!folded) btn.style.color = primaryColor
+        })
       })
 
       const style = doc.createElement("style")
