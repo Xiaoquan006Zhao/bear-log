@@ -1,24 +1,36 @@
 "use client"
 
 import type React from "react"
-
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { Github, Linkedin, Mail, Twitter, Globe, FileText, Rss, Check, Copy } from "lucide-react"
-import { useState } from "react"
+import { 
+  Github, Linkedin, Mail, Twitter, Globe, FileText, Rss, Check, Copy,
+  Facebook, Instagram, Youtube, Twitch, Dribbble, Figma 
+} from "lucide-react"
+import { siteConfig } from "@/personalize/config"
 
 interface SocialLinksProps {
   collapsed?: boolean
 }
 
+interface SocialLinkProps {
+  name: string
+  icon: string
+  url: string
+}
+
 export function SocialLinks({ collapsed = false }: SocialLinksProps) {
+  // Don't render if socials are disabled
+  if (!siteConfig.socials.show) return null;
+
   // State to track if email was copied
   const [emailCopied, setEmailCopied] = useState(false)
   // State to track if email is being hovered
   const [emailHovered, setEmailHovered] = useState(false)
 
-  // Your email address
-  const emailAddress = "xiaoquan0622@gmail.com"
+  // Email address from config
+  const emailAddress = siteConfig.socials.email
 
   // Function to copy email to clipboard
   const copyEmailToClipboard = (e: React.MouseEvent) => {
@@ -51,22 +63,57 @@ export function SocialLinks({ collapsed = false }: SocialLinksProps) {
     }
   }
 
+  // Find the appropriate icon component for a social link
+  const getIconForSocial = (name: string, customIcon?: string) => {
+    // If a custom icon is provided, use that
+    if (customIcon) {
+      switch (customIcon.toLowerCase()) {
+        case 'github': return <Github className="h-4 w-4" />;
+        case 'linkedin': return <Linkedin className="h-4 w-4" />;
+        case 'twitter': return <Twitter className="h-4 w-4" />;
+        case 'facebook': return <Facebook className="h-4 w-4" />;
+        case 'instagram': return <Instagram className="h-4 w-4" />;
+        case 'youtube': return <Youtube className="h-4 w-4" />;
+        case 'twitch': return <Twitch className="h-4 w-4" />;
+        case 'dribbble': return <Dribbble className="h-4 w-4" />;
+        case 'figma': return <Figma className="h-4 w-4" />;
+        case 'rss': return <Rss className="h-4 w-4" />;
+        case 'file': case 'cv': case 'resume': return <FileText className="h-4 w-4" />;
+        default: return <Globe className="h-4 w-4" />;
+      }
+    }
+    
+    // Try to auto-detect based on name
+    const lowerName = name.toLowerCase();
+    if (lowerName.includes('github')) return <Github className="h-4 w-4" />;
+    if (lowerName.includes('linkedin')) return <Linkedin className="h-4 w-4" />;
+    if (lowerName.includes('twitter')) return <Twitter className="h-4 w-4" />;
+    if (lowerName.includes('facebook')) return <Facebook className="h-4 w-4" />;
+    if (lowerName.includes('instagram')) return <Instagram className="h-4 w-4" />;
+    if (lowerName.includes('youtube')) return <Youtube className="h-4 w-4" />;
+    if (lowerName.includes('twitch')) return <Twitch className="h-4 w-4" />;
+    if (lowerName.includes('dribbble')) return <Dribbble className="h-4 w-4" />;
+    if (lowerName.includes('figma')) return <Figma className="h-4 w-4" />;
+    if (lowerName.includes('rss')) return <Rss className="h-4 w-4" />;
+    if (['cv', 'resume'].some(term => lowerName.includes(term))) return <FileText className="h-4 w-4" />;
+    
+    // Default fallback
+    return <Globe className="h-4 w-4" />;
+  }
+
+  // Build links array including config-based social links and email
   const links = [
-    {
-      name: "LinkedIn",
-      icon: <Linkedin className="h-4 w-4" />,
-      href: "https://www.linkedin.com/in/xiaoquan-zhao-b21a1633b/",
-      color: "hover:text-blue-600",
-      isEmail: false,
-    },
-    {
-      name: "GitHub",
-      icon: <Github className="h-4 w-4" />,
-      href: "https://github.com/Xiaoquan006Zhao",
+    // Map the social links from config
+    ...siteConfig.socials.links.map(({name, icon, url}:SocialLinkProps) => ({
+      name: name,
+      icon: getIconForSocial(name, icon),
+      href: url,
       color: "hover:text-gray-900 dark:hover:text-white",
       isEmail: false,
-    },
-    {
+    })),
+    
+    // Add email if provided
+    ...(emailAddress ? [{
       name: emailCopied ? "Email Copied!" : emailAddress,
       icon: getEmailIcon(),
       href: "#",
@@ -75,7 +122,7 @@ export function SocialLinks({ collapsed = false }: SocialLinksProps) {
       onClick: copyEmailToClipboard,
       onMouseLeave: handleEmailMouseLeave,
       onMouseEnter: handleEmailMouseEnter,
-    },
+    }] : [])
   ]
 
   return (
@@ -111,4 +158,3 @@ export function SocialLinks({ collapsed = false }: SocialLinksProps) {
     </TooltipProvider>
   )
 }
-

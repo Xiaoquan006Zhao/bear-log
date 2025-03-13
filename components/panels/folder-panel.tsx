@@ -6,6 +6,8 @@ import { Folder, ChevronRight, ChevronLeft, Loader2 } from "lucide-react"
 import type { FolderNode } from "@/hooks/use-folder-structure"
 import { FolderItem } from "@/components/panels/folder-item"
 import { SocialLinks } from "@/components/social-links"
+import { siteConfig } from "@/personalize/config"
+
 
 interface FolderPanelProps {
   folderStructure: FolderNode | null
@@ -50,8 +52,7 @@ export function FolderPanel({
     <>
       <div className="px-4 py-3 border-b shrink-0 flex items-center justify-between">
         <h2 className="text-lg font-semibold flex items-center gap-3 min-w-0 overflow-hidden">
-          
-          <span className="truncate overflow-hidden text-ellipsis">Xiaoquan's Notes</span>
+          <span className="truncate overflow-hidden text-ellipsis">{siteConfig.name}</span>
         </h2>
         <Button
           variant="ghost"
