@@ -139,10 +139,11 @@ export async function getFilesForFolder(
 
       let lunrSearchTerm = ""
       for (const term of searchTerm.trim().split(" ")) {
-        lunrSearchTerm += `+*${term}* `
+        lunrSearchTerm += `*${term} ${term}* ${term} `
       }
 
       const results = searchIndex.search(lunrSearchTerm);
+      console.log(`Search results:`, results) 
       const filteredFiles = folderData.files?.filter((fileInstance: any) => {
         return results.some((result: any) => {
           return result.ref == fileInstance.file;
