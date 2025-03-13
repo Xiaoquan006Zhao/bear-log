@@ -25,11 +25,12 @@ You can check my notes at: https://xiaoquan-notes.netlify.app/ or https://xiaoqu
 4. Header folding
 
 # Not So Supported Feature
-6. Searching(Filtering) Notes within current folder (achieved by `lunrjs` though the default setting has limited language support and no OCR search).
-7. No highlighting matched terms, I would suggest use the browser's `Ctrl+F` or `Cmd+F` if you need it.
-8. No Folder icon 
-9. No custom themes (limited by the Bear export process)
-10. If you export as `.md` files, the dates will be unavailable and styling might be a little different.
+1. Searching(Filtering) Notes within current folder (achieved by `lunrjs` though the default setting has limited language support and no OCR search).
+2. No highlighting matched terms, I would suggest use the browser's `Ctrl+F` or `Cmd+F` if you need it.
+3. No Folder icon 
+4. No custom themes (limited by the Bear export process)
+5. If you export as `.md` files, the dates will be unavailable and styling might be a little different.
+6. Currently, not optimized for small screen use
 
 ---
 This project is built with many help from [v0.dev ](https://v0.dev/)
