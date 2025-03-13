@@ -139,7 +139,7 @@ export async function getFilesForFolder(
 
       let lunrSearchTerm = ""
       for (const term of searchTerm.trim().split(" ")) {
-        lunrSearchTerm += `*${term} ${term}* ${term} `
+        lunrSearchTerm += `*${term} ${term}* *${term}* ${term} `
       }
 
       const results = searchIndex.search(lunrSearchTerm);
